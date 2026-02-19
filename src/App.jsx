@@ -1,11 +1,12 @@
 import { Routes, Route, NavLink, useLocation } from "react-router-dom";
-import { Users, Package, FileText, Menu } from "lucide-react";
+import { Users, Package, FileText, Menu, X } from "lucide-react";
 import { useState } from "react";
 
 import AddParty from "./pages/AddParty";
 import Parties from "./pages/Parties";
 import PartyDetails from "./pages/PartyDetails";
 import Products from "./pages/Products";
+import AddProduct from "./pages/AddProduct";
 import Vouchers from "./pages/Vouchers";
 
 function App() {
@@ -24,7 +25,7 @@ function App() {
         {/* Sidebar */}
         <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
           <div className="sidebar-header">
-            <h2>GST Billing</h2>
+            {/* Header Content Removed */}
           </div>
           <nav className="sidebar-nav">
             <NavLink 
@@ -55,15 +56,20 @@ function App() {
         </aside>
 
         <main className="main-content">
-          {/* Mobile Menu Toggle - visible only on main pages */}
+          {/* Mobile Menu Toggle - visible on main pages for all devices now */}
           {isMainPage && (
             <div className="mobile-menu-toggle">
               <button 
                 className="btn btn-icon" 
                 onClick={() => setSidebarOpen(!sidebarOpen)}
-                style={{ background: "transparent", color: "var(--text-primary)", padding: "0.5rem" }}
+                style={{ 
+                  background: "transparent", 
+                  color: sidebarOpen ? "var(--text-inverse)" : "var(--text-primary)", 
+                  padding: "0.5rem",
+                  transition: "color 0.3s"
+                }}
               >
-                <Menu size={20} />
+                {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
               </button>
             </div>
           )}
@@ -74,7 +80,11 @@ function App() {
               <Route path="/add-party" element={<AddParty />} />
               <Route path="/edit-party/:id" element={<AddParty />} />
               <Route path="/party/:id" element={<PartyDetails />} />
+              
               <Route path="/products" element={<Products />} />
+              <Route path="/add-product" element={<AddProduct />} />
+              <Route path="/edit-product/:id" element={<AddProduct />} />
+
               <Route path="/vouchers" element={<Vouchers />} />
             </Routes>
           </div>

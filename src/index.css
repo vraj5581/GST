@@ -329,7 +329,7 @@ tr:hover td {
       left: -260px;
       top: 0;
       bottom: 0;
-      z-index: 50;
+      z-index: 1200; /* Ensure sidebar is ABOVE the fixed header (1000) */
       height: 100%;
   }
 
@@ -341,7 +341,7 @@ tr:hover td {
       position: fixed;
       inset: 0;
       background: rgba(0,0,0,0.5);
-      z-index: 40;
+      z-index: 1150; /* Above header (1000) but below sidebar (1200) */
       opacity: 0;
       visibility: hidden;
       transition: opacity 0.3s;
@@ -465,7 +465,15 @@ tr:hover td {
     position: fixed;
     top: 1rem; /* Aligns with header padding */
     left: 0.5rem;
-    z-index: 1100;
+    z-index: 1300; /* Must be higher than sidebar so it remains clickable/visible */
+  }
+
+  .sidebar {
+      z-index: 1200; /* Higher than fixed-header (1000) */
+  }
+
+  .sidebar-overlay {
+      z-index: 1150; /* Between header and sidebar */
   }
 }
 
