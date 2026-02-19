@@ -116,7 +116,7 @@ function AddVoucher() {
       </header>
       
       <div className="content-below-fixed">
-        <form onSubmit={handleSubmit} className="card" style={{ maxWidth: '800px', margin: '0 auto' }}>
+        <form onSubmit={handleSubmit}>
           
           {/* Voucher Header Info */}
           <div className="grid grid-2" style={{ marginBottom: '1.5rem' }}>
@@ -145,25 +145,25 @@ function AddVoucher() {
           </div>
 
           {/* Items Table */}
-          <div className="table-container" style={{ marginBottom: '1.5rem' }}>
-            <table>
+          <div className="table-container" style={{ marginBottom: '1.5rem', overflowX: 'auto' }}>
+            <table style={{ minWidth: '100%' }}>
               <thead>
                 <tr>
                   <th>Product</th>
-                  <th style={{ width: '100px' }}>Price</th>
-                  <th style={{ width: '80px' }}>Qty</th>
-                  <th style={{ width: '60px' }}>Tax%</th>
-                  <th style={{ width: '100px' }}>Total</th>
+                  <th style={{ width: '120px' }}>Price</th>
+                  <th style={{ width: '100px' }}>Qty</th>
+                  <th style={{ width: '80px' }}>Tax%</th>
+                  <th style={{ width: '120px' }}>Total</th>
                   <th style={{ width: '50px' }}></th>
                 </tr>
               </thead>
               <tbody>
                 {voucher.items.map((item, index) => (
                   <tr key={index}>
-                    <td>
+                    <td style={{ padding: '0.75rem' }}>
                       <select 
                         className="form-input" 
-                        style={{ border: 'none', padding: '0.4rem' }}
+                        style={{ border: '1px solid var(--border-color)', padding: '0.75rem', fontSize: '1rem', minWidth: '200px' }}
                         value={item.productId || ""}
                         onChange={(e) => handleItemChange(index, "productId", e.target.value)}
                       >
@@ -173,33 +173,33 @@ function AddVoucher() {
                         ))}
                       </select>
                     </td>
-                    <td>
+                    <td style={{ padding: '0.75rem' }}>
                       <input 
                         type="number" 
                         className="form-input"
-                        style={{ padding: '0.4rem' }}
+                        style={{ padding: '0.75rem', fontSize: '1rem' }}
                         value={item.price}
                         onChange={(e) => handleItemChange(index, "price", e.target.value)}
                       />
                     </td>
-                    <td>
+                    <td style={{ padding: '0.75rem' }}>
                       <input 
                         type="number" 
                         className="form-input"
-                        style={{ padding: '0.4rem' }}
+                        style={{ padding: '0.75rem', fontSize: '1rem' }}
                         value={item.qty}
                         onChange={(e) => handleItemChange(index, "qty", e.target.value)}
                       />
                     </td>
-                    <td>
+                    <td style={{ padding: '0.75rem', fontSize: '1rem' }}>
                       {item.tax}%
                     </td>
-                    <td>
+                    <td style={{ padding: '0.75rem', fontSize: '1rem', fontWeight: 600 }}>
                       {item.amount.toFixed(2)}
                     </td>
-                    <td>
-                       <button type="button" onClick={() => removeItem(index)} style={{ color: 'var(--color-danger)', background: 'none', border: 'none', cursor: 'pointer' }}>
-                         <Trash2 size={18} />
+                    <td style={{ padding: '0.75rem', textAlign: 'center' }}>
+                       <button type="button" onClick={() => removeItem(index)} style={{ color: 'var(--color-danger)', background: 'none', border: 'none', cursor: 'pointer', padding: '0.5rem' }}>
+                         <Trash2 size={24} />
                        </button>
                     </td>
                   </tr>
@@ -217,16 +217,16 @@ function AddVoucher() {
             </button>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '2rem', padding: '1rem', background: '#f8fafc', borderRadius: 'var(--radius-md)' }}>
-            <div style={{ textAlign: 'right' }}>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '2rem', padding: '1rem', background: '#f8fafc', borderRadius: 'var(--radius-md)', flexWrap: 'wrap' }}>
+            <div style={{ textAlign: 'right', minWidth: '100px' }}>
               <p style={{ color: 'var(--text-secondary)' }}>Subtotal</p>
               <p style={{ fontSize: '1.1rem', fontWeight: 600 }}>₹{totals.subtotal.toFixed(2)}</p>
             </div>
-            <div style={{ textAlign: 'right' }}>
+            <div style={{ textAlign: 'right', minWidth: '100px' }}>
                <p style={{ color: 'var(--text-secondary)' }}>Tax (GST)</p>
                <p style={{ fontSize: '1.1rem', fontWeight: 600 }}>₹{totals.tax.toFixed(2)}</p>
             </div>
-            <div style={{ textAlign: 'right' }}>
+            <div style={{ textAlign: 'right', minWidth: '100px' }}>
                <p style={{ color: 'var(--text-secondary)' }}>Total</p>
                <p style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--color-primary)' }}>₹{totals.total.toFixed(2)}</p>
             </div>

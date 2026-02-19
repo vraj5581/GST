@@ -47,17 +47,22 @@ function Vouchers() {
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                    <div>
-                     <h4 style={{ margin: 0, fontSize: '1.1rem' }}>{v.partyId}</h4>
-                     <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>{v.date}</p>
+                     <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>#INV-{String(v.id || (Number(v.originalIndex) + 1)).padStart(4, '0')}</p>
+                     <h4 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 600 }}>{v.partyId}</h4>
+                     <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '0.25rem' }}>{new Date(v.date).toLocaleDateString()}</p>
+                     <p style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.25rem' }}>
+                       {v.items.length} Items
+                     </p>
                    </div>
                    <div style={{ textAlign: 'right' }}>
-                     <span style={{ fontSize: '1.2rem', fontWeight: 600, color: 'var(--color-primary)' }}>
+                     <span style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--color-primary)' }}>
                        ₹{calculateTotal(v.items).toFixed(2)}
                      </span>
+                     <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>Total</p>
                    </div>
                 </div>
 
-                <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '0.75rem', marginTop: '0.5rem', display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '0.75rem', marginTop: '0.75rem', display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
                    <button 
                      className="btn btn-outline" 
                      onClick={() => navigate(`/voucher-print/${v.originalIndex}`)} 

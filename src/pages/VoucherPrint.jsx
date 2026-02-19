@@ -43,15 +43,42 @@ function VoucherPrint() {
       </div>
       
       <div className="content-below-fixed printable-area">
+        <style>{`
+          /* Screen Only Responsive Styles */
+          @media screen and (max-width: 768px) {
+            .invoice-header-row {
+              flex-direction: column;
+              gap: 1.5rem;
+            }
+            .invoice-header-row > div {
+              text-align: left !important;
+            }
+            .invoice-table-container {
+              overflow-x: auto;
+            }
+            .invoice-table {
+              min-width: 600px; /* Force table width so it scrolls instead of squishing */
+            }
+            .invoice-preview-card {
+              padding: 1rem !important;
+              width: 100% !important;
+              box-shadow: none !important;
+            }
+          }
+        `}</style>
+
         <div 
+          className="invoice-preview-card"
           style={{ 
             background: 'white', 
             padding: '2rem', 
-            maxWidth: '210mm', 
+            maxWidth: '100%', 
+            width: '210mm', // Default for desktop/print 
             minHeight: '297mm', 
             margin: '0 auto',
             boxShadow: 'var(--shadow-md)',
-            color: '#000'
+            color: '#000',
+            boxSizing: 'border-box'
           }}
         >
           {/* Header */}
@@ -60,8 +87,8 @@ function VoucherPrint() {
             <p style={{ margin: 0 }}>Create beautiful invoices with our GST Billing App</p>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2rem' }}>
-            <div>
+          <div className="invoice-header-row" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2rem' }}>
+            <div style={{ flex: 1 }}>
               <h3 style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Bill To:</h3>
               <p style={{ fontWeight: 'bold', fontSize: '1.1rem' }}>{party?.name}</p>
               <div style={{lineHeight: '1.4', marginTop: '4px'}}>
@@ -70,14 +97,15 @@ function VoucherPrint() {
                 {party?.mobile && <div><strong>Mobile:</strong> {party.mobile}</div>}
               </div>
             </div>
-            <div style={{ textAlign: 'right' }}>
+            <div style={{ textAlign: 'right', flex: 1 }}>
               <p><strong>Date:</strong> {new Date(voucher.date).toLocaleDateString()}</p>
               <p><strong>Invoice No:</strong> #INV-{String(Number(id) + 1).padStart(4, '0')}</p>
             </div>
           </div>
 
           {/* Table */}
-          <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '2rem' }}>
+          <div className="invoice-table-container">
+          <table className="invoice-table" style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '2rem' }}>
             <thead>
               <tr style={{ background: '#f0f0f0', borderBottom: '2px solid #000' }}>
                 <th style={{ padding: '0.75rem', textAlign: 'left', border: '1px solid #ddd' }}>#</th>
@@ -118,6 +146,7 @@ function VoucherPrint() {
                </tr>
             </tfoot>
           </table>
+          </div>
 
           {/* Footer Notes */}
           {voucher.note && (
