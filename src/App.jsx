@@ -57,13 +57,13 @@ function App() {
         <main className="main-content">
           {/* Mobile Menu Toggle - visible only on main pages */}
           {isMainPage && (
-            <div className="mobile-menu-toggle" style={{ position: "fixed", top: "0.8rem", left: "1rem", zIndex: 1100 }}>
+            <div className="mobile-menu-toggle">
               <button 
                 className="btn btn-icon" 
-                onClick={() => setSidebarOpen(true)}
+                onClick={() => setSidebarOpen(!sidebarOpen)}
                 style={{ background: "transparent", color: "var(--text-primary)", padding: "0.5rem" }}
               >
-                <Menu size={24} />
+                <Menu size={20} />
               </button>
             </div>
           )}

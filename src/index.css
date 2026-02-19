@@ -445,12 +445,27 @@ tr:hover td {
     width: 100%;
     left: 0;
     padding: 1rem;
+    gap: 1rem; /* Increased to match the 1rem spacing of the menu button */
   }
+  
+  /* Add extra left padding on root pages to accomodate the hamburger menu */
+  .fixed-header.root-page-header {
+    padding-left: 4rem; /* 1rem space + 2.5rem button + 0.5rem gap */
+  }
+
   .content-below-fixed {
-    padding-top: 5rem; /* Slightly less padding on mobile */
+    padding-top: 4.5rem;
     padding-left: 0.5rem;
     padding-right: 0.5rem;
     padding-bottom: 0.5rem;
+  }
+
+  /* Mobile Menu Toggle Positioning */
+  .mobile-menu-toggle {
+    position: fixed;
+    top: 1rem; /* Aligns with header padding */
+    left: 0.5rem;
+    z-index: 1100;
   }
 }
 

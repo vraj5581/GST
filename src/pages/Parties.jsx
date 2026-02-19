@@ -42,7 +42,7 @@ function Parties() {
 
   return (
     <div>
-      <div className="fixed-header">
+      <div className="fixed-header root-page-header">
         <div className="search-bar w-full-search" style={{ flex: 1, marginBottom: 0 }}>
           <Search className="search-icon" size={18} />
           <input
@@ -54,7 +54,7 @@ function Parties() {
         </div>
         
         <Link to="/add-party" className="btn btn-primary btn-icon" style={{ flexShrink: 0 }} title="Add Party">
-          <Plus size={16} />
+          <Plus size={18} />
         </Link>
       </div>
 
