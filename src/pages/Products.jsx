@@ -63,9 +63,10 @@ function Products() {
                 display: "flex",
                 flexDirection: "column",
                 gap: "0.5rem",
-                cursor: "default", // Changed from pointer since no details page yet
+                cursor: "pointer", 
                 transition: "transform 0.2s, box-shadow 0.2s"
               }}
+              onClick={() => navigate(`/product/${p.originalIndex}`)}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = "translateY(-2px)";
                 e.currentTarget.style.boxShadow = "var(--shadow-md)";

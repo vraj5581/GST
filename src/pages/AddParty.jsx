@@ -103,7 +103,7 @@ function AddParty() {
       <div className="content-below-fixed">
       <form onSubmit={handleSubmit} noValidate>
         {/* Form Content */}
-        <div className="grid grid-2">
+        <div className="grid grid-2 form-grid">
           <div className="form-group">
             <label className="form-label">Party Name <span style={{color: 'red'}}>*</span></label>
             <input 
@@ -161,7 +161,7 @@ function AddParty() {
           </div>
         </div>
         
-        <div className="form-group">
+        <div className="form-group" style={{ marginTop: '1rem' }}>
           <label className="form-label">Address</label>
           <textarea 
             className="form-textarea" 

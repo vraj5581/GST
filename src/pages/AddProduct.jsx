@@ -68,8 +68,16 @@ function AddProduct() {
       products.push(product);
     }
     
-    localStorage.setItem("products", JSON.stringify(products));
-    navigate("/products");
+    try {
+      localStorage.setItem("products", JSON.stringify(products));
+      navigate("/products");
+    } catch (error) {
+      if (error.name === "QuotaExceededError" || error.code === 22) {
+        alert("Storage Full! The image is too large for local storage. Please try a smaller image.");
+      } else {
+        alert("Failed to save product: " + error.message);
+      }
+    }
   };
 
   return (
@@ -165,10 +173,7 @@ function AddProduct() {
             onChange={(e) => {
                const file = e.target.files[0];
                if (file) {
-                 if (file.size > 1024 * 1024) { // 1MB limit check
-                    alert("File is too big! Please select an image under 1MB.");
-                    return;
-                 }
+                 // Removed size limit check as requested
                  const reader = new FileReader();
                  reader.onloadend = () => {
                    setProduct({ ...product, image: reader.result });

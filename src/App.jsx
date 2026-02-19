@@ -7,6 +7,7 @@ import Parties from "./pages/Parties";
 import PartyDetails from "./pages/PartyDetails";
 import Products from "./pages/Products";
 import AddProduct from "./pages/AddProduct";
+import ProductDetails from "./pages/ProductDetails";
 import Vouchers from "./pages/Vouchers";
 import AddVoucher from "./pages/AddVoucher";
 import VoucherPrint from "./pages/VoucherPrint";
@@ -86,6 +87,7 @@ function App() {
               <Route path="/products" element={<Products />} />
               <Route path="/add-product" element={<AddProduct />} />
               <Route path="/edit-product/:id" element={<AddProduct />} />
+              <Route path="/product/:id" element={<ProductDetails />} />
 
               <Route path="/vouchers" element={<Vouchers />} />
               <Route path="/add-voucher" element={<AddVoucher />} />
