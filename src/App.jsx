@@ -8,6 +8,8 @@ import PartyDetails from "./pages/PartyDetails";
 import Products from "./pages/Products";
 import AddProduct from "./pages/AddProduct";
 import Vouchers from "./pages/Vouchers";
+import AddVoucher from "./pages/AddVoucher";
+import VoucherPrint from "./pages/VoucherPrint";
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -86,6 +88,9 @@ function App() {
               <Route path="/edit-product/:id" element={<AddProduct />} />
 
               <Route path="/vouchers" element={<Vouchers />} />
+              <Route path="/add-voucher" element={<AddVoucher />} />
+              <Route path="/add-voucher/:id" element={<AddVoucher />} />
+              <Route path="/voucher-print/:id" element={<VoucherPrint />} />
             </Routes>
           </div>
         </main>

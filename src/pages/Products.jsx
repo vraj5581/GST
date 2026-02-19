@@ -76,7 +76,16 @@ function Products() {
               }}
             >
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", marginBottom: "0.5rem" }}>
-                <h4 style={{ fontSize: "1.1rem", fontWeight: 600, color: "var(--text-primary)", margin: 0 }}>{p.name}</h4>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                   {p.image && (
+                     <img 
+                       src={p.image} 
+                       alt={p.name} 
+                       style={{ width: "50px", height: "50px", borderRadius: "var(--radius-md)", objectFit: "cover", border: "1px solid var(--border-color)" }}
+                     />
+                   )}
+                   <h4 style={{ fontSize: "1.1rem", fontWeight: 600, color: "var(--text-primary)", margin: 0 }}>{p.name}</h4>
+                </div>
                 <div style={{ display: "flex", gap: "0.5rem" }}>
                   <button 
                     className="btn" 

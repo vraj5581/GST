@@ -1,9 +1,96 @@
-import React from 'react';
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Plus, Printer, Eye, Trash2 } from "lucide-react";
 
 function Vouchers() {
+  const [vouchers, setVouchers] = useState([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const data = JSON.parse(localStorage.getItem("vouchers")) || [];
+    // Sort by date desc
+    setVouchers(data.map((v, i) => ({ ...v, originalIndex: i })).reverse());
+  }, []);
+
+  const handleDelete = (index) => {
+    if (window.confirm("Are you sure you want to delete this voucher?")) {
+      const allVouchers = JSON.parse(localStorage.getItem("vouchers")) || [];
+      const updated = allVouchers.filter((_, i) => i !== index);
+      localStorage.setItem("vouchers", JSON.stringify(updated));
+      
+      // Update local state
+      setVouchers(updated.map((v, i) => ({ ...v, originalIndex: i })).reverse());
+    }
+  };
+
+  const calculateTotal = (items) => {
+    return items.reduce((sum, item) => sum + (item.amount || 0), 0);
+  };
+
   return (
-    <div className="fixed-header root-page-header">
-      <h3 style={{ margin: 0, border: "none" }}>Vouchers</h3>
+    <div>
+      <div className="fixed-header root-page-header">
+        <h3 style={{ margin: 0, border: "none" }}>Vouchers</h3>
+        <Link to="/add-voucher" className="btn btn-primary btn-icon" style={{ flexShrink: 0 }} title="Create Voucher">
+          <Plus size={18} />
+        </Link>
+      </div>
+
+      <div className="content-below-fixed">
+        <div className="grid grid-2">
+          {vouchers.length > 0 ? (
+            vouchers.map((v) => (
+              <div 
+                key={v.originalIndex}
+                className="card"
+                style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                   <div>
+                     <h4 style={{ margin: 0, fontSize: '1.1rem' }}>{v.partyId}</h4>
+                     <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>{v.date}</p>
+                   </div>
+                   <div style={{ textAlign: 'right' }}>
+                     <span style={{ fontSize: '1.2rem', fontWeight: 600, color: 'var(--color-primary)' }}>
+                       ₹{calculateTotal(v.items).toFixed(2)}
+                     </span>
+                   </div>
+                </div>
+
+                <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '0.75rem', marginTop: '0.5rem', display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                   <button 
+                     className="btn btn-outline" 
+                     onClick={() => navigate(`/voucher-print/${v.originalIndex}`)} 
+                     title="Print / View"
+                     style={{ padding: '0.4rem 0.8rem', fontSize: '0.9rem' }}
+                   >
+                     <Printer size={16} /> Print
+                   </button>
+                   <button 
+                     className="btn btn-outline" 
+                     onClick={() => navigate(`/add-voucher/${v.originalIndex}`)} // Actually just edit
+                     title="Edit"
+                     style={{ padding: '0.4rem', color: 'var(--text-secondary)' }}
+                   >
+                     <Eye size={16} />
+                   </button>
+                   <button 
+                     className="btn"
+                     style={{ padding: "0.4rem", color: "var(--color-danger)", background: "transparent", border: "none" }}
+                     onClick={() => handleDelete(v.originalIndex)}
+                   >
+                     <Trash2 size={16} />
+                   </button>
+                </div>
+              </div>
+            ))
+          ) : (
+             <div style={{ gridColumn: "1 / -1", textAlign: "center", padding: "2rem", color: "var(--text-secondary)" }}>
+               No vouchers created yet.
+             </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

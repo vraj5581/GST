@@ -460,13 +460,24 @@ tr:hover td {
     padding-bottom: 0.5rem;
   }
 
-  /* Mobile Menu Toggle Positioning */
-  .mobile-menu-toggle {
-    position: fixed;
-    top: 1rem; /* Aligns with header padding */
-    left: 0.5rem;
-    z-index: 1300; /* Must be higher than sidebar so it remains clickable/visible */
-  }
+  /* Mobile Menu Toggle Positioning - Visible everywhere */
+.mobile-menu-toggle {
+  position: fixed;
+  top: 1rem;
+  left: 0.5rem;
+  z-index: 1300;
+  display: block !important; /* Force visible */
+}
+
+.grid-2 {
+    grid-template-columns: 1fr; /* Single column layout everywhere */
+}
+
+/* Adjustments that were previously desktop-only but might still be useful if we want SOME responsiveness, 
+   BUT user asked for "same in pc", so we keep it 100% same. */
+.w-full-search {
+    max-width: 100% !important;
+}
 
   .sidebar {
       z-index: 1200; /* Higher than fixed-header (1000) */
@@ -477,3 +488,33 @@ tr:hover td {
   }
 }
 
+/* Print Styles */
+@media print {
+  .no-print, .sidebar, .fixed-header, .mobile-menu-toggle, .btn {
+    display: none !important;
+  }
+  
+  .app-container, .main-content, .page-content, .content-below-fixed {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+    display: block !important;
+    background: white !important;
+  }
+  
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  
+  /* Ensure the printable area is visible and centered if needed */
+  .printable-area > div {
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    max-width: 100% !important;
+    border: none !important;
+  }
+}

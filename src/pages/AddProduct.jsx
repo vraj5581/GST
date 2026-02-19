@@ -12,7 +12,8 @@ function AddProduct() {
     hsn: "",
     tax: "",
     unit: "Pcs",
-    description: "" // Fixed typo from 'descrption'
+    description: "",
+    image: ""
   });
 
   const [errors, setErrors] = useState({});
@@ -155,6 +156,45 @@ function AddProduct() {
           </div>
         </div>
         
+        <div className="form-group">
+          <label className="form-label">Product Image</label>
+          <input 
+            type="file" 
+            accept="image/*"
+            className="form-input" 
+            onChange={(e) => {
+               const file = e.target.files[0];
+               if (file) {
+                 if (file.size > 1024 * 1024) { // 1MB limit check
+                    alert("File is too big! Please select an image under 1MB.");
+                    return;
+                 }
+                 const reader = new FileReader();
+                 reader.onloadend = () => {
+                   setProduct({ ...product, image: reader.result });
+                 };
+                 reader.readAsDataURL(file);
+               }
+            }}
+          />
+          {product.image && (
+            <div style={{ marginTop: '0.5rem' }}>
+              <img 
+                src={product.image} 
+                alt="Preview" 
+                style={{ width: '100px', height: '100px', objectFit: 'cover', borderRadius: '4px', border: '1px solid #ddd' }} 
+              />
+              <button 
+                type="button" 
+                onClick={() => setProduct({...product, image: ""})}
+                style={{ display: 'block', marginTop: '4px', color: 'red', border: 'none', background: 'none', cursor: 'pointer', fontSize: '0.8rem' }}
+              >
+                Remove Image
+              </button>
+            </div>
+          )}
+        </div>
+
         <div className="form-group">
           <label className="form-label">Description</label>
           <textarea 
