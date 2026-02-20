@@ -103,7 +103,7 @@ function AddParty() {
       <div className="content-below-fixed">
       <form onSubmit={handleSubmit} noValidate>
         {/* Form Content */}
-        <div className="grid grid-2 form-grid">
+        <div className="grid grid-2">
           <div className="form-group">
             <label className="form-label">Party Name <span style={{color: 'red'}}>*</span></label>
             <input 
