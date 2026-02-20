@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Edit, Trash2, ArrowLeft } from "lucide-react";
+import "./Parties.css";
 
 function PartyDetails() {
   const { id } = useParams();
@@ -30,7 +31,7 @@ function PartyDetails() {
   if (!party) return <div>Loading...</div>;
 
   return (
-    <div>
+    <div className="parties-page">
       <header className="fixed-header" style={{ justifyContent: "flex-start" }}>
         <button className="btn btn-outline btn-icon" onClick={() => navigate("/")} style={{ flexShrink: 0 }} title="Back">
           <ArrowLeft size={20} />
@@ -39,28 +40,28 @@ function PartyDetails() {
       </header>
       
       <div className="content-below-fixed">
-      <div style={{ padding: "1rem 0" }}>
+      <div style={{ padding: "1rem" }}>
         <h2 style={{ fontSize: "1.5rem", marginBottom: "1.5rem", color: "var(--color-primary)" }}>{party.name}</h2>
         
         <div className="grid grid-2" style={{ gap: "2rem" }}>
-          <div>
+          <div className="detail-item">
             <label className="form-label" style={{ marginBottom: "0.25rem" }}>Mobile Number</label>
             <p style={{ fontSize: "1.1rem" }}>{party.mobile}</p>
           </div>
           
-          <div>
+          <div className="detail-item">
             <label className="form-label" style={{ marginBottom: "0.25rem" }}>Email Address</label>
-            <p style={{ fontSize: "1.1rem" }}>{party.email}</p>
+            <p style={{ fontSize: "1.1rem", wordBreak: "break-word" }}>{party.email}</p>
           </div>
           
-          <div>
+          <div className="detail-item">
             <label className="form-label" style={{ marginBottom: "0.25rem" }}>GST Number</label>
             <p style={{ fontSize: "1.1rem" }}>{party.gst || "N/A"}</p>
           </div>
           
-          <div style={{ gridColumn: "1 / -1" }}>
+          <div className="detail-item" style={{ gridColumn: "1 / -1" }}>
             <label className="form-label" style={{ marginBottom: "0.25rem" }}>Address</label>
-            <p style={{ fontSize: "1.1rem", whiteSpace: "pre-wrap" }}>{party.address || "N/A"}</p>
+            <p style={{ fontSize: "1.1rem", whiteSpace: "pre-wrap", wordBreak: "break-word" }}>{party.address || "N/A"}</p>
           </div>
         </div>
 

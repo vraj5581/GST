@@ -56,40 +56,21 @@ function Products() {
             filtered.map((p) => (
               <div
                 key={p.originalIndex}
-                style={{
-                  border: "1px solid var(--border-color)",
-                  padding: "0.5rem",
-                  borderRadius: "var(--radius-md)",
-                  background: "#ffffff",
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "0.5rem",
-                  cursor: "pointer",
-
-                  transition: "transform 0.2s, box-shadow 0.2s"
-                }}
+                className="product-card"
                 onClick={() => navigate(`/product/${p.originalIndex}`)}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = "translateY(-2px)";
-                  e.currentTarget.style.boxShadow = "var(--shadow-md)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = "none";
-                  e.currentTarget.style.boxShadow = "none";
-                }}
               >
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", marginBottom: "0.5rem" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                <div className="product-header">
+                  <div className="product-title-group">
                     {p.image && (
                       <img
                         src={p.image}
                         alt={p.name}
-                        style={{ width: "50px", height: "50px", borderRadius: "var(--radius-md)", objectFit: "cover", border: "1px solid var(--border-color)" }}
+                        className="product-image"
                       />
                     )}
-                    <h4 style={{ fontSize: "1.1rem", fontWeight: 600, color: "var(--text-primary)", margin: 0 }}>{p.name}</h4>
+                    <h4 className="product-title">{p.name}</h4>
                   </div>
-                  <div style={{ display: "flex", gap: "0.5rem" }}>
+                  <div className="product-actions">
                     <button
                       className="btn btn-action-edit"
                       onClick={(e) => { e.stopPropagation(); handleEdit(p.originalIndex); }}
@@ -107,11 +88,11 @@ function Products() {
                   </div>
                 </div>
 
-                <div style={{ fontSize: "0.9rem", color: "var(--text-secondary)" }}>
-                  <p style={{ margin: "4px 0" }}><strong>Price:</strong> ₹{p.price}/{p.unit}</p>
-                  <p style={{ margin: "4px 0" }}><strong>HSN:</strong> {p.hsn || "N/A"}</p>
-                  <p style={{ margin: "4px 0" }}><strong>Tax:</strong> {p.tax ? `${p.tax}%` : "None"}</p>
-                  {p.description && <p style={{ margin: "4px 0", fontStyle: "italic" }}>{p.description}</p>}
+                <div className="product-details">
+                  <p><strong>Price:</strong> ₹{p.price}/{p.unit}</p>
+                  <p><strong>HSN:</strong> {p.hsn || "N/A"}</p>
+                  <p><strong>Tax:</strong> {p.tax ? `${p.tax}%` : "None"}</p>
+                  {p.description && <p style={{ fontStyle: "italic" }}>{p.description}</p>}
                 </div>
               </div>
             ))

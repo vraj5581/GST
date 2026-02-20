@@ -1,13 +1,8 @@
 /* CSS for Parties Page */
-.parties-container {
-  /* Container specific styles if needed */
-}
+
 
 /* Page Header Override */
-.fixed-header.parties-header {
-  /* You can adjust margin/padding specifically for Parties page header here */
-  /* padding: 1rem 2rem; */
-}
+
 
 .parties-search-container {
   flex: 1;
@@ -40,7 +35,7 @@
   display: flex;
   justify-content: space-between;
   align-items: start;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.1rem;
 }
 
 .party-card-title {
@@ -126,6 +121,7 @@
 .w-full { width: 100%; }
 .grid { display: grid; gap: 1rem; }
 .grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+@media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr !important; } }
 
 /* Table */
 .table-container {

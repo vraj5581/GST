@@ -4,41 +4,58 @@
 .vouchers-page .grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
 
 .vouchers-page .voucher-card {
-    background: var(--bg-secondary);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-sm);
-    padding: 1.5rem; /* Or 1rem as per inline style override */
-    border: 1px solid var(--border-color);
-    display: flex; 
-    flex-direction: column; 
-    gap: 0.5rem;
+  border: 1px solid var(--border-color);
+  padding: 0.5rem;
+  border-radius: var(--radius-md);
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.vouchers-page .voucher-header {
-    display: flex; 
-    justify-content: space-between; 
-    align-items: flex-start;
+.vouchers-page .voucher-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
-.vouchers-page .voucher-party-name {
-    margin: 0; 
-    font-size: 1.2rem; 
-    font-weight: 600;
+.vouchers-page .voucher-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  margin-bottom: 0.1rem;
 }
 
-.vouchers-page .voucher-total {
-    font-size: 1.25rem; 
-    font-weight: 700; 
-    color: var(--color-primary);
+.vouchers-page .voucher-card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
 }
 
-.vouchers-page .voucher-actions-footer {
-    border-top: 1px solid var(--border-color); 
-    padding-top: 0.75rem; 
-    margin-top: 0.75rem; 
-    display: flex; 
-    gap: 0.5rem; 
-    justify-content: flex-end;
+.vouchers-page .voucher-card-actions {
+  display: flex;
+}
+
+.vouchers-page .voucher-card-action-btn {
+  padding: 0.4rem;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.vouchers-page .voucher-card-action-btn.edit-btn {  color: var(--color-primary); }
+.vouchers-page .voucher-card-action-btn.delete-btn { color: var(--color-danger); }
+.vouchers-page .voucher-card-action-btn.print-btn { color: var(--text-secondary); }
+
+.vouchers-page .voucher-card-details {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.vouchers-page .voucher-card-details p {
+  margin: 4px 0;
 }
 
 .vouchers-page .content-below-fixed {

@@ -44,17 +44,32 @@ function VoucherPrint() {
       
       <div className="content-below-fixed printable-area">
         <style>{`
+          .print-container .content-below-fixed {
+            padding-top: 6rem;
+            padding-left: 2rem;
+            padding-right: 2rem;
+            padding-bottom: 2rem;
+          }
+          
           /* Screen Only Responsive Styles */
           @media screen and (max-width: 768px) {
+            .print-container .content-below-fixed {
+              padding-top: 4.5rem;
+              padding-left: 0.5rem;
+              padding-right: 0.5rem;
+              padding-bottom: 0.5rem;
+            }
             .invoice-header-row {
-              flex-direction: column;
+              flex-direction: column !important;
               gap: 1.5rem;
+              display: flex;
             }
             .invoice-header-row > div {
               text-align: left !important;
             }
             .invoice-table-container {
               overflow-x: auto;
+              -webkit-overflow-scrolling: touch;
             }
             .invoice-table {
               min-width: 600px; /* Force table width so it scrolls instead of squishing */
@@ -62,6 +77,7 @@ function VoucherPrint() {
             .invoice-preview-card {
               padding: 1rem !important;
               width: 100% !important;
+              min-height: auto !important;
               box-shadow: none !important;
             }
           }

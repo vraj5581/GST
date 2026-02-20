@@ -43,49 +43,41 @@ function Vouchers() {
             vouchers.map((v) => (
               <div 
                 key={v.originalIndex}
-                className="card"
-                style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}
+                className="voucher-card"
+                onClick={() => navigate(`/voucher-print/${v.originalIndex}`)}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                   <div>
-                     <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>#INV-{String(v.id || (Number(v.originalIndex) + 1)).padStart(4, '0')}</p>
-                     <h4 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 600 }}>{v.partyId}</h4>
-                     <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '0.25rem' }}>{new Date(v.date).toLocaleDateString()}</p>
-                     <p style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.25rem' }}>
-                       {v.items.length} Items
-                     </p>
-                   </div>
-                   <div style={{ textAlign: 'right' }}>
-                     <span style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--color-primary)' }}>
-                       ₹{calculateTotal(v.items).toFixed(2)}
-                     </span>
-                     <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>Total</p>
-                   </div>
+                <div className="voucher-card-header">
+                  <h4 className="voucher-card-title" style={{ maxWidth: '65%', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{v.partyId}</h4>
+                  <div className="voucher-card-actions">
+                    <button 
+                      className="btn voucher-card-action-btn print-btn" 
+                      onClick={(e) => { e.stopPropagation(); navigate(`/voucher-print/${v.originalIndex}`); }} 
+                      title="Print / View"
+                    >
+                      <Printer size={16} />
+                    </button>
+                    <button 
+                      className="btn voucher-card-action-btn edit-btn" 
+                      onClick={(e) => { e.stopPropagation(); navigate(`/add-voucher/${v.originalIndex}`); }}
+                      title="Edit"
+                    >
+                      <Eye size={16} />
+                    </button>
+                    <button 
+                      className="btn voucher-card-action-btn delete-btn"
+                      onClick={(e) => { e.stopPropagation(); handleDelete(v.originalIndex); }}
+                      title="Delete"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
                 </div>
 
-                <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '0.75rem', marginTop: '0.75rem', display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-                   <button 
-                     className="btn btn-outline" 
-                     onClick={() => navigate(`/voucher-print/${v.originalIndex}`)} 
-                     title="Print / View"
-                     style={{ padding: '0.4rem 0.8rem', fontSize: '0.9rem' }}
-                   >
-                     <Printer size={16} /> Print
-                   </button>
-                   <button 
-                     className="btn btn-outline" 
-                     onClick={() => navigate(`/add-voucher/${v.originalIndex}`)} // Actually just edit
-                     title="Edit"
-                     style={{ padding: '0.4rem', color: 'var(--text-secondary)' }}
-                   >
-                     <Eye size={16} />
-                   </button>
-                   <button 
-                     className="btn btn-action-delete"
-                     onClick={() => handleDelete(v.originalIndex)}
-                   >
-                     <Trash2 size={16} />
-                   </button>
+                <div className="voucher-card-details">
+                  <p><strong>Invoice No:</strong> #INV-{String(v.id || (Number(v.originalIndex) + 1)).padStart(4, '0')}</p>
+                  <p><strong>Date:</strong> {new Date(v.date).toLocaleDateString()}</p>
+                  <p><strong>Items:</strong> {v.items.length}</p>
+                  <p><strong>Total:</strong> <span style={{ color: "var(--color-primary)", fontWeight: "600" }}>₹{calculateTotal(v.items).toFixed(2)}</span></p>
                 </div>
               </div>
             ))

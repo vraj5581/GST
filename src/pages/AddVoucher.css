@@ -202,4 +202,100 @@
     padding-right: 0.5rem;
     padding-bottom: 0.5rem;
   }
+
+  /* Convert Table to Cards on Mobile to remove horizontal scroll */
+  .add-voucher-page .voucher-items-table-container {
+    overflow-x: hidden;
+    border: none;
+    background: transparent;
+  }
+
+  .add-voucher-page .voucher-items-table,
+  .add-voucher-page .voucher-items-table thead,
+  .add-voucher-page .voucher-items-table tbody,
+  .add-voucher-page .voucher-items-table tr,
+  .add-voucher-page .voucher-items-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .add-voucher-page .voucher-items-table thead {
+    display: none;
+  }
+
+  .add-voucher-page .voucher-items-table tr {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background: #fff;
+    position: relative;
+  }
+
+  .add-voucher-page .voucher-items-table td {
+    border: none !important;
+    padding: 0 !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .add-voucher-page .voucher-product-select {
+    min-width: 0;
+  }
+
+  /* Column 1: Product */
+  .add-voucher-page .voucher-items-table td:nth-child(1) {
+    grid-column: 1 / -1;
+  }
+  
+  /* Column 2: Price */
+  .add-voucher-page .voucher-items-table td:nth-child(2) {
+    grid-column: 1 / 2;
+  }
+
+  /* Column 3: Qty */
+  .add-voucher-page .voucher-items-table td:nth-child(3) {
+    grid-column: 2 / 3;
+  }
+
+  /* Column 4: Tax */
+  .add-voucher-page .voucher-items-table td:nth-child(4) {
+    grid-column: 1 / 2;
+  }
+
+  /* Column 5: Total */
+  .add-voucher-page .voucher-items-table td:nth-child(5) {
+    grid-column: 2 / 3;
+    font-weight: bold;
+    color: var(--color-primary);
+  }
+
+  /* Column 6: Delete */
+  .add-voucher-page .voucher-items-table td:nth-child(6) {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    width: auto;
+    display: block;
+  }
+
+  /* Inject pseudo labels for form context */
+  .add-voucher-page .voucher-items-table td::before {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 0.25rem;
+    text-transform: uppercase;
+  }
+
+  .add-voucher-page .voucher-items-table td:nth-child(1)::before { content: "Product"; }
+  .add-voucher-page .voucher-items-table td:nth-child(2)::before { content: "Price"; }
+  .add-voucher-page .voucher-items-table td:nth-child(3)::before { content: "Quantity"; }
+  .add-voucher-page .voucher-items-table td:nth-child(4)::before { content: "Tax %"; }
+  .add-voucher-page .voucher-items-table td:nth-child(5)::before { content: "Amount"; }
+  .add-voucher-page .voucher-items-table td:nth-child(6)::before { content: ""; display: none; }
 }

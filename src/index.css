@@ -321,7 +321,7 @@ a {
   }
   
   .grid-2 {
-      grid-template-columns: 1fr;
+      grid-template-columns: 1fr !important;
   }
   
   .btn-mobile-full {
