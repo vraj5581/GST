@@ -37,15 +37,7 @@ function ProductDetails() {
           <ArrowLeft size={18} />
         </button>
         <h3 className="product-details-title">Product Details</h3>
-        
-        <div className="product-details-actions">
-            <button className="btn btn-outline-primary" onClick={handleEdit}>
-                Edit
-            </button>
-            <button className="btn btn-outline-danger product-delete-btn" onClick={handleDelete}>
-                Delete
-            </button>
-        </div>
+
       </header>
       
       <div className="content-below-fixed">
@@ -75,6 +67,21 @@ function ProductDetails() {
                         <p className="description-text">{product.description}</p>
                     </div>
                 )}
+                
+                <div style={{ display: "flex", gap: "1rem", marginTop: "3rem", borderTop: "1px solid var(--border-color)", paddingTop: "1.5rem" }}>
+                  <button 
+                    className="btn btn-outline-primary btn-mobile-flex" 
+                    onClick={handleEdit}
+                  >
+                    Edit
+                  </button>
+                  <button 
+                    className="btn btn-outline-danger btn-mobile-flex" 
+                    onClick={handleDelete}
+                  >
+                    Delete
+                  </button>
+                </div>
             </div>
         </div>
       </div>

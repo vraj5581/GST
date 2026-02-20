@@ -28,7 +28,16 @@ function App() {
         {/* Sidebar */}
         <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
           <div className="sidebar-header">
-            {/* Header Content Removed */}
+            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", width: "100%", position: "relative" }}>
+              <span style={{ fontWeight: "bold", fontSize: "1.5rem", letterSpacing: "1px" ,paddingRight:"1.5rem"}}>HITNISH</span>
+              <button 
+                className="btn btn-icon desktop-hide" 
+                onClick={() => setSidebarOpen(false)}
+                style={{ position: "absolute", right: "-0.5rem", background: "transparent", color: "var(--text-inverse)", padding: "0.25rem" }}
+              >
+                <X size={28} />
+              </button>
+            </div>
           </div>
           <nav className="sidebar-nav">
             <NavLink 
@@ -59,11 +68,10 @@ function App() {
         </aside>
 
         <main className="main-content">
-          {/* Mobile Menu Toggle - visible on main pages for all devices now */}
-          {isMainPage && (
+          {isMainPage && !sidebarOpen && (
             <div className="mobile-menu-toggle">
               <button 
-                className="btn btn-icon" 
+                className="btn btn-icon"
                 onClick={() => setSidebarOpen(!sidebarOpen)}
                 style={{ 
                   background: "transparent", 
@@ -72,7 +80,7 @@ function App() {
                   transition: "color 0.3s"
                 }}
               >
-                {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
+                <Menu size={24} />
               </button>
             </div>
           )}
