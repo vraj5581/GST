@@ -1,0 +1,205 @@
+/* CSS for AddVoucher Page */
+
+.add-voucher-page .add-voucher-header {
+    justify-content: flex-start;
+}
+
+.add-voucher-page .add-voucher-title {
+    margin: 0;
+    border: none;
+}
+
+.add-voucher-page .add-voucher-back-btn {
+    flex-shrink: 0;
+}
+
+.add-voucher-page .voucher-header-info {
+    margin-bottom: 1.5rem;
+}
+
+.add-voucher-page .voucher-items-table-container {
+    margin-bottom: 1.5rem;
+    overflow-x: auto;
+}
+
+.add-voucher-page .voucher-items-table {
+    min-width: 100%;
+}
+
+.add-voucher-page .voucher-product-select {
+    border: 1px solid var(--border-color);
+    padding: 0.75rem;
+    font-size: 1rem;
+    min-width: 200px;
+}
+
+.add-voucher-page .voucher-input-cell {
+    padding: 0.75rem;
+    font-size: 1rem;
+}
+
+.add-voucher-page .voucher-text-cell {
+    padding: 0.75rem;
+    font-size: 1rem;
+}
+
+.add-voucher-page .voucher-amount-cell {
+    padding: 0.75rem;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.add-voucher-page .voucher-action-cell {
+    padding: 0.75rem;
+    text-align: center;
+}
+
+.add-voucher-page .voucher-remove-btn {
+    color: var(--color-danger);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+}
+
+.add-voucher-page .voucher-add-item-btn {
+    margin: 1rem;
+    width: auto;
+}
+
+.add-voucher-page .voucher-totals-container {
+    display: flex;
+    justify-content: flex-end;
+    gap: 2rem;
+    padding: 1rem;
+    background: #f8fafc;
+    border-radius: var(--radius-md);
+    flex-wrap: wrap;
+}
+
+.add-voucher-page .voucher-total-block {
+    text-align: right;
+    min-width: 100px;
+}
+
+.add-voucher-page .voucher-total-label {
+    color: var(--text-secondary);
+}
+
+.add-voucher-page .voucher-subtotal-value, .add-voucher-page .voucher-tax-value {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.add-voucher-page .voucher-grand-total-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-primary);
+}
+
+.add-voucher-page .voucher-notes-group {
+    margin-top: 1.5rem;
+}
+
+.add-voucher-page .voucher-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+/* Shared Styles for this page - Namespaced */
+
+/* Forms */
+.add-voucher-page .form-group {
+  margin-bottom: 0rem;
+}
+
+.add-voucher-page .form-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 0.1rem;
+}
+
+.add-voucher-page .form-input, .add-voucher-page .form-textarea {
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  font-size: 0.95rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.add-voucher-page .form-input:focus, .add-voucher-page .form-textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.add-voucher-page .form-textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* Utilities */
+.add-voucher-page .w-full { width: 100%; }
+.add-voucher-page .grid { display: grid; gap: 0.7rem; }
+.add-voucher-page .grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+
+/* Table */
+.add-voucher-page .table-container {
+  overflow-x: auto;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+}
+
+.add-voucher-page table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--bg-secondary);
+}
+
+.add-voucher-page th {
+  background: var(--bg-primary);
+  text-align: left;
+  padding: 0.875rem 1.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.add-voucher-page td {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-primary);
+  font-size: 0.95rem;
+}
+
+.add-voucher-page tr:last-child td {
+  border-bottom: none;
+}
+
+.add-voucher-page tr:hover td {
+  background: #f8fafc;
+}
+
+.add-voucher-page .content-below-fixed {
+  padding-top: 6rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  padding-bottom: 2rem;
+}
+
+@media (max-width: 768px) {
+  .add-voucher-page .content-below-fixed {
+    padding-top: 4.5rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+}

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Search, Edit, Trash2, Plus } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import "./Products.css";
 
 function Products() {
   const [products, setProducts] = useState([]);
@@ -32,7 +33,7 @@ function Products() {
     );
 
   return (
-    <div>
+    <div className="products-page">
       <div className="fixed-header root-page-header">
         <div className="search-bar w-full-search" style={{ flex: 1, marginBottom: 0 }}>
           <Search className="search-icon" size={18} />
@@ -90,16 +91,14 @@ function Products() {
                   </div>
                   <div style={{ display: "flex", gap: "0.5rem" }}>
                     <button
-                      className="btn"
-                      style={{ padding: "0.4rem", color: "var(--color-primary)", background: "transparent", border: "none", boxShadow: "none" }}
+                      className="btn btn-action-edit"
                       onClick={(e) => { e.stopPropagation(); handleEdit(p.originalIndex); }}
                       title="Edit"
                     >
                       <Edit size={16} />
                     </button>
                     <button
-                      className="btn"
-                      style={{ padding: "0.4rem", color: "var(--color-danger)", background: "transparent", border: "none", boxShadow: "none" }}
+                      className="btn btn-action-delete"
                       onClick={(e) => { e.stopPropagation(); handleDelete(p.originalIndex); }}
                       title="Delete"
                     >

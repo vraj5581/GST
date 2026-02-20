@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Search, Edit, Trash2, Plus } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import "./Parties.css";
 
 function Parties() {
   const [parties, setParties] = useState([]);
@@ -41,9 +42,9 @@ function Parties() {
                          );
 
   return (
-    <div>
-      <div className="fixed-header root-page-header">
-        <div className="search-bar w-full-search" style={{ flex: 1, marginBottom: 0 }}>
+    <div className="parties-page">
+      <div className="fixed-header root-page-header parties-header">
+        <div className="search-bar w-full-search parties-search-container">
           <Search className="search-icon" size={18} />
           <input
             className="form-input"
@@ -58,47 +59,27 @@ function Parties() {
         </Link>
       </div>
 
-      <div className="content-below-fixed">
+      <div className="content-below-fixed parties-content">
       <div className="grid grid-2">
         {filtered.length > 0 ? (
           filtered.map((p) => (
             <div 
               key={p.originalIndex} 
               onClick={() => navigate(`/party/${p.originalIndex}`)}
-              style={{ 
-                border: "1px solid var(--border-color)", 
-                padding: "0.5rem", 
-                borderRadius: "var(--radius-md)",
-                background: "#ffffff",
-                display: "flex",
-                flexDirection: "column",
-                gap: "0.5rem",
-                cursor: "pointer",
-                transition: "transform 0.2s, box-shadow 0.2s"
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-2px)";
-                e.currentTarget.style.boxShadow = "var(--shadow-md)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "none";
-                e.currentTarget.style.boxShadow = "none";
-              }}
+              className="party-card"
             >
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", marginBottom: "0.5rem" }}>
-                <h4 style={{ fontSize: "1.1rem", fontWeight: 600, color: "var(--text-primary)", margin: 0 }}>{p.name}</h4>
-                <div style={{ display: "flex", gap: "0.5rem" }}>
+              <div className="party-card-header">
+                <h4 className="party-card-title">{p.name}</h4>
+                <div className="party-card-actions">
                   <button 
-                    className="btn" 
-                    style={{ padding: "0.4rem", color: "var(--color-primary)", background: "transparent", border: "none", boxShadow: "none" }}
+                    className="btn party-card-action-btn edit-btn" 
                     onClick={(e) => { e.stopPropagation(); handleEdit(p.originalIndex); }}
                     title="Edit"
                   >
                     <Edit size={16} />
                   </button>
                   <button 
-                    className="btn" 
-                    style={{ padding: "0.4rem", color: "var(--color-danger)", background: "transparent", border: "none", boxShadow: "none" }}
+                    className="btn party-card-action-btn delete-btn" 
                     onClick={(e) => { e.stopPropagation(); handleDelete(p.originalIndex); }}
                     title="Delete"
                   >
@@ -107,16 +88,16 @@ function Parties() {
                 </div>
               </div>
 
-              <div style={{ fontSize: "0.9rem", color: "var(--text-secondary)" }}>
-                <p style={{ margin: "4px 0" }}><strong>Mobile:</strong> {p.mobile}</p>
-                <p style={{ margin: "4px 0" }}><strong>Email:</strong> {p.email}</p>
-                <p style={{ margin: "4px 0" }}><strong>GST:</strong> {p.gst || "N/A"}</p>
-                <p style={{ margin: "4px 0" }}><strong>Address:</strong> {p.address || "N/A"}</p>
+              <div className="party-card-details">
+                <p><strong>Mobile:</strong> {p.mobile}</p>
+                <p><strong>Email:</strong> {p.email}</p>
+                <p><strong>GST:</strong> {p.gst || "N/A"}</p>
+                <p><strong>Address:</strong> {p.address || "N/A"}</p>
               </div>
             </div>
           ))
         ) : (
-          <div style={{ gridColumn: "1 / -1", textAlign: "center", padding: "2rem", color: "var(--text-secondary)" }}>
+          <div className="no-parties-message">
             No parties found.
           </div>
         )}

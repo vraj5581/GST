@@ -1,0 +1,64 @@
+/* CSS for AddProduct Page */
+
+/* Forms */
+.add-product-page .form-group {
+  margin-bottom: 0rem;
+}
+
+.add-product-page .form-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 0.1rem;
+}
+
+.add-product-page .form-input, 
+.add-product-page .form-textarea,
+.add-product-page select.form-input {
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  font-size: 0.95rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.add-product-page .form-input:focus, 
+.add-product-page .form-textarea:focus,
+.add-product-page select.form-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.add-product-page .form-textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* Utilities override if needed */
+.add-product-page .grid { display: grid; gap: 0.7rem; }
+.add-product-page .grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+
+.add-product-page .content-below-fixed {
+  padding-top: 6rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  padding-bottom: 2rem;
+}
+
+/* Spacing helper */
+.add-product-page .add-product-spacing {
+  margin-top: 0.7rem;
+}
+
+@media (max-width: 768px) {
+  .add-product-page .content-below-fixed {
+    padding-top: 4.5rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+}

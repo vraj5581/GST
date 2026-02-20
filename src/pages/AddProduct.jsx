@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Save, ArrowLeft } from "lucide-react";
+import "./AddProduct.css";
 
 function AddProduct() {
   const { id } = useParams();
@@ -81,7 +82,7 @@ function AddProduct() {
   };
 
   return (
-    <div>
+    <div className="add-product-page">
       <header className="fixed-header" style={{ justifyContent: "flex-start" }}>
         <button className="btn btn-outline btn-icon" onClick={() => navigate("/products")} style={{ flexShrink: 0 }} title="Back">
           <ArrowLeft size={20} />
@@ -133,7 +134,7 @@ function AddProduct() {
           <div className="form-group">
             <label className="form-label">Tax Rate (%)</label>
             <select 
-              className="form-input" 
+              className={`form-input ${!product.tax ? 'placeholder' : ''}`}
               name="tax" 
               value={product.tax} 
               onChange={handleChange}
@@ -149,7 +150,7 @@ function AddProduct() {
           <div className="form-group">
             <label className="form-label">Unit</label>
             <select 
-              className="form-input" 
+              className={`form-input ${product.unit === "" ? 'placeholder' : ''}`}
               name="unit" 
               value={product.unit} 
               onChange={handleChange}
@@ -164,7 +165,7 @@ function AddProduct() {
           </div>
         </div>
         
-        <div className="form-group">
+        <div className="form-group add-product-spacing">
           <label className="form-label">Product Image</label>
           <input 
             type="file" 
@@ -200,7 +201,7 @@ function AddProduct() {
           )}
         </div>
 
-        <div className="form-group">
+        <div className="form-group add-product-spacing">
           <label className="form-label">Description</label>
           <textarea 
             className="form-textarea" 
@@ -216,7 +217,7 @@ function AddProduct() {
           <button type="submit" className="btn btn-primary btn-mobile-flex">
             <Save size={18} /> {id ? "Update" : "Save"}
           </button>
-          <button type="button" className="btn btn-outline btn-mobile-flex" onClick={() => navigate("/products")}>
+          <button type="button" className="btn btn-outline-danger btn-mobile-flex" onClick={() => navigate("/products")}>
             Cancel
           </button>
         </div>

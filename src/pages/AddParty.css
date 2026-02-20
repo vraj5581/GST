@@ -1,0 +1,129 @@
+/* CSS for AddParty Page */
+.add-party-page .add-party-header {
+  justify-content: flex-start;
+}
+
+.add-party-page .add-party-back-btn {
+  flex-shrink: 0;
+}
+
+.add-party-page .add-party-title {
+  margin: 0;
+  border: none;
+}
+
+.add-party-page .add-party-form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.add-party-page .add-party-address-group {
+  margin-top: 0.7rem;
+}
+
+.add-party-page .error-text {
+  color: var(--color-danger);
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+.add-party-page .required-asterisk {
+  color: red;
+}
+
+/* Shared Styles for this page - Namespaced */
+.add-party-page .form-group {
+  margin-bottom: 0rem;
+}
+
+.add-party-page .form-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 0.1rem;
+}
+
+.add-party-page .form-input, .add-party-page .form-textarea {
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  font-size: 0.95rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.add-party-page .form-input:focus, .add-party-page .form-textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.add-party-page .form-textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* Utilities */
+.add-party-page .w-full { width: 100%; }
+.add-party-page .grid { display: grid; gap: 0.7rem; }
+.add-party-page .grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+
+/* Table */
+.add-party-page .table-container {
+  overflow-x: auto;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+}
+
+.add-party-page table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--bg-secondary);
+}
+
+.add-party-page th {
+  background: var(--bg-primary);
+  text-align: left;
+  padding: 0.875rem 1.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.add-party-page td {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-primary);
+  font-size: 0.95rem;
+}
+
+.add-party-page tr:last-child td {
+  border-bottom: none;
+}
+
+.add-party-page tr:hover td {
+  background: #f8fafc;
+}
+
+.add-party-page .content-below-fixed {
+  padding-top: 6rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  padding-bottom: 2rem;
+}
+
+@media (max-width: 768px) {
+  .add-party-page .content-below-fixed {
+    padding-top: 4.5rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+}

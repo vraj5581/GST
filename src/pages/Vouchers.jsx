@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import "./Vouchers.css";
 import { Plus, Printer, Eye, Trash2 } from "lucide-react";
 
 function Vouchers() {
@@ -28,7 +29,7 @@ function Vouchers() {
   };
 
   return (
-    <div>
+    <div className="vouchers-page">
       <div className="fixed-header root-page-header">
         <h3 style={{ margin: 0, border: "none" }}>Vouchers</h3>
         <Link to="/add-voucher" className="btn btn-primary btn-icon" style={{ flexShrink: 0 }} title="Create Voucher">
@@ -80,8 +81,7 @@ function Vouchers() {
                      <Eye size={16} />
                    </button>
                    <button 
-                     className="btn"
-                     style={{ padding: "0.4rem", color: "var(--color-danger)", background: "transparent", border: "none" }}
+                     className="btn btn-action-delete"
                      onClick={() => handleDelete(v.originalIndex)}
                    >
                      <Trash2 size={16} />

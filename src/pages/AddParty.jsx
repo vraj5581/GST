@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Save, ArrowLeft } from "lucide-react";
+import "./AddParty.css";
 
 function AddParty() {
   const { id } = useParams();
@@ -92,12 +93,12 @@ function AddParty() {
   };
 
   return (
-    <div>
-      <header className="fixed-header" style={{ justifyContent: "flex-start" }}>
-        <button className="btn btn-outline btn-icon" onClick={() => navigate("/")} style={{ flexShrink: 0 }} title="Back">
+    <div className="add-party-page">
+      <header className="fixed-header add-party-header">
+        <button className="btn btn-outline btn-icon add-party-back-btn" onClick={() => navigate("/")} title="Back">
           <ArrowLeft size={20} />
         </button>
-        <h3 style={{ margin: 0, border: "none" }}>{id ? "Edit Party" : "Add New Party"}</h3>
+        <h3 className="add-party-title">{id ? "Edit Party" : "Add New Party"}</h3>
       </header>
       
       <div className="content-below-fixed">
@@ -105,7 +106,7 @@ function AddParty() {
         {/* Form Content */}
         <div className="grid grid-2">
           <div className="form-group">
-            <label className="form-label">Party Name <span style={{color: 'red'}}>*</span></label>
+            <label className="form-label">Party Name <span className="required-asterisk">*</span></label>
             <input 
               className="form-input" 
               name="name" 
@@ -114,7 +115,7 @@ function AddParty() {
               onChange={handleChange}
               style={errors.name ? { borderColor: 'var(--color-danger)' } : {}}
             />
-            {errors.name && <span style={{ color: 'var(--color-danger)', fontSize: '0.8rem', marginTop: '0.25rem', display: 'block' }}>{errors.name}</span>}
+            {errors.name && <span className="error-text">{errors.name}</span>}
           </div>
           
           <div className="form-group">
@@ -129,7 +130,7 @@ function AddParty() {
               maxLength={10}
               style={errors.mobile ? { borderColor: 'var(--color-danger)' } : {}}
             />
-            {errors.mobile && <span style={{ color: 'var(--color-danger)', fontSize: '0.8rem', marginTop: '0.25rem', display: 'block' }}>{errors.mobile}</span>}
+            {errors.mobile && <span className="error-text">{errors.mobile}</span>}
           </div>
           
           <div className="form-group">
@@ -143,7 +144,7 @@ function AddParty() {
               onChange={handleChange}
               style={errors.email ? { borderColor: 'var(--color-danger)' } : {}}
             />
-            {errors.email && <span style={{ color: 'var(--color-danger)', fontSize: '0.8rem', marginTop: '0.25rem', display: 'block' }}>{errors.email}</span>}
+            {errors.email && <span className="error-text">{errors.email}</span>}
           </div>
           
           <div className="form-group">
@@ -157,11 +158,11 @@ function AddParty() {
               maxLength={15}
               style={errors.gst ? { borderColor: 'var(--color-danger)' } : {}}
             />
-            {errors.gst && <span style={{ color: 'var(--color-danger)', fontSize: '0.8rem', marginTop: '0.25rem', display: 'block' }}>{errors.gst}</span>}
+            {errors.gst && <span className="error-text">{errors.gst}</span>}
           </div>
         </div>
         
-        <div className="form-group" style={{ marginTop: '1rem' }}>
+        <div className="form-group add-party-address-group">
           <label className="form-label">Address</label>
           <textarea 
             className="form-textarea" 
@@ -173,11 +174,11 @@ function AddParty() {
           />
         </div>
         
-        <div style={{ display: "flex", gap: "1rem", marginTop: "2rem" }}>
+        <div className="add-party-form-actions">
           <button type="submit" className="btn btn-primary btn-mobile-flex">
             <Save size={18} /> {id ? "Update" : "Save"}
           </button>
-          <button type="button" className="btn btn-outline btn-mobile-flex" onClick={() => navigate("/")}>
+          <button type="button" className="btn btn-outline-danger btn-mobile-flex" onClick={() => navigate("/")}>
             Cancel
           </button>
         </div>

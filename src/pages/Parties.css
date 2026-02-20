@@ -1,0 +1,184 @@
+/* CSS for Parties Page */
+.parties-container {
+  /* Container specific styles if needed */
+}
+
+/* Page Header Override */
+.fixed-header.parties-header {
+  /* You can adjust margin/padding specifically for Parties page header here */
+  /* padding: 1rem 2rem; */
+}
+
+.parties-search-container {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.parties-add-btn {
+  flex-shrink: 0;
+}
+
+/* Party Card Styles */
+.party-card {
+  border: 1px solid var(--border-color);
+  padding: 0.5rem;
+  border-radius: var(--radius-md);
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.party-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.party-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  margin-bottom: 0.5rem;
+}
+
+.party-card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.party-card-actions {
+  display: flex;
+  /* gap: 0.5rem; */
+}
+
+.party-card-action-btn {
+  padding: 0.4rem;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.party-card-action-btn.edit-btn {
+  color: var(--color-primary);
+}
+
+.party-card-action-btn.delete-btn {
+  color: var(--color-danger);
+}
+
+.party-card-details {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.party-card-details p {
+  margin: 4px 0;
+}
+
+.no-parties-message {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-secondary);
+}
+
+/* Shared Styles for this page */
+
+/* Forms */
+.form-group {
+  margin-bottom: 0rem;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.form-input, .form-textarea {
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  font-size: 0.95rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-input:focus, .form-textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* Utilities */
+.w-full { width: 100%; }
+.grid { display: grid; gap: 1rem; }
+.grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+
+/* Table */
+.table-container {
+  overflow-x: auto;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--bg-secondary);
+}
+
+th {
+  background: var(--bg-primary);
+  text-align: left;
+  padding: 0.875rem 1.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+td {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-primary);
+  font-size: 0.95rem;
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+tr:hover td {
+  background: #f8fafc;
+}
+
+.parties-page .content-below-fixed {
+  padding-top: 6rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  padding-bottom: 2rem;
+}
+
+@media (max-width: 768px) {
+  .parties-page .content-below-fixed {
+    padding-top: 4.5rem;
+    padding-left: 0.2rem;
+    padding-right: 0.2rem;
+    padding-bottom: 0.2rem;
+  }
+}

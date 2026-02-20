@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Save, ArrowLeft, Plus, Trash2, Printer } from "lucide-react";
+import "./AddVoucher.css";
 
 function AddVoucher() {
   const { id } = useParams();
@@ -107,19 +108,19 @@ function AddVoucher() {
   };
 
   return (
-    <div>
-      <header className="fixed-header no-print" style={{ justifyContent: "flex-start" }}>
-        <button className="btn btn-outline btn-icon" onClick={() => navigate("/vouchers")} style={{ flexShrink: 0 }} title="Back">
+    <div className="add-voucher-page">
+      <header className="fixed-header no-print add-voucher-header">
+        <button className="btn btn-outline btn-icon add-voucher-back-btn" onClick={() => navigate("/vouchers")} title="Back">
           <ArrowLeft size={20} />
         </button>
-        <h3 style={{ margin: 0, border: "none" }}>{id ? "Edit Voucher" : "New Voucher"}</h3>
+        <h3 className="add-voucher-title">{id ? "Edit Voucher" : "New Voucher"}</h3>
       </header>
       
       <div className="content-below-fixed">
         <form onSubmit={handleSubmit}>
           
           {/* Voucher Header Info */}
-          <div className="grid grid-2" style={{ marginBottom: '1.5rem' }}>
+          <div className="grid grid-2 voucher-header-info">
             <div className="form-group">
               <label className="form-label">Date</label>
               <input 
@@ -145,8 +146,8 @@ function AddVoucher() {
           </div>
 
           {/* Items Table */}
-          <div className="table-container" style={{ marginBottom: '1.5rem', overflowX: 'auto' }}>
-            <table style={{ minWidth: '100%' }}>
+          <div className="table-container voucher-items-table-container">
+            <table className="voucher-items-table">
               <thead>
                 <tr>
                   <th>Product</th>
@@ -160,10 +161,9 @@ function AddVoucher() {
               <tbody>
                 {voucher.items.map((item, index) => (
                   <tr key={index}>
-                    <td style={{ padding: '0.75rem' }}>
+                    <td className="voucher-input-cell">
                       <select 
-                        className="form-input" 
-                        style={{ border: '1px solid var(--border-color)', padding: '0.75rem', fontSize: '1rem', minWidth: '200px' }}
+                        className="form-input voucher-product-select" 
                         value={item.productId || ""}
                         onChange={(e) => handleItemChange(index, "productId", e.target.value)}
                       >
@@ -173,32 +173,30 @@ function AddVoucher() {
                         ))}
                       </select>
                     </td>
-                    <td style={{ padding: '0.75rem' }}>
+                    <td className="voucher-input-cell">
                       <input 
                         type="number" 
                         className="form-input"
-                        style={{ padding: '0.75rem', fontSize: '1rem' }}
                         value={item.price}
                         onChange={(e) => handleItemChange(index, "price", e.target.value)}
                       />
                     </td>
-                    <td style={{ padding: '0.75rem' }}>
+                    <td className="voucher-input-cell">
                       <input 
                         type="number" 
                         className="form-input"
-                        style={{ padding: '0.75rem', fontSize: '1rem' }}
                         value={item.qty}
                         onChange={(e) => handleItemChange(index, "qty", e.target.value)}
                       />
                     </td>
-                    <td style={{ padding: '0.75rem', fontSize: '1rem' }}>
+                    <td className="voucher-text-cell">
                       {item.tax}%
                     </td>
-                    <td style={{ padding: '0.75rem', fontSize: '1rem', fontWeight: 600 }}>
+                    <td className="voucher-amount-cell">
                       {item.amount.toFixed(2)}
                     </td>
-                    <td style={{ padding: '0.75rem', textAlign: 'center' }}>
-                       <button type="button" onClick={() => removeItem(index)} style={{ color: 'var(--color-danger)', background: 'none', border: 'none', cursor: 'pointer', padding: '0.5rem' }}>
+                    <td className="voucher-action-cell">
+                       <button type="button" onClick={() => removeItem(index)} className="voucher-remove-btn">
                          <Trash2 size={24} />
                        </button>
                     </td>
@@ -209,30 +207,29 @@ function AddVoucher() {
             
             <button 
               type="button" 
-              className="btn btn-outline" 
-              style={{ margin: '1rem', width: 'auto' }}
+              className="btn btn-outline-primary voucher-add-item-btn" 
               onClick={addItem}
             >
               <Plus size={16} /> Add Item
             </button>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '2rem', padding: '1rem', background: '#f8fafc', borderRadius: 'var(--radius-md)', flexWrap: 'wrap' }}>
-            <div style={{ textAlign: 'right', minWidth: '100px' }}>
-              <p style={{ color: 'var(--text-secondary)' }}>Subtotal</p>
-              <p style={{ fontSize: '1.1rem', fontWeight: 600 }}>₹{totals.subtotal.toFixed(2)}</p>
+          <div className="voucher-totals-container">
+            <div className="voucher-total-block">
+              <p className="voucher-total-label">Subtotal</p>
+              <p className="voucher-subtotal-value">₹{totals.subtotal.toFixed(2)}</p>
             </div>
-            <div style={{ textAlign: 'right', minWidth: '100px' }}>
-               <p style={{ color: 'var(--text-secondary)' }}>Tax (GST)</p>
-               <p style={{ fontSize: '1.1rem', fontWeight: 600 }}>₹{totals.tax.toFixed(2)}</p>
+            <div className="voucher-total-block">
+               <p className="voucher-total-label">Tax (GST)</p>
+               <p className="voucher-tax-value">₹{totals.tax.toFixed(2)}</p>
             </div>
-            <div style={{ textAlign: 'right', minWidth: '100px' }}>
-               <p style={{ color: 'var(--text-secondary)' }}>Total</p>
-               <p style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--color-primary)' }}>₹{totals.total.toFixed(2)}</p>
+            <div className="voucher-total-block">
+               <p className="voucher-total-label">Total</p>
+               <p className="voucher-grand-total-value">₹{totals.total.toFixed(2)}</p>
             </div>
           </div>
 
-          <div className="form-group" style={{ marginTop: '1.5rem' }}>
+          <div className="form-group voucher-notes-group">
             <label className="form-label">Notes</label>
             <textarea 
               className="form-textarea"
@@ -243,7 +240,7 @@ function AddVoucher() {
             />
           </div>
 
-          <div style={{ display: "flex", gap: "1rem", marginTop: "2rem" }}>
+          <div className="voucher-actions">
             <button type="submit" className="btn btn-primary btn-mobile-flex">
               <Save size={18} /> Save Voucher
             </button>

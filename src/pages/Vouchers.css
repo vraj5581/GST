@@ -1,0 +1,58 @@
+/* CSS for Vouchers Page */
+
+.vouchers-page .grid { display: grid; gap: 1rem; }
+.vouchers-page .grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+
+.vouchers-page .voucher-card {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 1.5rem; /* Or 1rem as per inline style override */
+    border: 1px solid var(--border-color);
+    display: flex; 
+    flex-direction: column; 
+    gap: 0.5rem;
+}
+
+.vouchers-page .voucher-header {
+    display: flex; 
+    justify-content: space-between; 
+    align-items: flex-start;
+}
+
+.vouchers-page .voucher-party-name {
+    margin: 0; 
+    font-size: 1.2rem; 
+    font-weight: 600;
+}
+
+.vouchers-page .voucher-total {
+    font-size: 1.25rem; 
+    font-weight: 700; 
+    color: var(--color-primary);
+}
+
+.vouchers-page .voucher-actions-footer {
+    border-top: 1px solid var(--border-color); 
+    padding-top: 0.75rem; 
+    margin-top: 0.75rem; 
+    display: flex; 
+    gap: 0.5rem; 
+    justify-content: flex-end;
+}
+
+.vouchers-page .content-below-fixed {
+  padding-top: 6rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  padding-bottom: 2rem;
+}
+
+@media (max-width: 768px) {
+  .vouchers-page .content-below-fixed {
+    padding-top: 4.5rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+}

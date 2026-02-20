@@ -1,6 +1,7 @@
 import { useRef, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, Edit, Trash2 } from "lucide-react";
+import "./ProductDetails.css";
 
 function ProductDetails() {
   const { id } = useParams();
@@ -30,59 +31,59 @@ function ProductDetails() {
   if (!product) return <div>Loading...</div>;
 
   return (
-    <div>
-       <header className="fixed-header" style={{ justifyContent: "flex-start" }}>
-        <button className="btn btn-outline btn-icon" onClick={() => navigate("/products")} style={{ flexShrink: 0 }} title="Back">
+    <div className="product-details-page">
+       <header className="fixed-header product-details-header">
+        <button className="btn btn-outline btn-icon product-details-back-btn" onClick={() => navigate("/products")} title="Back">
           <ArrowLeft size={20} />
         </button>
-        <h3 style={{ margin: 0, border: "none" }}>Product Details</h3>
+        <h3 className="product-details-title">Product Details</h3>
         
-        <div style={{ marginLeft: "auto", display: "flex", gap: "0.5rem" }}>
-            <button className="btn btn-outline btn-icon" onClick={handleEdit} title="Edit">
+        <div className="product-details-actions">
+            <button className="btn btn-outline-primary btn-icon" onClick={handleEdit} title="Edit">
                 <Edit size={18} />
             </button>
-            <button className="btn btn-outline btn-icon" style={{ color: "var(--color-danger)", borderColor: "var(--color-danger)" }} onClick={handleDelete} title="Delete">
+            <button className="btn btn-outline-danger btn-icon product-delete-btn" onClick={handleDelete} title="Delete">
                 <Trash2 size={18} />
             </button>
         </div>
       </header>
       
       <div className="content-below-fixed">
-        <div className="card" style={{ maxWidth: '600px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+        <div className="product-card-container">
             {/* Image Section */}
             {product.image && (
-                <div style={{ width: '100%', display: 'flex', justifyContent: 'center', background: '#f8fafc', padding: '1rem', borderRadius: 'var(--radius-md)' }}>
+                <div className="product-image-container">
                     <img 
                         src={product.image} 
                         alt={product.name} 
-                        style={{ maxWidth: '100%', maxHeight: '300px', objectFit: 'contain', borderRadius: '4px' }}
+                        className="product-detail-image"
                     />
                 </div>
             )}
 
             {/* Details Section */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 700 }}>{product.name}</h2>
-                {product.hsn && <p style={{ color: 'var(--text-secondary)', margin: 0 }}>HSN Code: {product.hsn}</p>}
+            <div className="product-info-section">
+                <h2 className="product-name-heading">{product.name}</h2>
+                {product.hsn && <p className="product-hsn-text">HSN Code: {product.hsn}</p>}
                 
-                <div style={{ marginTop: '1rem', display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
+                <div className="product-metrics-grid">
                     <div>
-                        <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '0.25rem' }}>Selling Price</p>
-                        <p style={{ fontSize: '1.25rem', fontWeight: 600, color: 'var(--color-primary)', margin: 0 }}>₹{product.price} <span style={{fontSize: '0.9rem', color: '#666'}}>per {product.unit}</span></p>
+                        <p className="metric-label">Selling Price</p>
+                        <p className="metric-value price">₹{product.price} <span className="metric-unit">per {product.unit}</span></p>
                     </div>
                     
                     {product.tax && (
                     <div>
-                        <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '0.25rem' }}>Tax Rate</p>
-                        <p style={{ fontSize: '1.25rem', fontWeight: 600, margin: 0 }}>{product.tax}%</p>
+                        <p className="metric-label">Tax Rate</p>
+                        <p className="metric-value">{product.tax}%</p>
                     </div>
                     )}
                 </div>
 
                 {product.description && (
-                    <div style={{ marginTop: '1.5rem', borderTop: '1px solid var(--border-color)', paddingTop: '1rem' }}>
-                        <p style={{ fontWeight: 600, marginBottom: '0.5rem' }}>Description</p>
-                        <p style={{ color: 'var(--text-secondary)', lineHeight: '1.5' }}>{product.description}</p>
+                    <div className="product-description-section">
+                        <p className="description-heading">Description</p>
+                        <p className="description-text">{product.description}</p>
                     </div>
                 )}
             </div>
