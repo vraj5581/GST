@@ -34,33 +34,22 @@ function ProductDetails() {
     <div className="product-details-page">
        <header className="fixed-header product-details-header">
         <button className="btn btn-outline btn-icon product-details-back-btn" onClick={() => navigate("/products")} title="Back">
-          <ArrowLeft size={20} />
+          <ArrowLeft size={18} />
         </button>
         <h3 className="product-details-title">Product Details</h3>
         
         <div className="product-details-actions">
-            <button className="btn btn-outline-primary btn-icon" onClick={handleEdit} title="Edit">
-                <Edit size={18} />
+            <button className="btn btn-outline-primary" onClick={handleEdit}>
+                Edit
             </button>
-            <button className="btn btn-outline-danger btn-icon product-delete-btn" onClick={handleDelete} title="Delete">
-                <Trash2 size={18} />
+            <button className="btn btn-outline-danger product-delete-btn" onClick={handleDelete}>
+                Delete
             </button>
         </div>
       </header>
       
       <div className="content-below-fixed">
         <div className="product-card-container">
-            {/* Image Section */}
-            {product.image && (
-                <div className="product-image-container">
-                    <img 
-                        src={product.image} 
-                        alt={product.name} 
-                        className="product-detail-image"
-                    />
-                </div>
-            )}
-
             {/* Details Section */}
             <div className="product-info-section">
                 <h2 className="product-name-heading">{product.name}</h2>

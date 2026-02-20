@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Vouchers.css";
-import { Plus, Printer, Eye, Trash2 } from "lucide-react";
+import { Plus, Printer, Edit, Trash2, Search } from "lucide-react";
 
 function Vouchers() {
   const [vouchers, setVouchers] = useState([]);
+  const [search, setSearch] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,19 +29,36 @@ function Vouchers() {
     return items.reduce((sum, item) => sum + (item.amount || 0), 0);
   };
 
+  const filtered = vouchers.filter(v => {
+    const searchLower = search.toLowerCase();
+    const invNo = String(v.id || (Number(v.originalIndex) + 1)).padStart(4, '0');
+    return (
+      (v.partyId && v.partyId.toLowerCase().includes(searchLower)) ||
+      invNo.includes(searchLower)
+    );
+  });
+
   return (
     <div className="vouchers-page">
       <div className="fixed-header root-page-header">
-        <h3 style={{ margin: 0, border: "none" }}>Vouchers</h3>
-        <Link to="/add-voucher" className="btn btn-primary btn-icon" style={{ flexShrink: 0 }} title="Create Voucher">
+        <div className="search-bar w-full-search" style={{ flex: 1, marginBottom: 0 }}>
+          <Search className="search-icon" size={18} />
+          <input
+            className="form-input"
+            value={search}
+            placeholder="Search by Party Name, Invoice No..."
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+        <Link to="/add-voucher" className="btn btn-outline-primary btn-icon" style={{ flexShrink: 0, marginLeft: "1rem" }} title="Create Voucher">
           <Plus size={18} />
         </Link>
       </div>
 
       <div className="content-below-fixed">
         <div className="grid grid-2">
-          {vouchers.length > 0 ? (
-            vouchers.map((v) => (
+          {filtered.length > 0 ? (
+            filtered.map((v) => (
               <div 
                 key={v.originalIndex}
                 className="voucher-card"
@@ -50,21 +68,21 @@ function Vouchers() {
                   <h4 className="voucher-card-title" style={{ maxWidth: '65%', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{v.partyId}</h4>
                   <div className="voucher-card-actions">
                     <button 
-                      className="btn voucher-card-action-btn print-btn" 
+                      className="btn btn-action-print" 
                       onClick={(e) => { e.stopPropagation(); navigate(`/voucher-print/${v.originalIndex}`); }} 
                       title="Print / View"
                     >
                       <Printer size={16} />
                     </button>
                     <button 
-                      className="btn voucher-card-action-btn edit-btn" 
+                      className="btn btn-action-edit" 
                       onClick={(e) => { e.stopPropagation(); navigate(`/add-voucher/${v.originalIndex}`); }}
                       title="Edit"
                     >
-                      <Eye size={16} />
+                      <Edit size={16} />
                     </button>
                     <button 
-                      className="btn voucher-card-action-btn delete-btn"
+                      className="btn btn-action-delete"
                       onClick={(e) => { e.stopPropagation(); handleDelete(v.originalIndex); }}
                       title="Delete"
                     >
@@ -83,7 +101,7 @@ function Vouchers() {
             ))
           ) : (
              <div style={{ gridColumn: "1 / -1", textAlign: "center", padding: "2rem", color: "var(--text-secondary)" }}>
-               No vouchers created yet.
+               No vouchers found.
              </div>
           )}
         </div>

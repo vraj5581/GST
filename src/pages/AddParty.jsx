@@ -96,7 +96,7 @@ function AddParty() {
     <div className="add-party-page">
       <header className="fixed-header add-party-header">
         <button className="btn btn-outline btn-icon add-party-back-btn" onClick={() => navigate("/")} title="Back">
-          <ArrowLeft size={20} />
+          <ArrowLeft size={18} />
         </button>
         <h3 className="add-party-title">{id ? "Edit Party" : "Add New Party"}</h3>
       </header>
@@ -175,8 +175,8 @@ function AddParty() {
         </div>
         
         <div className="add-party-form-actions">
-          <button type="submit" className="btn btn-primary btn-mobile-flex">
-            <Save size={18} /> {id ? "Update" : "Save"}
+          <button type="submit" className="btn btn-outline-primary btn-mobile-flex">
+            {id ? "Update" : "Save"}
           </button>
           <button type="button" className="btn btn-outline-danger btn-mobile-flex" onClick={() => navigate("/")}>
             Cancel

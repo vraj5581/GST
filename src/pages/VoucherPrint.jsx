@@ -26,15 +26,15 @@ function VoucherPrint() {
 
   if (!voucher) return <div>Loading...</div>;
   
-  const calculateTotal = (items) => items.reduce((sum, item) => sum + (item.amount || 0), 0);
-  const calculateTotalTax = (items) => items.reduce((sum, item) => sum + (item.taxAmount || 0), 0);
-  const calculateSubtotal = (items) => items.reduce((sum, item) => sum + (item.price * item.qty), 0);
+  const calculateTotal = (items) => items.reduce((sum, item) => sum + (Number(item.amount) || 0), 0);
+  const calculateTotalTax = (items) => items.reduce((sum, item) => sum + (Number(item.taxAmount) || 0), 0);
+  const calculateSubtotal = (items) => items.reduce((sum, item) => sum + (Number(item.price) * Number(item.qty)), 0);
 
   return (
     <div className="print-container">
       <div className="fixed-header no-print" style={{ justifyContent: "flex-start" }}>
         <button className="btn btn-outline btn-icon" onClick={() => navigate("/vouchers")} style={{ flexShrink: 0 }} title="Back">
-          <ArrowLeft size={20} />
+          <ArrowLeft size={18} />
         </button>
         <h3 style={{ margin: 0, border: "none" }}>Print Preview</h3>
         <button className="btn btn-primary" onClick={handlePrint} style={{ marginLeft: 'auto' }}>
@@ -51,6 +51,39 @@ function VoucherPrint() {
             padding-bottom: 2rem;
           }
           
+          .invoice-preview-card {
+            background: white;
+            padding: 2rem;
+            max-width: 100%;
+            width: 210mm;
+            min-height: 297mm;
+            margin: 0 auto;
+            box-shadow: var(--shadow-md);
+            color: #000;
+            box-sizing: border-box;
+          }
+          
+          /* Print Only Styles */
+          @media print {
+            @page {
+              margin: 10mm;
+            }
+            body {
+              background: white;
+            }
+            .print-container .content-below-fixed {
+              padding: 0 !important;
+            }
+            .invoice-preview-card {
+              width: 100% !important;
+              min-height: auto !important;
+              padding: 0 !important;
+              margin: 0 !important;
+              box-shadow: none !important;
+              border: none !important;
+            }
+          }
+
           /* Screen Only Responsive Styles */
           @media screen and (max-width: 768px) {
             .print-container .content-below-fixed {
@@ -67,36 +100,73 @@ function VoucherPrint() {
             .invoice-header-row > div {
               text-align: left !important;
             }
-            .invoice-table-container {
-              overflow-x: auto;
-              -webkit-overflow-scrolling: touch;
-            }
-            .invoice-table {
-              min-width: 600px; /* Force table width so it scrolls instead of squishing */
-            }
             .invoice-preview-card {
               padding: 1rem !important;
               width: 100% !important;
               min-height: auto !important;
               box-shadow: none !important;
             }
+
+            /* Convert Table to Flowing Cards on Mobile to remove slide scroll entirely */
+            .invoice-table-container {
+              overflow-x: hidden;
+            }
+            .invoice-table, .invoice-table thead, .invoice-table tbody, .invoice-table tfoot, .invoice-table tr, .invoice-table td {
+              display: block;
+              width: 100%;
+            }
+            .invoice-table thead {
+              display: none;
+            }
+            .invoice-table tbody tr {
+              border: 1px solid #ddd;
+              margin-bottom: 1rem;
+              padding: 0.5rem 1rem;
+              border-radius: var(--radius-md);
+            }
+            .invoice-table tbody td {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              border: none !important;
+              padding: 0.5rem 0 !important;
+              border-bottom: 1px solid #eee !important;
+              text-align: right !important;
+            }
+            .invoice-table tbody td:last-child {
+              border-bottom: none !important;
+            }
+            .invoice-table tbody td::before {
+              content: attr(data-label);
+              font-weight: 600;
+              color: #666;
+              text-align: left;
+            }
+            
+            .invoice-table tfoot tr {
+               display: flex;
+               justify-content: space-between;
+               padding: 0.75rem 0 !important;
+               margin-bottom: 0;
+               border-top: 1px solid #eee;
+            }
+            .invoice-table tfoot td {
+               display: inline-block;
+               width: auto;
+               border: none !important;
+               padding: 0 !important;
+            }
+            .invoice-table tfoot tr:last-child {
+               background: #f0f0f0 !important;
+               padding: 1rem !important;
+               border-radius: var(--radius-md);
+               margin-top: 0.5rem;
+               border-top: none;
+            }
           }
         `}</style>
 
-        <div 
-          className="invoice-preview-card"
-          style={{ 
-            background: 'white', 
-            padding: '2rem', 
-            maxWidth: '100%', 
-            width: '210mm', // Default for desktop/print 
-            minHeight: '297mm', 
-            margin: '0 auto',
-            boxShadow: 'var(--shadow-md)',
-            color: '#000',
-            boxSizing: 'border-box'
-          }}
-        >
+        <div className="invoice-preview-card">
           {/* Header */}
           <div style={{ textAlign: "center", borderBottom: '2px solid #000', paddingBottom: '1rem', marginBottom: '2rem' }}> 
             <h1 style={{ fontSize: '2rem', fontWeight: 'bold', margin: '0 0 0.5rem 0' }}>INVOICE / VOUCHER</h1>
@@ -135,15 +205,15 @@ function VoucherPrint() {
             <tbody>
               {voucher.items.map((item, index) => (
                 <tr key={index}>
-                  <td style={{ padding: '0.75rem', border: '1px solid #ddd' }}>{index + 1}</td>
-                  <td style={{ padding: '0.75rem', border: '1px solid #ddd' }}>
+                  <td data-label="#" style={{ padding: '0.75rem', border: '1px solid #ddd' }}>{index + 1}</td>
+                  <td data-label="Item" style={{ padding: '0.75rem', border: '1px solid #ddd' }}>
                     <strong>{item.name}</strong>
                     {item.hsn && <div style={{ fontSize: '0.8rem', color: '#666' }}>HSN: {item.hsn}</div>}
                   </td>
-                  <td style={{ padding: '0.75rem', textAlign: 'right', border: '1px solid #ddd' }}>₹{item.price.toFixed(2)}</td>
-                  <td style={{ padding: '0.75rem', textAlign: 'center', border: '1px solid #ddd' }}>{item.qty} {item.unit}</td>
-                  <td style={{ padding: '0.75rem', textAlign: 'right', border: '1px solid #ddd' }}>{item.tax}%<br/><span style={{ fontSize: '0.8rem' }}>(₹{item.taxAmount.toFixed(2)})</span></td>
-                  <td style={{ padding: '0.75rem', textAlign: 'right', border: '1px solid #ddd', fontWeight: 'bold' }}>₹{item.amount.toFixed(2)}</td>
+                  <td data-label="Price" style={{ padding: '0.75rem', textAlign: 'right', border: '1px solid #ddd' }}>₹{Number(item.price || 0).toFixed(2)}</td>
+                  <td data-label="Qty" style={{ padding: '0.75rem', textAlign: 'center', border: '1px solid #ddd' }}>{item.qty} {item.unit}</td>
+                  <td data-label="Tax" style={{ padding: '0.75rem', textAlign: 'right', border: '1px solid #ddd' }}>{item.tax}%<br/><span style={{ fontSize: '0.8rem' }}>(₹{Number(item.taxAmount || 0).toFixed(2)})</span></td>
+                  <td data-label="Total" style={{ padding: '0.75rem', textAlign: 'right', border: '1px solid #ddd', fontWeight: 'bold' }}>₹{Number(item.amount || 0).toFixed(2)}</td>
                 </tr>
               ))}
             </tbody>

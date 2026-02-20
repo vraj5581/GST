@@ -45,7 +45,7 @@ function Products() {
           />
         </div>
 
-        <Link to="/add-product" className="btn btn-primary btn-icon" style={{ flexShrink: 0 }} title="Add Product">
+        <Link to="/add-product" className="btn btn-outline-primary btn-icon" style={{ flexShrink: 0 }} title="Add Product">
           <Plus size={18} />
         </Link>
       </div>
@@ -61,13 +61,6 @@ function Products() {
               >
                 <div className="product-header">
                   <div className="product-title-group">
-                    {p.image && (
-                      <img
-                        src={p.image}
-                        alt={p.name}
-                        className="product-image"
-                      />
-                    )}
                     <h4 className="product-title">{p.name}</h4>
                   </div>
                   <div className="product-actions">

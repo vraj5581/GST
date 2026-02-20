@@ -17,43 +17,6 @@
     margin-bottom: 1.5rem;
 }
 
-.add-voucher-page .voucher-items-table-container {
-    margin-bottom: 1.5rem;
-    overflow-x: auto;
-}
-
-.add-voucher-page .voucher-items-table {
-    min-width: 100%;
-}
-
-.add-voucher-page .voucher-product-select {
-    border: 1px solid var(--border-color);
-    padding: 0.75rem;
-    font-size: 1rem;
-    min-width: 200px;
-}
-
-.add-voucher-page .voucher-input-cell {
-    padding: 0.75rem;
-    font-size: 1rem;
-}
-
-.add-voucher-page .voucher-text-cell {
-    padding: 0.75rem;
-    font-size: 1rem;
-}
-
-.add-voucher-page .voucher-amount-cell {
-    padding: 0.75rem;
-    font-size: 1rem;
-    font-weight: 600;
-}
-
-.add-voucher-page .voucher-action-cell {
-    padding: 0.75rem;
-    text-align: center;
-}
-
 .add-voucher-page .voucher-remove-btn {
     color: var(--color-danger);
     background: none;
@@ -148,44 +111,64 @@
 .add-voucher-page .grid { display: grid; gap: 0.7rem; }
 .add-voucher-page .grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
 
-/* Table */
-.add-voucher-page .table-container {
-  overflow-x: auto;
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--border-color);
-}
-
-.add-voucher-page table {
-  width: 100%;
-  border-collapse: collapse;
+/* Modern Grid Base */
+.add-voucher-page .voucher-items-wrapper {
   background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-bottom: 2rem;
 }
 
-.add-voucher-page th {
-  background: var(--bg-primary);
-  text-align: left;
+.add-voucher-page .voucher-items-header-row {
+  display: grid;
+  grid-template-columns: 3fr 1fr 1fr 0.5fr 1fr 50px;
+  gap: 1rem;
   padding: 0.875rem 1.5rem;
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border-color);
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
   color: var(--text-secondary);
-  border-bottom: 1px solid var(--border-color);
 }
 
-.add-voucher-page td {
+.add-voucher-page .voucher-item-row {
+  display: grid;
+  grid-template-columns: 3fr 1fr 1fr 0.5fr 1fr 50px;
+  gap: 1rem;
   padding: 1rem 1.5rem;
   border-bottom: 1px solid var(--border-color);
-  color: var(--text-primary);
-  font-size: 0.95rem;
+  align-items: center;
 }
 
-.add-voucher-page tr:last-child td {
+.add-voucher-page .voucher-item-row:last-child {
   border-bottom: none;
 }
 
-.add-voucher-page tr:hover td {
+.add-voucher-page .voucher-item-row:hover {
   background: #f8fafc;
+}
+
+.add-voucher-page .voucher-col-tax span,
+.add-voucher-page .voucher-col-total span {
+  font-size: 0.95rem;
+}
+
+.add-voucher-page .voucher-col-total span {
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.add-voucher-page .voucher-col-action {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.add-voucher-page .voucher-add-item-container {
+  padding: 1rem 1.5rem;
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-color);
 }
 
 .add-voucher-page .content-below-fixed {
@@ -198,104 +181,103 @@
 @media (max-width: 768px) {
   .add-voucher-page .content-below-fixed {
     padding-top: 4.5rem;
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
-    padding-bottom: 0.5rem;
+    padding-left: 0.2rem;
+    padding-right: 0.2rem;
+    padding-bottom: 0.2rem;
   }
 
-  /* Convert Table to Cards on Mobile to remove horizontal scroll */
-  .add-voucher-page .voucher-items-table-container {
-    overflow-x: hidden;
-    border: none;
+  .add-voucher-page .grid-2 {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Convert Grid rows to cohesive Cards on mobile */
+  .add-voucher-page .voucher-items-wrapper {
     background: transparent;
+    border: none;
+    overflow: visible;
   }
-
-  .add-voucher-page .voucher-items-table,
-  .add-voucher-page .voucher-items-table thead,
-  .add-voucher-page .voucher-items-table tbody,
-  .add-voucher-page .voucher-items-table tr,
-  .add-voucher-page .voucher-items-table td {
-    display: block;
-    width: 100%;
-  }
-
-  .add-voucher-page .voucher-items-table thead {
+  
+  .add-voucher-page .voucher-items-header-row {
     display: none;
   }
 
-  .add-voucher-page .voucher-items-table tr {
-    display: grid !important;
+  .add-voucher-page .voucher-item-row {
     grid-template-columns: 1fr 1fr;
-    gap: 0.75rem;
+    gap: 1rem;
+    padding: 1.25rem;
     border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
-    padding: 1rem;
+    border-radius: var(--radius-lg);
     margin-bottom: 1rem;
-    background: #fff;
+    background: var(--bg-secondary);
     position: relative;
+    align-items: flex-start;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   }
 
-  .add-voucher-page .voucher-items-table td {
-    border: none !important;
-    padding: 0 !important;
+  .add-voucher-page .voucher-cell {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
   }
 
-  .add-voucher-page .voucher-product-select {
-    min-width: 0;
-  }
-
-  /* Column 1: Product */
-  .add-voucher-page .voucher-items-table td:nth-child(1) {
-    grid-column: 1 / -1;
-  }
-  
-  /* Column 2: Price */
-  .add-voucher-page .voucher-items-table td:nth-child(2) {
-    grid-column: 1 / 2;
-  }
-
-  /* Column 3: Qty */
-  .add-voucher-page .voucher-items-table td:nth-child(3) {
-    grid-column: 2 / 3;
-  }
-
-  /* Column 4: Tax */
-  .add-voucher-page .voucher-items-table td:nth-child(4) {
-    grid-column: 1 / 2;
-  }
-
-  /* Column 5: Total */
-  .add-voucher-page .voucher-items-table td:nth-child(5) {
-    grid-column: 2 / 3;
-    font-weight: bold;
-    color: var(--color-primary);
-  }
-
-  /* Column 6: Delete */
-  .add-voucher-page .voucher-items-table td:nth-child(6) {
-    position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
-    width: auto;
-    display: block;
-  }
-
-  /* Inject pseudo labels for form context */
-  .add-voucher-page .voucher-items-table td::before {
+  .add-voucher-page .voucher-cell::before {
+    content: attr(data-label);
     font-size: 0.75rem;
     font-weight: 600;
     color: var(--text-secondary);
     margin-bottom: 0.25rem;
     text-transform: uppercase;
+    display: block;
   }
 
-  .add-voucher-page .voucher-items-table td:nth-child(1)::before { content: "Product"; }
-  .add-voucher-page .voucher-items-table td:nth-child(2)::before { content: "Price"; }
-  .add-voucher-page .voucher-items-table td:nth-child(3)::before { content: "Quantity"; }
-  .add-voucher-page .voucher-items-table td:nth-child(4)::before { content: "Tax %"; }
-  .add-voucher-page .voucher-items-table td:nth-child(5)::before { content: "Amount"; }
-  .add-voucher-page .voucher-items-table td:nth-child(6)::before { content: ""; display: none; }
+  /* Specific column spanning on mobile */
+  .add-voucher-page .voucher-col-product { 
+    grid-column: 1 / -1; 
+  }
+  .add-voucher-page .voucher-col-price { grid-column: 1 / 2; }
+  .add-voucher-page .voucher-col-qty { grid-column: 2 / 3; }
+  .add-voucher-page .voucher-col-tax { grid-column: 1 / 2; }
+  .add-voucher-page .voucher-col-total { grid-column: 2 / 3; }
+  
+  .add-voucher-page .voucher-col-action {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    grid-column: auto;
+    justify-content: flex-end;
+  }
+
+  .add-voucher-page .voucher-col-action::before {
+    display: none; /* No label for action */
+  }
+
+  .add-voucher-page .voucher-add-item-container {
+    padding: 0;
+    background: transparent;
+    border-top: none;
+  }
+
+  .add-voucher-page .voucher-add-item-btn {
+    width: auto;
+    margin-top: 0.5rem;
+  }
+
+  .add-voucher-page .voucher-totals-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .add-voucher-page .voucher-total-block {
+    display: flex;
+    justify-content: space-between;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+  }
+
+  .add-voucher-page .voucher-total-block:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
 }

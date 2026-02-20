@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Save, ArrowLeft, Plus, Trash2, Printer } from "lucide-react";
+import { ArrowLeft, Save, Plus, Trash2, Printer } from "lucide-react";
+import Select from "react-select";
 import "./AddVoucher.css";
 
 function AddVoucher() {
@@ -59,6 +60,12 @@ function AddVoucher() {
         item.price = parseFloat(selectedProduct.price) || 0;
         item.tax = parseFloat(selectedProduct.tax) || 0;
         item.unit = selectedProduct.unit;
+      } else {
+        item.productId = "";
+        item.name = "";
+        item.price = 0;
+        item.tax = 0;
+        item.unit = "";
       }
     } else {
       item[field] = value;
@@ -111,7 +118,7 @@ function AddVoucher() {
     <div className="add-voucher-page">
       <header className="fixed-header no-print add-voucher-header">
         <button className="btn btn-outline btn-icon add-voucher-back-btn" onClick={() => navigate("/vouchers")} title="Back">
-          <ArrowLeft size={20} />
+          <ArrowLeft size={18} />
         </button>
         <h3 className="add-voucher-title">{id ? "Edit Voucher" : "New Voucher"}</h3>
       </header>
@@ -132,86 +139,83 @@ function AddVoucher() {
             </div>
             <div className="form-group">
               <label className="form-label">Party</label>
-              <select 
-                className="form-input"
-                value={voucher.partyId}
-                onChange={(e) => setVoucher({ ...voucher, partyId: e.target.value })}
-              >
-                <option value="">Select Party</option>
-                {parties.map((p, i) => (
-                  <option key={i} value={p.name}>{p.name}</option>
-                ))}
-              </select>
+              <Select 
+                options={parties.map(p => ({ value: p.name, label: p.name }))}
+                value={voucher.partyId ? { value: voucher.partyId, label: voucher.partyId } : null}
+                onChange={(selected) => setVoucher({ ...voucher, partyId: selected ? selected.value : "" })}
+                placeholder="Select Party"
+                isClearable
+                className="react-select-container"
+                classNamePrefix="react-select"
+              />
             </div>
           </div>
 
-          {/* Items Table */}
-          <div className="table-container voucher-items-table-container">
-            <table className="voucher-items-table">
-              <thead>
-                <tr>
-                  <th>Product</th>
-                  <th style={{ width: '120px' }}>Price</th>
-                  <th style={{ width: '100px' }}>Qty</th>
-                  <th style={{ width: '80px' }}>Tax%</th>
-                  <th style={{ width: '120px' }}>Total</th>
-                  <th style={{ width: '50px' }}></th>
-                </tr>
-              </thead>
-              <tbody>
-                {voucher.items.map((item, index) => (
-                  <tr key={index}>
-                    <td className="voucher-input-cell">
-                      <select 
-                        className="form-input voucher-product-select" 
-                        value={item.productId || ""}
-                        onChange={(e) => handleItemChange(index, "productId", e.target.value)}
-                      >
-                        <option value="">Select Product...</option>
-                        {products.map((p, i) => (
-                          <option key={i} value={p.name}>{p.name}</option>
-                        ))}
-                      </select>
-                    </td>
-                    <td className="voucher-input-cell">
-                      <input 
-                        type="number" 
-                        className="form-input"
-                        value={item.price}
-                        onChange={(e) => handleItemChange(index, "price", e.target.value)}
-                      />
-                    </td>
-                    <td className="voucher-input-cell">
-                      <input 
-                        type="number" 
-                        className="form-input"
-                        value={item.qty}
-                        onChange={(e) => handleItemChange(index, "qty", e.target.value)}
-                      />
-                    </td>
-                    <td className="voucher-text-cell">
-                      {item.tax}%
-                    </td>
-                    <td className="voucher-amount-cell">
-                      {item.amount.toFixed(2)}
-                    </td>
-                    <td className="voucher-action-cell">
-                       <button type="button" onClick={() => removeItem(index)} className="voucher-remove-btn">
-                         <Trash2 size={24} />
-                       </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          {/* Items Section */}
+          <div className="voucher-items-wrapper">
+            <div className="voucher-items-header-row">
+              <div className="voucher-col voucher-col-product">Product</div>
+              <div className="voucher-col voucher-col-price">Price</div>
+              <div className="voucher-col voucher-col-qty">Quantity</div>
+              <div className="voucher-col voucher-col-tax">Tax%</div>
+              <div className="voucher-col voucher-col-total">Total</div>
+              <div className="voucher-col voucher-col-action"></div>
+            </div>
             
-            <button 
-              type="button" 
-              className="btn btn-outline-primary voucher-add-item-btn" 
-              onClick={addItem}
-            >
-              <Plus size={16} /> Add Item
-            </button>
+            <div className="voucher-items-list">
+              {voucher.items.map((item, index) => (
+                <div key={index} className="voucher-item-row">
+                  <div className="voucher-cell voucher-col-product" data-label="Product">
+                    <Select 
+                      options={products.map(p => ({ value: p.name, label: p.name }))}
+                      value={item.productId ? { value: item.productId, label: item.productId } : null}
+                      onChange={(selected) => handleItemChange(index, "productId", selected ? selected.value : "")}
+                      placeholder="Select Product..."
+                      isClearable
+                      className="react-select-container voucher-product-select"
+                      classNamePrefix="react-select"
+                    />
+                  </div>
+                  <div className="voucher-cell voucher-col-price" data-label="Price">
+                    <input 
+                      type="number" 
+                      className="form-input"
+                      value={item.price}
+                      onChange={(e) => handleItemChange(index, "price", e.target.value)}
+                    />
+                  </div>
+                  <div className="voucher-cell voucher-col-qty" data-label="Quantity">
+                    <input 
+                      type="number" 
+                      className="form-input"
+                      value={item.qty}
+                      onChange={(e) => handleItemChange(index, "qty", e.target.value)}
+                    />
+                  </div>
+                  <div className="voucher-cell voucher-col-tax" data-label="Tax%">
+                    <span>{item.tax}%</span>
+                  </div>
+                  <div className="voucher-cell voucher-col-total" data-label="Amount">
+                    <span>{Number(item.amount || 0).toFixed(2)}</span>
+                  </div>
+                  <div className="voucher-cell voucher-col-action">
+                    <button type="button" onClick={() => removeItem(index)} className="voucher-remove-btn" title="Remove Item">
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            <div className="voucher-add-item-container">
+              <button 
+                type="button" 
+                className="btn btn-outline-primary voucher-add-item-btn" 
+                onClick={addItem}
+              >
+                Add Item
+              </button>
+            </div>
           </div>
 
           <div className="voucher-totals-container">
@@ -241,8 +245,8 @@ function AddVoucher() {
           </div>
 
           <div className="voucher-actions">
-            <button type="submit" className="btn btn-primary btn-mobile-flex">
-              <Save size={18} /> Save Voucher
+            <button type="submit" className="btn btn-outline-primary btn-mobile-flex">
+              Save Voucher
             </button>
           </div>
 

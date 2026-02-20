@@ -34,7 +34,7 @@ function PartyDetails() {
     <div className="parties-page">
       <header className="fixed-header" style={{ justifyContent: "flex-start" }}>
         <button className="btn btn-outline btn-icon" onClick={() => navigate("/")} style={{ flexShrink: 0 }} title="Back">
-          <ArrowLeft size={20} />
+          <ArrowLeft size={18} />
         </button>
         <h3 style={{ margin: 0, border: "none" }}>Party Details</h3>
       </header>
@@ -67,16 +67,16 @@ function PartyDetails() {
 
         <div style={{ display: "flex", gap: "1rem", marginTop: "3rem", borderTop: "1px solid var(--border-color)", paddingTop: "1.5rem" }}>
           <button 
-            className="btn btn-primary btn-mobile-flex" 
+            className="btn btn-outline-primary btn-mobile-flex" 
             onClick={() => navigate(`/edit-party/${id}`)}
           >
-            <Edit size={18} /> Edit
+            Edit
           </button>
           <button 
-            className="btn btn-danger btn-mobile-flex" 
+            className="btn btn-outline-danger btn-mobile-flex" 
             onClick={handleDelete}
           >
-            <Trash2 size={18} /> Delete
+            Delete
           </button>
         </div>
       </div>

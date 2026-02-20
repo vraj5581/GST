@@ -197,8 +197,9 @@ a {
 }
 
 .btn-outline-danger:hover {
-  background: var(--color-danger);
-  color: white;
+  background: transparent;
+  color: var(--color-danger-hover);
+  border-color: var(--color-danger-hover);
 }
 
 .btn-icon {
@@ -235,6 +236,18 @@ a {
   color: var(--color-danger-hover);
 }
 
+.btn-action-print {
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0.4rem;
+}
+.btn-action-print:hover {
+  background: #f3f4f6; /* light gray */
+  color: var(--text-primary);
+}
+
 /* Outline Primary */
 .btn-outline-primary {
   background: transparent;
@@ -243,8 +256,9 @@ a {
 }
 
 .btn-outline-primary:hover {
-  background: var(--color-primary);
-  color: white;
+  background: transparent;
+  color: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
 }
 
 /* Search Bar */
@@ -425,6 +439,41 @@ a {
   .sidebar-overlay {
       z-index: 1150; /* Between header and sidebar */
   }
+}
+
+/* React Select Global Overrides */
+.react-select-container {
+  font-size: 0.95rem;
+}
+.react-select__control {
+  min-height: 42px;
+  border-radius: var(--radius-md);
+  border-color: var(--border-color);
+  background: var(--bg-secondary);
+  box-shadow: none;
+}
+.react-select__control:hover {
+  border-color: var(--color-primary);
+}
+.react-select__control--is-focused {
+  border-color: var(--color-primary);
+  box-shadow: none;
+  background: var(--bg-secondary);
+}
+.react-select__menu {
+  z-index: 100;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  background: var(--bg-primary);
+}
+.react-select__option--is-focused {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+}
+.react-select__option--is-selected {
+  background-color: var(--color-primary);
+  color: white;
 }
 
 /* Print Styles */

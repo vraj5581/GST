@@ -122,8 +122,8 @@
 @media (max-width: 768px) {
   .add-party-page .content-below-fixed {
     padding-top: 4.5rem;
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
-    padding-bottom: 0.5rem;
+    padding-left: 0.2rem;
+    padding-right: 0.2rem;
+    padding-bottom: 0.2rem;
   }
 }

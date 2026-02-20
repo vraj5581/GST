@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Save, ArrowLeft } from "lucide-react";
+import Select from "react-select";
 import "./AddProduct.css";
 
 function AddProduct() {
@@ -13,8 +14,7 @@ function AddProduct() {
     hsn: "",
     tax: "",
     unit: "Pcs",
-    description: "",
-    image: ""
+    description: ""
   });
 
   const [errors, setErrors] = useState({});
@@ -85,7 +85,7 @@ function AddProduct() {
     <div className="add-product-page">
       <header className="fixed-header" style={{ justifyContent: "flex-start" }}>
         <button className="btn btn-outline btn-icon" onClick={() => navigate("/products")} style={{ flexShrink: 0 }} title="Back">
-          <ArrowLeft size={20} />
+          <ArrowLeft size={18} />
         </button>
         <h3 style={{ margin: 0, border: "none" }}>{id ? "Edit Product" : "Add New Product"}</h3>
       </header>
@@ -133,72 +133,42 @@ function AddProduct() {
           
           <div className="form-group">
             <label className="form-label">Tax Rate (%)</label>
-            <select 
-              className={`form-input ${!product.tax ? 'placeholder' : ''}`}
-              name="tax" 
-              value={product.tax} 
-              onChange={handleChange}
-            >
-              <option value="">None (0%)</option>
-              <option value="5">5%</option>
-              <option value="12">12%</option>
-              <option value="18">18%</option>
-              <option value="28">28%</option>
-            </select>
+            <Select 
+              options={[
+                { value: "", label: "None (0%)" },
+                { value: "5", label: "5%" },
+                { value: "12", label: "12%" },
+                { value: "18", label: "18%" },
+                { value: "28", label: "28%" }
+              ]}
+              value={{ 
+                value: product.tax, 
+                label: product.tax ? `${product.tax}%` : "None (0%)"
+              }}
+              onChange={(selected) => setProduct({ ...product, tax: selected ? selected.value : "" })}
+              placeholder="Select Tax"
+              className="react-select-container"
+              classNamePrefix="react-select"
+            />
           </div>
 
           <div className="form-group">
             <label className="form-label">Unit</label>
-            <select 
-              className={`form-input ${product.unit === "" ? 'placeholder' : ''}`}
-              name="unit" 
-              value={product.unit} 
-              onChange={handleChange}
-            >
-              <option value="Pcs">Pcs</option>
-              <option value="Box">Box</option>
-              <option value="Kg">Kg</option>
-              <option value="Ltr">Ltr</option>
-              <option value="Mtr">Mtr</option>
-              <option value="Set">Set</option>
-            </select>
+            <Select 
+              options={[
+                { value: "Pcs", label: "Pcs" },
+                { value: "Box", label: "Box" },
+                { value: "Kg", label: "Kg" },
+                { value: "Ltr", label: "Ltr" },
+                { value: "Mtr", label: "Mtr" },
+                { value: "Set", label: "Set" }
+              ]}
+              value={product.unit ? { value: product.unit, label: product.unit } : null}
+              onChange={(selected) => setProduct({ ...product, unit: selected ? selected.value : "Pcs" })}
+              className="react-select-container"
+              classNamePrefix="react-select"
+            />
           </div>
-        </div>
-        
-        <div className="form-group add-product-spacing">
-          <label className="form-label">Product Image</label>
-          <input 
-            type="file" 
-            accept="image/*"
-            className="form-input" 
-            onChange={(e) => {
-               const file = e.target.files[0];
-               if (file) {
-                 // Removed size limit check as requested
-                 const reader = new FileReader();
-                 reader.onloadend = () => {
-                   setProduct({ ...product, image: reader.result });
-                 };
-                 reader.readAsDataURL(file);
-               }
-            }}
-          />
-          {product.image && (
-            <div style={{ marginTop: '0.5rem' }}>
-              <img 
-                src={product.image} 
-                alt="Preview" 
-                style={{ width: '100px', height: '100px', objectFit: 'cover', borderRadius: '4px', border: '1px solid #ddd' }} 
-              />
-              <button 
-                type="button" 
-                onClick={() => setProduct({...product, image: ""})}
-                style={{ display: 'block', marginTop: '4px', color: 'red', border: 'none', background: 'none', cursor: 'pointer', fontSize: '0.8rem' }}
-              >
-                Remove Image
-              </button>
-            </div>
-          )}
         </div>
 
         <div className="form-group add-product-spacing">
@@ -214,8 +184,8 @@ function AddProduct() {
         </div>
         
         <div style={{ display: "flex", gap: "1rem", marginTop: "2rem" }}>
-          <button type="submit" className="btn btn-primary btn-mobile-flex">
-            <Save size={18} /> {id ? "Update" : "Save"}
+          <button type="submit" className="btn btn-outline-primary btn-mobile-flex">
+            {id ? "Update" : "Save"}
           </button>
           <button type="button" className="btn btn-outline-danger btn-mobile-flex" onClick={() => navigate("/products")}>
             Cancel

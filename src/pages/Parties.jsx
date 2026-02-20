@@ -54,7 +54,7 @@ function Parties() {
           />
         </div>
         
-        <Link to="/add-party" className="btn btn-primary btn-icon" style={{ flexShrink: 0 }} title="Add Party">
+        <Link to="/add-party" className="btn btn-outline-primary btn-icon" style={{ flexShrink: 0 }} title="Add Party">
           <Plus size={18} />
         </Link>
       </div>
