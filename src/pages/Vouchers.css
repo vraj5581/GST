@@ -1,6 +1,6 @@
 /* CSS for Vouchers Page */
 
-.vouchers-page .grid { display: grid; gap: 1rem; }
+.vouchers-page .grid { display: grid; gap: 0.7rem; }
 .vouchers-page .grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
 
 .vouchers-page .voucher-card {
@@ -24,7 +24,7 @@
   display: flex;
   justify-content: space-between;
   align-items: start;
-  margin-bottom: 0.1rem;
+  margin-bottom: 0.5rem;
 }
 
 .vouchers-page .voucher-card-title {

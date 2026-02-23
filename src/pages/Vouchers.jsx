@@ -50,7 +50,7 @@ function Vouchers() {
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
-        <Link to="/add-voucher" className="btn btn-outline-primary btn-icon" style={{ flexShrink: 0, marginLeft: "1rem" }} title="Create Voucher">
+        <Link to="/add-voucher" className="btn btn-outline-primary btn-icon" style={{ flexShrink: 0, marginLeft: "0rem" }} title="Create Voucher">
           <Plus size={18} />
         </Link>
       </div>
