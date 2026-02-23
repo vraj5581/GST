@@ -25,17 +25,18 @@ function Products() {
     navigate(`/edit-product/${index}`);
   };
 
-  const filtered = products.map((product, index) => ({ ...product, originalIndex: index }))
-    .filter(p =>
-      Object.values(p).some(val =>
-        String(val).toLowerCase().includes(search.toLowerCase())
-      )
+  const filtered = products
+    .map((product, index) => ({ ...product, originalIndex: index }))
+    .filter((p) =>
+      Object.values(p).some((val) =>
+        String(val).toLowerCase().includes(search.toLowerCase()),
+      ),
     );
 
   return (
     <div className="products-page">
       <div className="fixed-header root-page-header">
-        <div className="search-bar w-full-search" style={{ flex: 1, marginBottom: 0 }}>
+        <div className="search-bar w-full-search products-search-wrap">
           <Search className="search-icon" size={18} />
           <input
             className="form-input"
@@ -45,7 +46,11 @@ function Products() {
           />
         </div>
 
-        <Link to="/add-product" className="btn btn-outline-primary btn-icon" style={{ flexShrink: 0 }} title="Add Product">
+        <Link
+          to="/add-product"
+          className="btn btn-outline-primary btn-icon products-add-btn"
+          title="Add Product"
+        >
           <Plus size={18} />
         </Link>
       </div>
@@ -66,14 +71,20 @@ function Products() {
                   <div className="product-actions">
                     <button
                       className="btn btn-action-edit"
-                      onClick={(e) => { e.stopPropagation(); handleEdit(p.originalIndex); }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleEdit(p.originalIndex);
+                      }}
                       title="Edit"
                     >
                       <Edit size={16} />
                     </button>
                     <button
                       className="btn btn-action-delete"
-                      onClick={(e) => { e.stopPropagation(); handleDelete(p.originalIndex); }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(p.originalIndex);
+                      }}
                       title="Delete"
                     >
                       <Trash2 size={16} />
@@ -82,15 +93,22 @@ function Products() {
                 </div>
 
                 <div className="product-details">
-                  <p><strong>Price:</strong> ₹{p.price}/{p.unit}</p>
-                  <p><strong>HSN:</strong> {p.hsn || "N/A"}</p>
-                  <p><strong>Tax:</strong> {p.tax ? `${p.tax}%` : "None"}</p>
-                  {p.description && <p style={{ fontStyle: "italic" }}>{p.description}</p>}
+                  <p>
+                    <strong>Price:</strong> ₹{p.price}/{p.unit}
+                  </p>
+                  <p>
+                    <strong>HSN:</strong> {p.hsn || "N/A"}
+                  </p>
+                  {p.description && (
+                    <p className="product-description-italic">
+                      {p.description}
+                    </p>
+                  )}
                 </div>
               </div>
             ))
           ) : (
-            <div style={{ gridColumn: "1 / -1", textAlign: "center", padding: "2rem", color: "var(--text-secondary)" }}>
+            <div className="no-products-message">
               No products found, add one to get started!
             </div>
           )}

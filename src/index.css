@@ -410,7 +410,7 @@ a {
   
   /* Add extra left padding on root pages to accomodate the hamburger menu */
   .fixed-header.root-page-header {
-    padding-left: 3rem; /* 1rem space + 2.5rem button + 0.5rem gap */
+    padding-left: 3.3rem; /* 1rem space + 2.5rem button + 0.5rem gap */
   }
 
   /* content-below-fixed mobile styles - moved to page CSS */

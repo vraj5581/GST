@@ -1,0 +1,395 @@
+/* CSS for Voucher Print Preview Page */
+
+.print-page-header {
+  justify-content: flex-start;
+}
+.print-back-btn {
+  flex-shrink: 0;
+}
+.print-title-text {
+  margin: 0;
+  border: none;
+}
+.print-btn-right {
+  margin-left: auto;
+}
+
+/* Document Header Sections */
+.print-doc-header {
+  text-align: center;
+  border-bottom: 2px solid #000;
+  padding-bottom: 1.5rem;
+  margin-bottom: 2.4rem;
+}
+.print-company-name {
+  font-size: 2.8rem;
+  font-weight: 900;
+  margin: 0 0 0.2rem 0;
+  color: #000;
+  letter-spacing: 1px;
+}
+.print-company-details {
+  font-size: 0.95rem;
+  color: #333;
+  line-height: 1.4;
+}
+.print-company-details p {
+  margin: 0;
+}
+.print-invoice-title-wrapper {
+  margin-top: 1.5rem;
+}
+.print-invoice-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0;
+  text-decoration: underline;
+}
+
+/* Bill To & Date Row */
+.print-bill-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+}
+.print-bill-to-col {
+  flex: 1;
+}
+.print-bill-to-heading {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+.print-party-name {
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+.print-party-details {
+  line-height: 1.4;
+  margin-top: 4px;
+}
+.print-meta-col {
+  text-align: right;
+  flex: 1;
+}
+
+/* Table styling extracted from inline */
+.print-table-wrapper {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 2rem;
+}
+.print-thead-row {
+  background: #f0f0f0;
+  border-bottom: 1px solid #ddd;
+}
+.print-th-left {
+  padding: 0.75rem;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+.print-th-center {
+  padding: 0.75rem;
+  text-align: center;
+  border: 1px solid #ddd;
+}
+.print-th-right {
+  padding: 0.75rem;
+  text-align: right;
+  border: 1px solid #ddd;
+}
+.print-td-default {
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+}
+.print-td-center {
+  padding: 0.75rem;
+  text-align: center;
+  border: 1px solid #ddd;
+}
+.print-td-right {
+  padding: 0.75rem;
+  text-align: right;
+  border: 1px solid #ddd;
+}
+.print-td-right-bold {
+  padding: 0.75rem;
+  text-align: right;
+  border: 1px solid #ddd;
+  font-weight: bold;
+}
+.print-hsn-helper {
+  font-size: 0.8rem;
+  color: #666;
+}
+.print-tfoot-row {
+  background: #f0f0f0;
+}
+.print-tfoot-label {
+  padding: 1rem;
+  text-align: right;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border-top: 1px solid #ddd;
+}
+.print-tfoot-value {
+  padding: 1rem;
+  text-align: right;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border-top: 1px solid #ddd;
+}
+
+/* Notes & Footer */
+.print-notes-container {
+  margin-top: 2rem;
+  padding: 1rem;
+  background: #f9f9f9;
+  border-left: 4px solid #333;
+}
+.print-notes-heading {
+  margin: 0 0 0.5rem 0;
+}
+.print-notes-body {
+  margin: 0;
+  white-space: pre-wrap;
+}
+.print-signatory-wrapper {
+  margin-top: 4rem;
+  text-align: right;
+}
+.print-signatory-line {
+  border-top: 1px solid #000;
+  display: inline-block;
+  padding: 0.5rem 2rem 0 2rem;
+}
+
+/* Base Layout */
+.print-container .content-below-fixed {
+  padding-top: 6rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  padding-bottom: 2rem;
+}
+
+.invoice-preview-card {
+  background: white;
+  padding: 2rem;
+  max-width: 100%;
+  width: 210mm;
+  min-height: 297mm;
+  margin: 0 auto;
+  box-shadow: var(--shadow-md);
+  color: #000;
+  box-sizing: border-box;
+}
+
+/* Print Only Styles */
+@media print {
+  @page {
+    margin: 10mm;
+  }
+  body {
+    background: white;
+  }
+  .print-container .content-below-fixed {
+    padding: 0 !important;
+  }
+  .invoice-preview-card {
+    width: 100% !important;
+    min-height: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  /* Fix extra blank pages by removing minimum 100vh height during print */
+  html,
+  body,
+  #root,
+  .app-container,
+  .main-content {
+    min-height: 0 !important;
+    height: auto !important;
+  }
+
+  /* Force standard desktop layout during mobile prints to prevent multi-page flowing */
+  .invoice-header-row {
+    flex-direction: row !important;
+    gap: 0 !important;
+  }
+  .invoice-header-row > div {
+    text-align: left !important;
+  }
+  .invoice-header-row > div:last-child {
+    text-align: right !important;
+  }
+
+  .invoice-table-container {
+    overflow: visible !important;
+  }
+  .invoice-table {
+    display: table !important;
+    width: 100% !important;
+  }
+  .invoice-table thead {
+    display: table-header-group !important;
+  }
+  .invoice-table tbody {
+    display: table-row-group !important;
+  }
+  .invoice-table tfoot {
+    display: table-row-group !important;
+  }
+
+  .invoice-table tr,
+  .invoice-table tbody tr,
+  .invoice-table tfoot tr {
+    display: table-row !important;
+    margin: 0 !important;
+  }
+  .invoice-table th,
+  .invoice-table td,
+  .invoice-table tbody td {
+    display: table-cell !important;
+  }
+
+  /* Restore table border and padding for mobile print */
+  .invoice-table tbody td {
+    border: 1px solid #ddd !important;
+    padding: 0.75rem !important;
+    text-align: left !important;
+  }
+  .invoice-table tbody td[data-label="Price"],
+  .invoice-table tbody td[data-label="Total"] {
+    text-align: right !important;
+  }
+  .invoice-table tbody td[data-label="Qty"] {
+    text-align: center !important;
+  }
+  .invoice-table tbody td::before {
+    display: none !important;
+  }
+
+  .invoice-table tfoot td {
+    border: none !important;
+    padding: 0.75rem !important;
+    width: auto !important;
+  }
+  .invoice-table tfoot tr:first-child td {
+    border-top: 1px solid #ddd !important;
+  }
+}
+
+/* Screen Only Responsive Styles */
+@media screen and (max-width: 768px) {
+  .print-container .content-below-fixed {
+    padding-top: 5rem;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    padding-bottom: 2rem;
+  }
+
+  .invoice-preview-card {
+    padding: 1.5rem 1rem !important;
+    width: 100% !important;
+    min-height: auto !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05) !important;
+    border-radius: 8px;
+  }
+
+  /* Scale down headers heavily to fit narrow screens */
+  .print-company-name {
+    font-size: 1.4rem;
+  }
+  .print-company-details {
+    font-size: 0.65rem;
+  }
+  .print-invoice-title {
+    font-size: 1rem;
+    margin-top: 1rem;
+  }
+
+  .print-doc-header {
+    padding-bottom: 1rem;
+    margin-bottom: 1.2rem;
+  }
+
+  /* Shrink bill-to details */
+  .print-bill-to-heading {
+    font-size: 0.85rem;
+    margin-bottom: 0.25rem;
+  }
+  .print-party-name {
+    font-size: 0.85rem;
+  }
+  .print-party-details {
+    font-size: 0.65rem;
+  }
+
+  /* Align details beautifully */
+  .invoice-header-row {
+    flex-direction: column !important;
+    gap: 0.75rem;
+    margin-bottom: 1.2rem;
+  }
+  .print-meta-col {
+    text-align: left;
+    background: #f8fafc;
+    padding: 0.5rem;
+    border-radius: 6px;
+    font-size: 0.65rem;
+  }
+  .print-meta-col p {
+    margin-bottom: 0.2rem;
+  }
+
+  /* Scaled-down Table instead of slide scroll */
+  .invoice-table-container {
+    overflow: hidden;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+    margin-bottom: 1.5rem;
+  }
+
+  .print-table-wrapper {
+    width: 100%;
+    margin-bottom: 0;
+  }
+
+  .print-th-left,
+  .print-th-center,
+  .print-th-right,
+  .print-td-default,
+  .print-td-center,
+  .print-td-right {
+    padding: 0.35rem 0.25rem;
+    font-size: 0.6rem;
+    word-break: break-word; /* Ensure wrapping fits gracefully */
+  }
+
+  .print-tfoot-label,
+  .print-tfoot-value {
+    font-size: 0.75rem;
+    padding: 0.5rem 0.25rem;
+  }
+
+  .print-notes-container {
+    padding: 0.5rem;
+    font-size: 0.65rem;
+    margin-top: 1.2rem;
+  }
+  .print-notes-heading {
+    font-size: 0.75rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .print-signatory-wrapper {
+    margin-top: 2rem;
+  }
+  .print-signatory-line {
+    font-size: 0.65rem;
+    padding: 0.3rem 1rem 0 1rem;
+  }
+}

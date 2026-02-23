@@ -1,7 +1,12 @@
 /* CSS for Vouchers Page */
 
-.vouchers-page .grid { display: grid; gap: 0.7rem; }
-.vouchers-page .grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+.vouchers-page .grid {
+  display: grid;
+  gap: 1rem;
+}
+.vouchers-page .grid-2 {
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
 
 .vouchers-page .voucher-card {
   border: 1px solid var(--border-color);
@@ -12,7 +17,9 @@
   flex-direction: column;
   gap: 0.5rem;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
 }
 
 .vouchers-page .voucher-card:hover {
@@ -38,8 +45,6 @@
   display: flex;
 }
 
-
-
 .vouchers-page .voucher-card-details {
   font-size: 0.9rem;
   color: var(--text-secondary);
@@ -63,4 +68,30 @@
     padding-right: 0.2rem;
     padding-bottom: 0.2rem;
   }
+}
+
+/* Extracted inline overrides */
+.vouchers-page .vouchers-search-wrap {
+  flex: 1;
+  margin-bottom: 0;
+}
+.vouchers-page .vouchers-add-btn {
+  flex-shrink: 0;
+  margin-left: 0rem;
+}
+.vouchers-page .voucher-card-title-cutoff {
+  max-width: 65%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.vouchers-page .voucher-total-highlight {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+.vouchers-page .no-vouchers-message {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-secondary);
 }

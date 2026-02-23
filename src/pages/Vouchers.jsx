@@ -19,9 +19,11 @@ function Vouchers() {
       const allVouchers = JSON.parse(localStorage.getItem("vouchers")) || [];
       const updated = allVouchers.filter((_, i) => i !== index);
       localStorage.setItem("vouchers", JSON.stringify(updated));
-      
+
       // Update local state
-      setVouchers(updated.map((v, i) => ({ ...v, originalIndex: i })).reverse());
+      setVouchers(
+        updated.map((v, i) => ({ ...v, originalIndex: i })).reverse(),
+      );
     }
   };
 
@@ -29,9 +31,9 @@ function Vouchers() {
     return items.reduce((sum, item) => sum + (item.amount || 0), 0);
   };
 
-  const filtered = vouchers.filter(v => {
+  const filtered = vouchers.filter((v) => {
     const searchLower = search.toLowerCase();
-    const invNo = String(v.id || (Number(v.originalIndex) + 1)).padStart(4, '0');
+    const invNo = String(v.id || Number(v.originalIndex) + 1).padStart(4, "0");
     return (
       (v.partyId && v.partyId.toLowerCase().includes(searchLower)) ||
       invNo.includes(searchLower)
@@ -41,7 +43,7 @@ function Vouchers() {
   return (
     <div className="vouchers-page">
       <div className="fixed-header root-page-header">
-        <div className="search-bar w-full-search" style={{ flex: 1, marginBottom: 0 }}>
+        <div className="search-bar w-full-search vouchers-search-wrap">
           <Search className="search-icon" size={18} />
           <input
             className="form-input"
@@ -50,7 +52,11 @@ function Vouchers() {
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
-        <Link to="/add-voucher" className="btn btn-outline-primary btn-icon" style={{ flexShrink: 0, marginLeft: "0rem" }} title="Create Voucher">
+        <Link
+          to="/add-voucher"
+          className="btn btn-outline-primary btn-icon vouchers-add-btn"
+          title="Create Voucher"
+        >
           <Plus size={18} />
         </Link>
       </div>
@@ -59,31 +65,42 @@ function Vouchers() {
         <div className="grid grid-2">
           {filtered.length > 0 ? (
             filtered.map((v) => (
-              <div 
+              <div
                 key={v.originalIndex}
                 className="voucher-card"
                 onClick={() => navigate(`/voucher-print/${v.originalIndex}`)}
               >
                 <div className="voucher-card-header">
-                  <h4 className="voucher-card-title" style={{ maxWidth: '65%', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{v.partyId}</h4>
+                  <h4 className="voucher-card-title voucher-card-title-cutoff">
+                    {v.partyId}
+                  </h4>
                   <div className="voucher-card-actions">
-                    <button 
-                      className="btn btn-action-print" 
-                      onClick={(e) => { e.stopPropagation(); navigate(`/voucher-print/${v.originalIndex}`); }} 
+                    <button
+                      className="btn btn-action-print"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/voucher-print/${v.originalIndex}`);
+                      }}
                       title="Print / View"
                     >
                       <Printer size={16} />
                     </button>
-                    <button 
-                      className="btn btn-action-edit" 
-                      onClick={(e) => { e.stopPropagation(); navigate(`/add-voucher/${v.originalIndex}`); }}
+                    <button
+                      className="btn btn-action-edit"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/add-voucher/${v.originalIndex}`);
+                      }}
                       title="Edit"
                     >
                       <Edit size={16} />
                     </button>
-                    <button 
+                    <button
                       className="btn btn-action-delete"
-                      onClick={(e) => { e.stopPropagation(); handleDelete(v.originalIndex); }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(v.originalIndex);
+                      }}
                       title="Delete"
                     >
                       <Trash2 size={16} />
@@ -92,17 +109,31 @@ function Vouchers() {
                 </div>
 
                 <div className="voucher-card-details">
-                  <p><strong>Invoice No:</strong> #INV-{String(v.id || (Number(v.originalIndex) + 1)).padStart(4, '0')}</p>
-                  <p><strong>Date:</strong> {new Date(v.date).toLocaleDateString()}</p>
-                  <p><strong>Items:</strong> {v.items.length}</p>
-                  <p><strong>Total:</strong> <span style={{ color: "var(--color-primary)", fontWeight: "600" }}>₹{calculateTotal(v.items).toFixed(2)}</span></p>
+                  <p>
+                    <strong>Invoice No:</strong> #INV-
+                    {String(v.id || Number(v.originalIndex) + 1).padStart(
+                      4,
+                      "0",
+                    )}
+                  </p>
+                  <p>
+                    <strong>Date:</strong>{" "}
+                    {new Date(v.date).toLocaleDateString()}
+                  </p>
+                  <p>
+                    <strong>Items:</strong> {v.items.length}
+                  </p>
+                  <p>
+                    <strong>Total:</strong>{" "}
+                    <span className="voucher-total-highlight">
+                      ₹{calculateTotal(v.items).toFixed(2)}
+                    </span>
+                  </p>
                 </div>
               </div>
             ))
           ) : (
-             <div style={{ gridColumn: "1 / -1", textAlign: "center", padding: "2rem", color: "var(--text-secondary)" }}>
-               No vouchers found.
-             </div>
+            <div className="no-vouchers-message">No vouchers found.</div>
           )}
         </div>
       </div>

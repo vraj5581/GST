@@ -1,8 +1,6 @@
 /* CSS for Parties Page */
 
-
 /* Page Header Override */
-
 
 .parties-search-container {
   flex: 1;
@@ -23,7 +21,9 @@
   flex-direction: column;
   gap: 0.5rem;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
 }
 
 .party-card:hover {
@@ -72,6 +72,8 @@
 
 .party-card-details p {
   margin: 4px 0;
+  word-break: break-all;
+  overflow-wrap: anywhere;
 }
 
 .no-parties-message {
@@ -96,17 +98,21 @@
   margin-bottom: 0.5rem;
 }
 
-.form-input, .form-textarea {
+.form-input,
+.form-textarea {
   width: 100%;
   padding: 0.625rem 0.875rem;
   border-radius: var(--radius-md);
   border: 1px solid var(--border-color);
   background: var(--bg-secondary);
   font-size: 0.95rem;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
 }
 
-.form-input:focus, .form-textarea:focus {
+.form-input:focus,
+.form-textarea:focus {
   outline: none;
   border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
@@ -118,10 +124,21 @@
 }
 
 /* Utilities */
-.w-full { width: 100%; }
-.grid { display: grid; gap: 1rem; }
-.grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
-@media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr !important; } }
+.w-full {
+  width: 100%;
+}
+.grid {
+  display: grid;
+  gap: 1rem;
+}
+.grid-2 {
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+@media (max-width: 768px) {
+  .grid-2 {
+    grid-template-columns: 1fr !important;
+  }
+}
 
 /* Table */
 .table-container {
@@ -177,4 +194,54 @@ tr:hover td {
     padding-right: 0.2rem;
     padding-bottom: 0.2rem;
   }
+}
+
+/* --- Party Details Extraction --- */
+.parties-page .party-details-header {
+  justify-content: flex-start;
+}
+.parties-page .party-details-back-btn {
+  flex-shrink: 0;
+}
+.parties-page .party-details-title {
+  margin: 0;
+  border: none;
+}
+.parties-page .party-details-wrapper {
+  padding: 1rem;
+}
+.parties-page .party-details-name {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: var(--color-primary);
+}
+.parties-page .party-details-grid {
+  gap: 2rem;
+}
+.parties-page .party-details-label {
+  margin-bottom: 0.25rem;
+}
+.parties-page .party-details-value {
+  font-size: 1.1rem;
+}
+.parties-page .party-details-value-break {
+  font-size: 1.1rem;
+  word-break: break-all;
+  overflow-wrap: anywhere;
+}
+.parties-page .party-details-address-col {
+  grid-column: 1 / -1;
+}
+.parties-page .party-details-address-value {
+  font-size: 1.1rem;
+  white-space: pre-wrap;
+  word-break: break-all;
+  overflow-wrap: anywhere;
+}
+.parties-page .party-details-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 3rem;
+  border-top: 1px solid var(--border-color);
+  padding-top: 1.5rem;
 }

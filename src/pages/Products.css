@@ -2,66 +2,75 @@
 
 /* Card Styles */
 .products-page .product-card {
-    border: 1px solid var(--border-color);
-    padding: 0.5rem;
-    border-radius: var(--radius-md);
-    background: #ffffff;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
+  border: 1px solid var(--border-color);
+  padding: 0.5rem;
+  border-radius: var(--radius-md);
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
 }
 
 .products-page .product-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .products-page .product-image {
-    width: 50px; 
-    height: 50px; 
-    border-radius: var(--radius-md); 
-    object-fit: cover; 
-    border: 1px solid var(--border-color);
+  width: 50px;
+  height: 50px;
+  border-radius: var(--radius-md);
+  object-fit: cover;
+  border: 1px solid var(--border-color);
 }
 
 .products-page .product-header {
-    display: flex; 
-    justify-content: space-between; 
-    align-items: start; 
-    margin-bottom: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  margin-bottom: 0.5rem;
 }
 
 .products-page .product-title-group {
-    display: flex; 
-    align-items: center; 
-    gap: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
 
 .products-page .product-title {
-    font-size: 1.1rem; 
-    font-weight: 600; 
-    color: var(--text-primary); 
-    margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
 }
 
 .products-page .product-actions {
-    display: flex; 
-    /* gap: 0.5rem; */
+  display: flex;
+  /* gap: 0.5rem; */
 }
 
 .products-page .product-details {
-    font-size: 0.9rem; 
-    color: var(--text-secondary);
+  font-size: 0.9rem;
+  color: var(--text-secondary);
 }
 
 .products-page .product-details p {
-    margin: 4px 0;
+  margin: 4px 0;
+  word-break: break-all;
+  overflow-wrap: anywhere;
 }
 
-.products-page .grid { display: grid; gap: 1rem; }
-.products-page .grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+.products-page .grid {
+  display: grid;
+  gap: 1rem;
+}
+.products-page .grid-2 {
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
 
 .products-page .content-below-fixed {
   padding-top: 6rem;
@@ -77,4 +86,22 @@
     padding-right: 0.2rem;
     padding-bottom: 0.2rem;
   }
+}
+
+/* Utilities extracted from inline styles */
+.products-page .products-search-wrap {
+  flex: 1;
+  margin-bottom: 0;
+}
+.products-page .products-add-btn {
+  flex-shrink: 0;
+}
+.products-page .product-description-italic {
+  font-style: italic;
+}
+.products-page .no-products-message {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-secondary);
 }
