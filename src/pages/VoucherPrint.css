@@ -187,10 +187,14 @@
 /* Print Only Styles */
 @media print {
   @page {
-    margin: 10mm;
+    /* Setting margin to 0 prevents the browser from printing default headers (date/title) and footers (URL/page numbers) */
+    margin: 0;
   }
   body {
     background: white;
+    /* Since we removed the page margin, we add padding to the body so content doesn't hit the physical paper edge */
+    padding: 10mm 15mm !important; 
+    box-sizing: border-box;
   }
   .print-container .content-below-fixed {
     padding: 0 !important;
