@@ -60,7 +60,7 @@
     margin: 4px 0;
 }
 
-.products-page .grid { display: grid; gap: 0.7rem; }
+.products-page .grid { display: grid; gap: 1rem; }
 .products-page .grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
 
 .products-page .content-below-fixed {
