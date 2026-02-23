@@ -2,6 +2,15 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Save, Plus, Trash2, Printer, Calendar } from "lucide-react";
 import Select from "react-select";
+import {
+  collection,
+  getDocs,
+  addDoc,
+  updateDoc,
+  doc,
+  getDoc,
+} from "firebase/firestore";
+import { db } from "../firebase";
 import "./AddVoucher.css";
 
 function AddVoucher() {
@@ -22,15 +31,29 @@ function AddVoucher() {
 
   // Load parties and products for dropdowns
   useEffect(() => {
-    setParties(JSON.parse(localStorage.getItem("parties")) || []);
-    setProducts(JSON.parse(localStorage.getItem("products")) || []);
+    const fetchData = async () => {
+      try {
+        const partiesSnap = await getDocs(collection(db, "parties"));
+        setParties(
+          partiesSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() })),
+        );
 
-    if (id) {
-      const savedVouchers = JSON.parse(localStorage.getItem("vouchers")) || [];
-      if (savedVouchers[id]) {
-        setVoucher(savedVouchers[id]);
+        const productsSnap = await getDocs(collection(db, "products"));
+        setProducts(
+          productsSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() })),
+        );
+
+        if (id) {
+          const voucherSnap = await getDoc(doc(db, "vouchers", id));
+          if (voucherSnap.exists()) {
+            setVoucher(voucherSnap.data());
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
       }
-    }
+    };
+    fetchData();
   }, [id]);
 
   const handleProductSelect = (selectedOptions) => {
@@ -93,7 +116,7 @@ function AddVoucher() {
 
   const totals = calculateTotals();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Clean up any stray empty items before saving
@@ -106,14 +129,19 @@ function AddVoucher() {
 
     const finalVoucher = { ...voucher, items: cleanedItems };
 
-    let vouchers = JSON.parse(localStorage.getItem("vouchers")) || [];
-    if (id) {
-      vouchers[id] = finalVoucher;
-    } else {
-      vouchers.push(finalVoucher);
+    try {
+      if (id) {
+        await updateDoc(doc(db, "vouchers", id), finalVoucher);
+      } else {
+        // Assign creation timestamp if purely new
+        finalVoucher.createdAt = Date.now();
+        await addDoc(collection(db, "vouchers"), finalVoucher);
+      }
+      navigate("/vouchers");
+    } catch (error) {
+      console.error("Error saving voucher:", error);
+      alert("Failed to save voucher. Check console for details.");
     }
-    localStorage.setItem("vouchers", JSON.stringify(vouchers));
-    navigate("/vouchers");
   };
 
   return (

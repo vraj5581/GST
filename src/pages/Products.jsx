@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { Search, Edit, Trash2, Plus } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
+import { db } from "../firebase";
 import "./Products.css";
 
 function Products() {
@@ -9,29 +11,41 @@ function Products() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem("products")) || [];
-    setProducts(data);
+    const fetchProducts = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "products"));
+        const data = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setProducts(data);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+    fetchProducts();
   }, []);
 
-  const handleDelete = (index) => {
+  const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
-      const updated = products.filter((_, i) => i !== index);
-      localStorage.setItem("products", JSON.stringify(updated));
-      setProducts(updated);
+      try {
+        await deleteDoc(doc(db, "products", id));
+        setProducts(products.filter((p) => p.id !== id));
+      } catch (error) {
+        console.error("Error deleting product:", error);
+      }
     }
   };
 
-  const handleEdit = (index) => {
-    navigate(`/edit-product/${index}`);
+  const handleEdit = (id) => {
+    navigate(`/edit-product/${id}`);
   };
 
-  const filtered = products
-    .map((product, index) => ({ ...product, originalIndex: index }))
-    .filter((p) =>
-      Object.values(p).some((val) =>
-        String(val).toLowerCase().includes(search.toLowerCase()),
-      ),
-    );
+  const filtered = products.filter((p) =>
+    Object.values(p).some((val) =>
+      String(val).toLowerCase().includes(search.toLowerCase()),
+    ),
+  );
 
   return (
     <div className="products-page">
@@ -60,9 +74,9 @@ function Products() {
           {filtered.length > 0 ? (
             filtered.map((p) => (
               <div
-                key={p.originalIndex}
+                key={p.id}
                 className="product-card"
-                onClick={() => navigate(`/product/${p.originalIndex}`)}
+                onClick={() => navigate(`/product/${p.id}`)}
               >
                 <div className="product-header">
                   <div className="product-title-group">
@@ -73,7 +87,7 @@ function Products() {
                       className="btn btn-action-edit"
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleEdit(p.originalIndex);
+                        handleEdit(p.id);
                       }}
                       title="Edit"
                     >
@@ -83,7 +97,7 @@ function Products() {
                       className="btn btn-action-delete"
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleDelete(p.originalIndex);
+                        handleDelete(p.id);
                       }}
                       title="Delete"
                     >

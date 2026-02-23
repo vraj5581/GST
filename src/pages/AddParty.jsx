@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Save, ArrowLeft } from "lucide-react";
+import { collection, addDoc, doc, getDoc, updateDoc } from "firebase/firestore";
+import { db } from "../firebase";
 import "./AddParty.css";
 
 function AddParty() {
@@ -19,13 +21,18 @@ function AddParty() {
 
   useEffect(() => {
     if (id) {
-      const parties =
-        JSON.parse(localStorage.getItem("parties")) ||
-        JSON.parse(localStorage.getItem("clients")) ||
-        [];
-      if (parties[id]) {
-        setParty(parties[id]);
-      }
+      const fetchParty = async () => {
+        try {
+          const docRef = doc(db, "parties", id);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            setParty(docSnap.data());
+          }
+        } catch (error) {
+          console.error("Error fetching party:", error);
+        }
+      };
+      fetchParty();
     }
   }, [id]);
 
@@ -84,29 +91,27 @@ function AddParty() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!validate()) {
       return;
     }
 
-    // Prefer 'parties', fallback to creating new if needed
-    let parties = JSON.parse(localStorage.getItem("parties"));
-
-    // If no 'parties' yet, try to migrate 'clients'
-    if (!parties) {
-      parties = JSON.parse(localStorage.getItem("clients")) || [];
+    try {
+      if (id) {
+        // Update existing
+        const docRef = doc(db, "parties", id);
+        await updateDoc(docRef, party);
+      } else {
+        // Create new
+        await addDoc(collection(db, "parties"), party);
+      }
+      navigate("/");
+    } catch (error) {
+      console.error("Error saving party:", error);
+      alert("Failed to save party. Check console for details.");
     }
-
-    if (id) {
-      parties[id] = party;
-    } else {
-      parties.push(party);
-    }
-
-    localStorage.setItem("parties", JSON.stringify(parties));
-    navigate("/");
   };
 
   return (

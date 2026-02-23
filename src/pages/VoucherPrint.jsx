@@ -1,6 +1,15 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Printer, ArrowLeft } from "lucide-react";
+import {
+  collection,
+  getDocs,
+  doc,
+  getDoc,
+  query,
+  where,
+} from "firebase/firestore";
+import { db } from "../firebase";
 import "./VoucherPrint.css";
 
 function VoucherPrint() {
@@ -11,15 +20,40 @@ function VoucherPrint() {
   const [party, setParty] = useState(null);
 
   useEffect(() => {
-    const vouchers = JSON.parse(localStorage.getItem("vouchers")) || [];
-    if (vouchers[id]) {
-      setVoucher(vouchers[id]);
+    const fetchVoucherData = async () => {
+      try {
+        const voucherRef = doc(db, "vouchers", id);
+        const voucherSnap = await getDoc(voucherRef);
 
-      const parties = JSON.parse(localStorage.getItem("parties")) || [];
-      const partyData = parties.find((p) => p.name === vouchers[id].partyId);
-      setParty(partyData || { name: vouchers[id].partyId });
+        if (voucherSnap.exists()) {
+          const vData = voucherSnap.data();
+          setVoucher({ id: voucherSnap.id, ...vData });
+
+          // Fetch the associated party using query
+          const q = query(
+            collection(db, "parties"),
+            where("name", "==", vData.partyId),
+          );
+          const partySnap = await getDocs(q);
+
+          if (!partySnap.empty) {
+            setParty(partySnap.docs[0].data());
+          } else {
+            setParty({ name: vData.partyId }); // Fallback if party deleted
+          }
+        } else {
+          console.error("No such voucher!");
+          navigate("/vouchers");
+        }
+      } catch (error) {
+        console.error("Error fetching voucher for print:", error);
+      }
+    };
+
+    if (id) {
+      fetchVoucherData();
     }
-  }, [id]);
+  }, [id, navigate]);
 
   const handlePrint = () => {
     window.print();
@@ -94,7 +128,7 @@ function VoucherPrint() {
               </p>
               <p>
                 <strong>Invoice No:</strong> #INV-
-                {String(Number(id) + 1).padStart(4, "0")}
+                {String(voucher.id).substring(0, 5).toUpperCase()}
               </p>
             </div>
           </div>

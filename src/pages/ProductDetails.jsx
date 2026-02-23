@@ -1,6 +1,8 @@
 import { useRef, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, Edit, Trash2 } from "lucide-react";
+import { doc, getDoc, deleteDoc } from "firebase/firestore";
+import { db } from "../firebase";
 import "./ProductDetails.css";
 
 function ProductDetails() {
@@ -9,18 +11,33 @@ function ProductDetails() {
   const [product, setProduct] = useState(null);
 
   useEffect(() => {
-    const products = JSON.parse(localStorage.getItem("products")) || [];
-    if (products[id]) {
-      setProduct(products[id]);
+    const fetchProduct = async () => {
+      try {
+        const docRef = doc(db, "products", id);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setProduct(docSnap.data());
+        } else {
+          console.log("No such product!");
+          navigate("/products");
+        }
+      } catch (error) {
+        console.error("Error fetching product:", error);
+      }
+    };
+    if (id) {
+      fetchProduct();
     }
-  }, [id]);
+  }, [id, navigate]);
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (window.confirm("Are you sure you want to delete this product?")) {
-      const products = JSON.parse(localStorage.getItem("products")) || [];
-      const updated = products.filter((_, i) => i !== Number(id));
-      localStorage.setItem("products", JSON.stringify(updated));
-      navigate("/products");
+      try {
+        await deleteDoc(doc(db, "products", id));
+        navigate("/products");
+      } catch (error) {
+        console.error("Error deleting product:", error);
+      }
     }
   };
 

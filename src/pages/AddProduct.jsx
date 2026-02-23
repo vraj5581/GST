@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Save, ArrowLeft } from "lucide-react";
 import Select from "react-select";
+import { collection, addDoc, doc, getDoc, updateDoc } from "firebase/firestore";
+import { db } from "../firebase";
 import "./AddProduct.css";
 
 function AddProduct() {
@@ -20,10 +22,18 @@ function AddProduct() {
 
   useEffect(() => {
     if (id) {
-      const products = JSON.parse(localStorage.getItem("products")) || [];
-      if (products[id]) {
-        setProduct({ unit: "Pcs", ...products[id] });
-      }
+      const fetchProduct = async () => {
+        try {
+          const docRef = doc(db, "products", id);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            setProduct({ unit: "Pcs", ...docSnap.data() });
+          }
+        } catch (error) {
+          console.error("Error fetching product:", error);
+        }
+      };
+      fetchProduct();
     }
   }, [id]);
 
@@ -53,32 +63,26 @@ function AddProduct() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!validate()) {
       return;
     }
 
-    let products = JSON.parse(localStorage.getItem("products")) || [];
-
-    if (id) {
-      products[id] = product;
-    } else {
-      products.push(product);
-    }
-
     try {
-      localStorage.setItem("products", JSON.stringify(products));
+      if (id) {
+        // Update existing
+        const docRef = doc(db, "products", id);
+        await updateDoc(docRef, product);
+      } else {
+        // Create new
+        await addDoc(collection(db, "products"), product);
+      }
       navigate("/products");
     } catch (error) {
-      if (error.name === "QuotaExceededError" || error.code === 22) {
-        alert(
-          "Storage Full! The image is too large for local storage. Please try a smaller image.",
-        );
-      } else {
-        alert("Failed to save product: " + error.message);
-      }
+      console.error("Error saving product:", error);
+      alert("Failed to save product. Check console for details.");
     }
   };
 

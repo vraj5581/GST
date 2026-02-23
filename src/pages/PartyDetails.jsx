@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Edit, Trash2, ArrowLeft } from "lucide-react";
+import { doc, getDoc, deleteDoc } from "firebase/firestore";
+import { db } from "../firebase";
 import "./Parties.css";
 
 function PartyDetails() {
@@ -9,25 +11,33 @@ function PartyDetails() {
   const [party, setParty] = useState(null);
 
   useEffect(() => {
-    // Try 'parties' first, then 'clients'
-    const parties =
-      JSON.parse(localStorage.getItem("parties")) ||
-      JSON.parse(localStorage.getItem("clients")) ||
-      [];
-    if (parties[id]) {
-      setParty(parties[id]);
-    }
-  }, [id]);
-
-  const handleDelete = () => {
-    if (window.confirm("Are you sure you want to delete this party?")) {
-      let parties = JSON.parse(localStorage.getItem("parties"));
-      if (!parties) {
-        parties = JSON.parse(localStorage.getItem("clients")) || [];
+    const fetchParty = async () => {
+      try {
+        const docRef = doc(db, "parties", id);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setParty(docSnap.data());
+        } else {
+          console.log("No such party!");
+          navigate("/");
+        }
+      } catch (error) {
+        console.error("Error fetching party:", error);
       }
-      const updated = parties.filter((_, i) => i !== parseInt(id));
-      localStorage.setItem("parties", JSON.stringify(updated));
-      navigate("/");
+    };
+    if (id) {
+      fetchParty();
+    }
+  }, [id, navigate]);
+
+  const handleDelete = async () => {
+    if (window.confirm("Are you sure you want to delete this party?")) {
+      try {
+        await deleteDoc(doc(db, "parties", id));
+        navigate("/");
+      } catch (error) {
+        console.error("Error deleting party:", error);
+      }
     }
   };
 

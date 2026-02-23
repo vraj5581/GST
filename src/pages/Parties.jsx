@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Search, Edit, Trash2, Plus } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
+import { db } from "../firebase";
 import "./Parties.css";
 
 function Parties() {
@@ -9,38 +11,41 @@ function Parties() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Migrate old 'clients' data to 'parties' if 'parties' doesn't exist yet
-    const existingParties = localStorage.getItem("parties");
-    if (!existingParties) {
-      const oldClients = localStorage.getItem("clients");
-      if (oldClients) {
-        localStorage.setItem("parties", oldClients);
+    const fetchParties = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "parties"));
+        const data = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setParties(data);
+      } catch (error) {
+        console.error("Error fetching parties: ", error);
       }
-    }
-
-    const data = JSON.parse(localStorage.getItem("parties")) || [];
-    setParties(data);
+    };
+    fetchParties();
   }, []);
 
-  const handleDelete = (index) => {
+  const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this party?")) {
-      const updated = parties.filter((_, i) => i !== index);
-      localStorage.setItem("parties", JSON.stringify(updated));
-      setParties(updated);
+      try {
+        await deleteDoc(doc(db, "parties", id));
+        setParties(parties.filter((p) => p.id !== id));
+      } catch (error) {
+        console.error("Error deleting party: ", error);
+      }
     }
   };
 
-  const handleEdit = (index) => {
-    navigate(`/edit-party/${index}`);
+  const handleEdit = (id) => {
+    navigate(`/edit-party/${id}`);
   };
 
-  const filtered = parties
-    .map((party, index) => ({ ...party, originalIndex: index }))
-    .filter((p) =>
-      Object.values(p).some((val) =>
-        String(val).toLowerCase().includes(search.toLowerCase()),
-      ),
-    );
+  const filtered = parties.filter((p) =>
+    Object.values(p).some((val) =>
+      String(val).toLowerCase().includes(search.toLowerCase()),
+    ),
+  );
 
   return (
     <div className="parties-page">
@@ -70,8 +75,8 @@ function Parties() {
           {filtered.length > 0 ? (
             filtered.map((p) => (
               <div
-                key={p.originalIndex}
-                onClick={() => navigate(`/party/${p.originalIndex}`)}
+                key={p.id}
+                onClick={() => navigate(`/party/${p.id}`)}
                 className="party-card"
               >
                 <div className="party-card-header">
@@ -81,7 +86,7 @@ function Parties() {
                       className="btn party-card-action-btn edit-btn"
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleEdit(p.originalIndex);
+                        handleEdit(p.id);
                       }}
                       title="Edit"
                     >
@@ -91,7 +96,7 @@ function Parties() {
                       className="btn party-card-action-btn delete-btn"
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleDelete(p.originalIndex);
+                        handleDelete(p.id);
                       }}
                       title="Delete"
                     >
