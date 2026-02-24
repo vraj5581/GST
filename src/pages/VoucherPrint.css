@@ -300,7 +300,7 @@
     width: 100% !important;
     min-height: auto !important;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05) !important;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
   }
 
   /* Scale down headers heavily to fit narrow screens */
@@ -340,9 +340,9 @@
   }
   .print-meta-col {
     text-align: left;
-    background: #f8fafc;
+    background: var(--bg-primary);
     padding: 0.5rem;
-    border-radius: 6px;
+    border-radius: var(--radius-md);
     font-size: 0.65rem;
   }
   .print-meta-col p {
@@ -352,8 +352,8 @@
   /* Scaled-down Table instead of slide scroll */
   .invoice-table-container {
     overflow: hidden;
-    border-radius: 6px;
-    border: 1px solid #e2e8f0;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
     margin-bottom: 1.5rem;
   }
 

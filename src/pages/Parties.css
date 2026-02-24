@@ -16,7 +16,7 @@
   border: 1px solid var(--border-color);
   padding: 0.5rem;
   border-radius: var(--radius-md);
-  background: #ffffff;
+  background: var(--bg-secondary);
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -115,7 +115,7 @@
 .form-textarea:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
 .form-textarea {
@@ -177,7 +177,7 @@ tr:last-child td {
 }
 
 tr:hover td {
-  background: #f8fafc;
+  background: var(--bg-primary);
 }
 
 .parties-page .content-below-fixed {

@@ -210,7 +210,7 @@ function App() {
               style={{
                 width: "100%", padding: "0.75rem", background: "rgba(239, 68, 68, 0.1)", 
                 color: "#ff8f8f", border: "1px solid rgba(239, 68, 68, 0.2)", 
-                borderRadius: "8px", display: "flex", alignItems: "center", 
+                borderRadius: "var(--radius-md)", display: "flex", alignItems: "center", 
                 justifyContent: "center", gap: "0.5rem", cursor: "pointer",
                 fontWeight: "600", transition: "all 0.2s"
               }}

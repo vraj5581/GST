@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { collection, addDoc, getDocs, deleteDoc, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase';
-import { Trash2, Plus, Building, LogOut, Edit2 } from 'lucide-react';
+import { Trash2, Plus, Building, LogOut, Edit2, Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import './VendorDashboard.css';
 
@@ -18,6 +18,7 @@ const VendorDashboard = () => {
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [error, setError] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -229,6 +230,12 @@ const VendorDashboard = () => {
     navigate('/vendor');
   };
 
+  const filteredCompanies = companies.filter(company => 
+    company.companyName?.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    company.userId?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (company.phone && company.phone.includes(searchQuery))
+  );
+
   return (
     <div className="vd-dashboard-container">
       <header className="vd-header">
@@ -245,13 +252,24 @@ const VendorDashboard = () => {
       <main className="vd-main">
         {!isAdding && (
           <div className="vd-action-bar">
-            <h3>Manage Companies</h3>
+            <div className="search-bar w-full-search" style={{ marginBottom: 0, flex: 1 }}>
+              <Search className="search-icon" size={18} />
+              <input 
+                type="text" 
+                className="form-input" 
+                placeholder="Search company by Name, ID, or Phone..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                style={{ width: '100%', paddingLeft: '2.5rem' }}
+              />
+            </div>
             <button 
-              className="btn btn-primary"
-              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+              className="btn btn-outline-primary btn-icon"
+              style={{ flexShrink: 0, marginLeft: '0.2rem' }}
               onClick={() => setIsAdding(true)}
+              title="Add Company"
             >
-              <span>Add Company</span>
+              <Plus size={18} />
             </button>
           </div>
         )}
@@ -264,7 +282,7 @@ const VendorDashboard = () => {
             <form onSubmit={handleAddCompany} className="vd-form">
               <div className="vd-form-row">
                 <div className="vd-input-group">
-                  <label>Company Name <span style={{color: 'red'}}>*</span></label>
+                  <label>Company Name <span style={{color: 'var(--color-danger)'}}>*</span></label>
                   <input 
                     type="text" 
                     value={companyName}
@@ -274,7 +292,7 @@ const VendorDashboard = () => {
                   />
                 </div>
                 <div className="vd-input-group">
-                  <label>User ID <span style={{color: 'red'}}>*</span></label>
+                  <label>User ID <span style={{color: 'var(--color-danger)'}}>*</span></label>
                   <input 
                     type="text" 
                     value={userId}
@@ -284,7 +302,7 @@ const VendorDashboard = () => {
                   />
                 </div>
                 <div className="vd-input-group">
-                  <label>Password <span style={{color: 'red'}}>*</span></label>
+                  <label>Password <span style={{color: 'var(--color-danger)'}}>*</span></label>
                   <input 
                     type="text" 
                     value={password}
@@ -294,7 +312,7 @@ const VendorDashboard = () => {
                   />
                 </div>
                 <div className="vd-input-group">
-                  <label>Email <span style={{color: 'red'}}>*</span></label>
+                  <label>Email <span style={{color: 'var(--color-danger)'}}>*</span></label>
                   <input 
                     type="email" 
                     value={email}
@@ -304,7 +322,7 @@ const VendorDashboard = () => {
                   />
                 </div>
                 <div className="vd-input-group">
-                  <label>Phone No. <span style={{color: 'red'}}>*</span></label>
+                  <label>Phone No. <span style={{color: 'var(--color-danger)'}}>*</span></label>
                   <input 
                     type="tel" 
                     value={phone}
@@ -315,7 +333,7 @@ const VendorDashboard = () => {
                   />
                 </div>
                 <div className="vd-input-group">
-                  <label>GST No. <span style={{color: 'red'}}>*</span></label>
+                  <label>GST No. <span style={{color: 'var(--color-danger)'}}>*</span></label>
                   <input 
                     type="text" 
                     value={gst}
@@ -326,7 +344,7 @@ const VendorDashboard = () => {
                   />
                 </div>
                 <div className="vd-input-group" style={{ gridColumn: "1 / -1" }}>
-                  <label>Address <span style={{color: 'red'}}>*</span></label>
+                  <label>Address <span style={{color: 'var(--color-danger)'}}>*</span></label>
                   <textarea 
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
@@ -346,8 +364,8 @@ const VendorDashboard = () => {
 
         {!isAdding && (
           <div className="vd-grid">
-            {companies.length > 0 ? (
-            companies.map((company) => (
+            {filteredCompanies.length > 0 ? (
+            filteredCompanies.map((company) => (
               <div key={company.id} className="vd-card">
                 <div className="vd-card-header">
                   <div className="vd-card-title">

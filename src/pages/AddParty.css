@@ -34,7 +34,7 @@
 }
 
 .add-party-page .required-asterisk {
-  color: red;
+  color: var(--color-danger);
 }
 
 /* Shared Styles for this page - Namespaced */
@@ -67,7 +67,7 @@
 .add-party-page .form-textarea:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
 .add-party-page .form-textarea {
@@ -124,7 +124,7 @@
 }
 
 .add-party-page tr:hover td {
-  background: #f8fafc;
+  background: var(--bg-primary);
 }
 
 .add-party-page .content-below-fixed {
