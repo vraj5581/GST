@@ -77,7 +77,7 @@ function AddProduct() {
         await updateDoc(docRef, product);
       } else {
         // Create new
-        await addDoc(collection(db, "products"), product);
+        await addDoc(collection(db, "products"), { ...product, companyId: JSON.parse(localStorage.getItem('loggedCompany'))?.id });
       }
       navigate("/products");
     } catch (error) {

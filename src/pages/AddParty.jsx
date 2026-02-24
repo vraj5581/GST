@@ -104,7 +104,7 @@ function AddParty() {
         await updateDoc(docRef, party);
       } else {
         // Create new
-        await addDoc(collection(db, "parties"), party);
+        await addDoc(collection(db, "parties"), { ...party, companyId: JSON.parse(localStorage.getItem('loggedCompany'))?.id });
       }
       navigate("/");
     } catch (error) {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Search, Edit, Trash2, Plus } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
+import { collection, getDocs, deleteDoc, doc, query, where } from "firebase/firestore";
 import { db } from "../firebase";
 import "./Parties.css";
 
@@ -13,7 +13,7 @@ function Parties() {
   useEffect(() => {
     const fetchParties = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, "parties"));
+        const q = query(collection(db, "parties"), where("companyId", "==", JSON.parse(localStorage.getItem('loggedCompany'))?.id)); const querySnapshot = await getDocs(q);
         const data = querySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),

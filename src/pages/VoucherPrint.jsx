@@ -18,6 +18,7 @@ function VoucherPrint() {
 
   const [voucher, setVoucher] = useState(null);
   const [party, setParty] = useState(null);
+  const loggedCompany = JSON.parse(localStorage.getItem('loggedCompany')) || {};
 
   useEffect(() => {
     const fetchVoucherData = async () => {
@@ -87,16 +88,20 @@ function VoucherPrint() {
         <div className="invoice-preview-card">
           {/* Header */}
           <div className="print-doc-header">
-            <h1 className="print-company-name">HITNISH</h1>
+            <h1 className="print-company-name">{loggedCompany.companyName || "COMPANY NAME"}</h1>
             <div className="print-company-details">
               <p>
-                Plot No. 42, Industrial Area Phase II, Ahmedabad, Gujarat -
-                380001
+                {loggedCompany.address || "Company Address"}
               </p>
               <p>
-                <strong>Mobile:</strong> +91 98765 43210 |{" "}
-                <strong>Email:</strong> contact@hitnish.com
+                <strong>Mobile:</strong> {loggedCompany.phone || "+91 00000 00000"} |{" "}
+                <strong>Email:</strong> {loggedCompany.email || "contact@company.com"}
               </p>
+              {loggedCompany.gst && (
+                <p>
+                  <strong>GSTIN:</strong> {loggedCompany.gst}
+                </p>
+              )}
             </div>
             <div className="print-invoice-title-wrapper">
               <h2 className="print-invoice-title">INVOICE</h2>

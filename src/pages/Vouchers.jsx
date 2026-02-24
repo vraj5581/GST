@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Vouchers.css";
 import { Plus, Printer, Edit, Trash2, Search } from "lucide-react";
-import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
+import { collection, getDocs, deleteDoc, doc, query, where } from "firebase/firestore";
 import { db } from "../firebase";
 
 function Vouchers() {
@@ -13,7 +13,7 @@ function Vouchers() {
   useEffect(() => {
     const fetchVouchers = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, "vouchers"));
+        const q = query(collection(db, "vouchers"), where("companyId", "==", JSON.parse(localStorage.getItem('loggedCompany'))?.id)); const querySnapshot = await getDocs(q);
         let data = querySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),

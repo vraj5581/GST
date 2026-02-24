@@ -1,6 +1,8 @@
-import { Routes, Route, NavLink, useLocation } from "react-router-dom";
-import { Users, Package, FileText, Menu, X } from "lucide-react";
-import { useState } from "react";
+import { Routes, Route, NavLink, useLocation, Navigate } from "react-router-dom";
+import { Users, Package, FileText, Menu, X, LogOut, CheckCircle } from "lucide-react";
+import { useState, useEffect } from "react";
+import { doc, onSnapshot, collection, getDocs, updateDoc } from "firebase/firestore";
+import { db } from "./firebase";
 
 import AddParty from "./pages/AddParty";
 import Parties from "./pages/Parties";
@@ -11,11 +13,109 @@ import ProductDetails from "./pages/ProductDetails";
 import Vouchers from "./pages/Vouchers";
 import AddVoucher from "./pages/AddVoucher";
 import VoucherPrint from "./pages/VoucherPrint";
+import VendorDashboard from "./vendor/VendorDashboard";
+import CompanyLogin from "./CompanyLogin";
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [loggedCompany, setLoggedCompany] = useState(() => {
+    const savedCompany = localStorage.getItem('loggedCompany');
+    if (savedCompany) {
+      try {
+        return JSON.parse(savedCompany);
+      } catch (e) {
+        console.error("Failed to parse saved company");
+        return null;
+      }
+    }
+    return null;
+  });
+
+  const handleCompanyLogin = (companyData) => {
+    setLoggedCompany(companyData);
+    localStorage.setItem('loggedCompany', JSON.stringify(companyData));
+  };
+
+  const handleCompanyLogout = () => {
+    setLoggedCompany(null);
+    localStorage.removeItem('loggedCompany');
+  };
+
+  // Real-time listener: kick user out instantly if vendor deactivates them
+  useEffect(() => {
+    if (!loggedCompany || !loggedCompany.id) return;
+    
+    const unsubscribe = onSnapshot(doc(db, "companies", loggedCompany.id), (docSnapshot) => {
+      if (!docSnapshot.exists() || docSnapshot.data().isActive === false) {
+        setLoggedCompany(null);
+        localStorage.removeItem('loggedCompany');
+        alert("Your account has been deactivated by the administrator.");
+      }
+    });
+
+    return () => unsubscribe();
+  }, [loggedCompany?.id]);
+
+  // Run a one-time sweep to attach any orphaned data to this company
+  useEffect(() => {
+    if (!loggedCompany || !loggedCompany.id) return;
+    
+    // Only run this scan once per session to save Firestore reads
+    if (sessionStorage.getItem('orphanedDataScanned') === 'true') return;
+    
+    const attachOrphanedData = async () => {
+      try {
+        const collectionsToScan = ["parties", "products", "vouchers"];
+        let migratedCount = 0;
+        
+        for (const colName of collectionsToScan) {
+          const snapshot = await getDocs(collection(db, colName));
+          for (const docSnap of snapshot.docs) {
+            const docData = docSnap.data();
+            // If the record exists but has no companyId, it's from before the multi-tenant upgrade
+            if (!docData.companyId) {
+              await updateDoc(doc(db, colName, docSnap.id), {
+                companyId: loggedCompany.id
+              });
+              migratedCount++;
+            }
+          }
+        }
+        
+        if (migratedCount > 0) {
+          console.log(`Successfully attached ${migratedCount} orphaned legacy records to ${loggedCompany.companyName}.`);
+        }
+        sessionStorage.setItem('orphanedDataScanned', 'true');
+      } catch (error) {
+        console.error("Error migrating orphaned data:", error);
+      }
+    };
+
+    attachOrphanedData();
+  }, [loggedCompany]);
+
   const location = useLocation();
   const isMainPage = ["/", "/products", "/vouchers"].includes(location.pathname);
+
+  const isVendorRoute = location.pathname.startsWith("/vendor");
+
+  if (isVendorRoute) {
+    return (
+      <Routes>
+        <Route path="/vendor/dashboard" element={<VendorDashboard />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    );
+  }
+
+  // If NOT a vendor route, and NO company is logged in, show company login
+  if (!loggedCompany) {
+    return (
+      <Routes>
+        <Route path="*" element={<CompanyLogin onLogin={handleCompanyLogin} />} />
+      </Routes>
+    );
+  }
 
   return (
     <div className="app-container">
@@ -29,7 +129,7 @@ function App() {
         <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
           <div className="sidebar-header">
             <div style={{ display: "flex", justifyContent: "center", alignItems: "center", width: "100%", position: "relative" }}>
-              <span style={{ fontWeight: "bold", fontSize: "1.5rem", letterSpacing: "1px" ,paddingRight:"1.5rem"}}>HITNISH</span>
+              <span style={{ fontWeight: "bold", fontSize: "1.5rem", letterSpacing: "1px" ,paddingRight:"1.5rem"}}>{loggedCompany?.companyName || "COMPANY"}</span>
               <button 
                 className="btn btn-icon desktop-hide" 
                 onClick={() => setSidebarOpen(false)}
@@ -38,6 +138,7 @@ function App() {
                 <X size={28} />
               </button>
             </div>
+
           </div>
           <nav className="sidebar-nav">
             <NavLink 
@@ -65,6 +166,24 @@ function App() {
               <span>Vouchers</span>
             </NavLink>
           </nav>
+          
+          <div style={{ marginTop: "auto", padding: "1rem" }}>
+            <button 
+              onClick={handleCompanyLogout}
+              style={{
+                width: "100%", padding: "0.75rem", background: "rgba(239, 68, 68, 0.1)", 
+                color: "#ff8f8f", border: "1px solid rgba(239, 68, 68, 0.2)", 
+                borderRadius: "8px", display: "flex", alignItems: "center", 
+                justifyContent: "center", gap: "0.5rem", cursor: "pointer",
+                fontWeight: "600", transition: "all 0.2s"
+              }}
+              onMouseOver={(e) => { e.currentTarget.style.background = "rgba(239, 68, 68, 0.2)"; e.currentTarget.style.color = "#fff"; }}
+              onMouseOut={(e) => { e.currentTarget.style.background = "rgba(239, 68, 68, 0.1)"; e.currentTarget.style.color = "#ff8f8f"; }}
+            >
+              <LogOut size={18} />
+              Sign Out
+            </button>
+          </div>
         </aside>
 
         <main className="main-content">
@@ -101,6 +220,9 @@ function App() {
               <Route path="/add-voucher" element={<AddVoucher />} />
               <Route path="/add-voucher/:id" element={<AddVoucher />} />
               <Route path="/voucher-print/:id" element={<VoucherPrint />} />
+              
+              {/* Fallback route */}
+              <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </div>
         </main>

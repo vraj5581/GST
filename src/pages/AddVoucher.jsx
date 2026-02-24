@@ -9,6 +9,8 @@ import {
   updateDoc,
   doc,
   getDoc,
+  query,
+  where,
 } from "firebase/firestore";
 import { db } from "../firebase";
 import "./AddVoucher.css";
@@ -33,12 +35,16 @@ function AddVoucher() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const partiesSnap = await getDocs(collection(db, "parties"));
+        const loggedCompanyId = JSON.parse(localStorage.getItem('loggedCompany'))?.id;
+        
+        const partiesQ = query(collection(db, "parties"), where("companyId", "==", loggedCompanyId));
+        const partiesSnap = await getDocs(partiesQ);
         setParties(
           partiesSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() })),
         );
 
-        const productsSnap = await getDocs(collection(db, "products"));
+        const productsQ = query(collection(db, "products"), where("companyId", "==", loggedCompanyId));
+        const productsSnap = await getDocs(productsQ);
         setProducts(
           productsSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() })),
         );
@@ -127,7 +133,11 @@ function AddVoucher() {
       return;
     }
 
-    const finalVoucher = { ...voucher, items: cleanedItems };
+    const finalVoucher = { 
+      ...voucher, 
+      items: cleanedItems,
+      companyId: JSON.parse(localStorage.getItem('loggedCompany'))?.id
+    };
 
     try {
       if (id) {
