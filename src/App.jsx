@@ -95,6 +95,43 @@ function App() {
   }, [loggedCompany]);
 
   const location = useLocation();
+
+  // Dynamic Title Management
+  useEffect(() => {
+    let pageName = "Dashboard";
+    const path = location.pathname;
+
+    if (path.startsWith("/vendor")) {
+      pageName = "Vendor Dashboard";
+    } else if (!loggedCompany) {
+      pageName = "Login";
+    } else if (path === "/") {
+      pageName = "Parties";
+    } else if (path.startsWith("/add-party") || path.startsWith("/edit-party")) {
+      pageName = "Manage Party";
+    } else if (path.startsWith("/party/")) {
+      pageName = "Party Details";
+    } else if (path === "/products") {
+      pageName = "Products";
+    } else if (path.startsWith("/add-product") || path.startsWith("/edit-product")) {
+      pageName = "Manage Product";
+    } else if (path.startsWith("/product/")) {
+      pageName = "Product Details";
+    } else if (path === "/vouchers") {
+      pageName = "Vouchers";
+    } else if (path.startsWith("/add-voucher")) {
+      pageName = "Manage Voucher";
+    } else if (path.startsWith("/voucher-print")) {
+      pageName = "Print Voucher";
+    }
+
+    const companySuffix = (loggedCompany && !path.startsWith("/vendor")) 
+      ? loggedCompany.companyName 
+      : "Billing App";
+      
+    document.title = `${pageName} - ${companySuffix}`;
+  }, [location.pathname, loggedCompany]);
+
   const isMainPage = ["/", "/products", "/vouchers"].includes(location.pathname);
 
   const isVendorRoute = location.pathname.startsWith("/vendor");
