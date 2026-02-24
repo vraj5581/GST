@@ -84,7 +84,7 @@
   gap: 0.7rem;
 }
 .add-party-page .grid-2 {
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 }
 
 /* Table */

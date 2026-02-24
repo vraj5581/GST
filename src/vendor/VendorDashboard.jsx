@@ -206,7 +206,12 @@ const VendorDashboard = () => {
     }
   };
 
-  const handleToggleStatus = async (id, currentStatus) => {
+  const handleToggleStatus = async (id, currentStatus, companyName) => {
+    const actionText = currentStatus === false ? 'activate' : 'deactivate';
+    if (!window.confirm(`Are you sure you want to ${actionText} ${companyName}?`)) {
+      return;
+    }
+
     try {
       // If currentStatus is undefined, it means it's an old record without isActive field, so treat as true (active).
       const newStatus = currentStatus === false ? true : false;
@@ -228,32 +233,28 @@ const VendorDashboard = () => {
     <div className="vd-dashboard-container">
       <header className="vd-header">
         <div className="vd-logo">
-          <Building size={28} />
-          <h2>Vendor Dashboard</h2>
+          <Building size={22} />
+          <h3>Vendor Dashboard</h3>
         </div>
-        <button className="vd-btn-outline" onClick={handleLogout}>
+        <button className="btn btn-outline" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }} onClick={handleLogout}>
           <LogOut size={18} />
           <span>Logout</span>
         </button>
       </header>
 
       <main className="vd-main">
-        <div className="vd-action-bar">
-          <h3>Manage Companies</h3>
-          <button 
-            className="vd-btn-primary"
-            onClick={() => {
-              if (isAdding) {
-                resetForm();
-              } else {
-                setIsAdding(true);
-              }
-            }}
-          >
-            <Plus size={18} />
-            <span>{isAdding ? "Cancel" : "Add Company"}</span>
-          </button>
-        </div>
+        {!isAdding && (
+          <div className="vd-action-bar">
+            <h3>Manage Companies</h3>
+            <button 
+              className="btn btn-primary"
+              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+              onClick={() => setIsAdding(true)}
+            >
+              <span>Add Company</span>
+            </button>
+          </div>
+        )}
 
         {error && <div className="vd-error-alert">{error}</div>}
 
@@ -326,25 +327,26 @@ const VendorDashboard = () => {
                 </div>
                 <div className="vd-input-group" style={{ gridColumn: "1 / -1" }}>
                   <label>Address <span style={{color: 'red'}}>*</span></label>
-                  <input 
-                    type="text" 
+                  <textarea 
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
                     placeholder="Full Business Address"
                     required
+                    rows="3"
                   />
                 </div>
               </div>
-              <div className="vd-form-actions">
-                <button type="button" className="vd-btn-ghost" onClick={resetForm}>Cancel</button>
-                <button type="submit" className="vd-btn-primary">{editingId ? "Update Company" : "Save Company"}</button>
+              <div className="vd-form-actions" style={{ gap: '1rem' }}>
+                <button type="submit" className="btn btn-outline-primary btn-mobile-flex" style={{ width: '130px' }}>{editingId ? "Update" : "Save"}</button>
+                <button type="button" className="btn btn-outline-danger btn-mobile-flex" style={{ width: '130px' }} onClick={resetForm}>Cancel</button>
               </div>
             </form>
           </div>
         )}
 
-        <div className="vd-grid">
-          {companies.length > 0 ? (
+        {!isAdding && (
+          <div className="vd-grid">
+            {companies.length > 0 ? (
             companies.map((company) => (
               <div key={company.id} className="vd-card">
                 <div className="vd-card-header">
@@ -354,18 +356,20 @@ const VendorDashboard = () => {
                   </div>
                   <div className="vd-card-actions">
                     <button 
-                      className="vd-btn-edit"
+                      className="btn btn-action-edit"
+                      style={{ padding: '0.4rem', border: 'none', boxShadow: 'none' }}
                       onClick={() => handleEditCompany(company)}
                       title="Edit Company"
                     >
-                      <Edit2 size={18} />
+                      <Edit2 size={16} />
                     </button>
                     <button 
-                      className="vd-btn-delete"
+                      className="btn btn-action-delete"
+                      style={{ padding: '0.4rem', border: 'none', boxShadow: 'none' }}
                       onClick={() => handleDeleteCompany(company.id, company.companyName)}
                       title="Delete Company"
                     >
-                      <Trash2 size={18} />
+                      <Trash2 size={16} />
                     </button>
                   </div>
                 </div>
@@ -402,10 +406,11 @@ const VendorDashboard = () => {
                     {company.isActive === false ? 'Deactive' : 'Active'}
                   </span>
                   <button 
-                    className={`vd-btn-ghost vd-toggle-btn ${company.isActive === false ? 'activate-btn' : 'deactivate-btn'}`}
-                    onClick={() => handleToggleStatus(company.id, company.isActive)}
+                    className={`btn btn-outline ${company.isActive === false ? 'btn-outline-primary' : 'btn-outline-danger'}`}
+                    style={{ fontSize: '0.8rem', padding: '0.4rem 0.8rem', width: 'auto' }}
+                    onClick={() => handleToggleStatus(company.id, company.isActive, company.companyName)}
                   >
-                    {company.isActive === false ? 'Mark Active' : 'Mark Deactive'}
+                    {company.isActive === false ? 'Make Active  ' : 'Make Deactive'}
                   </button>
                 </div>
               </div>
@@ -417,6 +422,7 @@ const VendorDashboard = () => {
             </div>
           )}
         </div>
+        )}
       </main>
     </div>
   );

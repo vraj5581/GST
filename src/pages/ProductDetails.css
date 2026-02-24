@@ -74,7 +74,7 @@
   margin-top: 0.75rem; /* Reduced from 1rem */
   display: grid;
   grid-template-columns: repeat(
-    auto-fit,
+    auto-fill,
     minmax(100px, 1fr)
   ); /* Reduced minmax */
   gap: 0.5rem; /* Reduced from 0.75rem */

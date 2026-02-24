@@ -113,7 +113,7 @@ const CompanyLogin = ({ onLogin }) => {
         </form>
         
         <div className="company-login-footer">
-          <p>Protected by GST Billing Software</p>
+          <p>Protected by HITNISH Software</p>
         </div>
       </div>
     </div>
