@@ -193,28 +193,47 @@
   gap: 1rem;
 }
 
+/* Glassmorphic Vendor Card Styles */
 .vd-card {
-  background: var(--bg-secondary);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--border-color);
-  overflow: hidden;
-  transition: transform 0.2s, box-shadow 0.2s;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  padding: 1.5rem;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(240, 248, 255, 0.8) 100%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   display: flex;
   flex-direction: column;
+  gap: 1rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 10px 30px -5px rgba(50, 80, 120, 0.08), 0 4px 10px -2px rgba(50, 80, 120, 0.04);
+  position: relative;
+  overflow: hidden;
+}
+
+.vd-card::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 40%;
+  background: radial-gradient(ellipse at bottom, rgba(147, 197, 253, 0.15) 0%, rgba(255,255,255,0) 70%);
+  pointer-events: none;
 }
 
 .vd-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 20px 40px -5px rgba(50, 80, 120, 0.12), 0 8px 16px -4px rgba(50, 80, 120, 0.06);
+  border-color: rgba(255, 255, 255, 1);
 }
 
 .vd-card-header {
-  padding: 1.25rem;
-  border-bottom: 1px solid #f1f5f9;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: var(--bg-primary);
+  margin-bottom: 0.25rem;
+  position: relative;
+  z-index: 1;
 }
 
 .vd-card-title {
@@ -224,97 +243,76 @@
 }
 
 .vd-card-icon {
-  color: var(--color-primary);
-  background: rgba(37, 99, 235, 0.1);
-  padding: 0.5rem;
-  border-radius: var(--radius-md);
-  width: 20px;
-  height: 20px;
+  display: none; /* Removed to match the clean title format elsewhere */
 }
 
 .vd-card-title h4 {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #1e293b;
   margin: 0;
-  font-size: 1.125rem;
-  color: var(--text-primary);
+  letter-spacing: -0.02em;
 }
 
 .vd-card-actions {
   display: flex;
-  align-items: center;
-  gap: 0.25rem;
-}
-
-.vd-btn-delete,
-.vd-btn-edit {
-  background: transparent;
-  color: #cbd5e1;
-  border: none;
-  cursor: pointer;
-  padding: 0.5rem;
-  border-radius: var(--radius-md);
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.vd-btn-delete:hover {
-  background: #fee2e2;
-  color: #ef4444;
-}
-
-.vd-btn-edit:hover {
-  background: #eff6ff;
-  color: var(--color-primary);
+  gap: 0.5rem;
 }
 
 .vd-card-body {
-  padding: 1.5rem 1.25rem;
-  flex-grow: 1;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.6rem;
+  position: relative;
+  z-index: 1;
+  flex-grow: 1;
 }
 
-.vd-info-row {
+.party-detail-row {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding-bottom: 0.75rem;
-  border-bottom: 1px dashed #e2e8f0;
-}
-
-.vd-info-row:last-child {
-  border-bottom: none;
-  padding-bottom: 0;
-}
-
-.vd-info-label {
-  color: #64748b;
-  font-size: 0.875rem;
-}
-
-.vd-info-value {
-  color: #1e293b;
-  font-weight: 500;
+  gap: 0.75rem;
   font-size: 0.95rem;
+  color: #475569;
+}
+
+.party-detail-icon {
+  background: rgba(37, 99, 235, 0.08);
+  color: #2563eb;
+  border: 1px solid rgba(37, 99, 235, 0.15);
+  border-radius: 8px;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+.party-detail-row p {
+  margin: 0;
+  word-break: break-all;
+  overflow-wrap: anywhere;
 }
 
 .vd-mono {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  background: var(--bg-primary);
-  padding: 0.2rem 0.5rem;
-  border-radius: var(--radius-md);
-  color: var(--text-primary);
+  background: rgba(15, 23, 42, 0.05);
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
+  color: #0f172a;
   letter-spacing: 1px;
 }
 
 .vd-card-footer {
-  padding: 1rem 1.25rem;
-  background: var(--bg-secondary);
-  border-top: 1px solid #f1f5f9;
+  padding: 1.25rem 0 0 0;
+  background: transparent;
+  border-top: 1px dashed rgba(203, 213, 225, 0.5);
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.5rem;
 }
 
 .vd-status-badge {

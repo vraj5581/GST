@@ -77,8 +77,8 @@ const CompanyLogin = ({ onLogin }) => {
     <div className="company-login-container">
       <div className="company-login-card">
         <div className="company-login-header">
-          <img src={hitnishLogo} alt="Hitnish Logo" className="company-logo" style={{ maxHeight: '115px', marginBottom: '1rem', width: 'auto' }} />
-          <h2>Company Login</h2>
+          <img src={hitnishLogo} alt="Hitnish Logo" className="company-logo" style={{ maxHeight: '120px', width: 'auto' }} />
+          <h2>Sign In</h2>
           <p>Sign in to access your dashboard</p>
         </div>
 
@@ -117,7 +117,7 @@ const CompanyLogin = ({ onLogin }) => {
         </form>
 
         <div className="company-login-footer">
-          <p>Protected by HITNISH Software</p>
+          <p>Protected by HITNISH Technology</p>
         </div>
       </div>
     </div>

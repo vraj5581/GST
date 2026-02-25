@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Vouchers.css";
-import { Plus, Printer, Edit, Trash2, Search } from "lucide-react";
+import { Plus, Printer, Edit, Trash2, Search, Hash, Calendar, Package, IndianRupee } from "lucide-react";
 import { collection, getDocs, deleteDoc, doc, query, where } from "firebase/firestore";
 import { db } from "../firebase";
 
@@ -128,23 +128,24 @@ function Vouchers() {
                 </div>
 
                 <div className="voucher-card-details">
-                  <p>
-                    <strong>Invoice No:</strong> #INV-
-                    {String(v.id).substring(0, 5).toUpperCase()}
-                  </p>
-                  <p>
-                    <strong>Date:</strong>{" "}
-                    {new Date(v.date).toLocaleDateString()}
-                  </p>
-                  <p>
-                    <strong>Items:</strong> {v.items.length}
-                  </p>
-                  <p>
-                    <strong>Total:</strong>{" "}
-                    <span className="voucher-total-highlight">
-                      ₹{calculateTotal(v.items).toFixed(2)}
-                    </span>
-                  </p>
+                  <div className="party-detail-row">
+                    <div className="party-detail-icon"><Hash size={14} /></div>
+                    <p>#INV-{String(v.id).substring(0, 5).toUpperCase()}</p>
+                  </div>
+                  <div className="party-detail-row">
+                    <div className="party-detail-icon"><Calendar size={14} /></div>
+                    <p>{new Date(v.date).toLocaleDateString()}</p>
+                  </div>
+                  <div className="party-detail-row">
+                    <div className="party-detail-icon"><Package size={14} /></div>
+                    <p>{v.items.length} Items</p>
+                  </div>
+                  <div className="party-detail-row">
+                    <div className="party-detail-icon"><IndianRupee size={14} /></div>
+                    <p>
+                      <strong className="voucher-total-highlight">₹{calculateTotal(v.items).toFixed(2)}</strong>
+                    </p>
+                  </div>
                 </div>
               </div>
             ))

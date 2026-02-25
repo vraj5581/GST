@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { collection, addDoc, getDocs, deleteDoc, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase';
-import { Trash2, Plus, Building, LogOut, Edit2, Search } from 'lucide-react';
+import { Trash2, Plus, Building, LogOut, Edit2, Search, Phone, Key, Mail, FileText, MapPin, Image as ImageIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import './VendorDashboard.css';
 
@@ -263,7 +263,7 @@ const VendorDashboard = () => {
           <Building size={22} />
           <h3>Vendor Dashboard</h3>
         </div>
-        <button className="btn btn-outline" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }} onClick={handleLogout}>
+        <button className="btn btn-outline-primary" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }} onClick={handleLogout}>
           <LogOut size={18} />
           <span>Logout</span>
         </button>
@@ -396,7 +396,6 @@ const VendorDashboard = () => {
                     <div className="vd-card-actions">
                       <button
                         className="btn btn-action-edit"
-                        style={{ padding: '0.4rem', border: 'none', boxShadow: 'none' }}
                         onClick={() => handleEditCompany(company)}
                         title="Edit Company"
                       >
@@ -404,7 +403,6 @@ const VendorDashboard = () => {
                       </button>
                       <button
                         className="btn btn-action-delete"
-                        style={{ padding: '0.4rem', border: 'none', boxShadow: 'none' }}
                         onClick={() => handleDeleteCompany(company.id, company.companyName)}
                         title="Delete Company"
                       >
@@ -413,32 +411,32 @@ const VendorDashboard = () => {
                     </div>
                   </div>
                   <div className="vd-card-body">
-                    <div className="vd-info-row">
-                      <span className="vd-info-label">Mobile No:</span>
-                      <span className="vd-info-value">{company.phone}</span>
+                    <div className="party-detail-row">
+                      <div className="party-detail-icon"><Phone size={14} /></div>
+                      <p>{company.phone}</p>
                     </div>
-                    <div className="vd-info-row">
-                      <span className="vd-info-label">4-Digit PIN:</span>
-                      <span className="vd-info-value vd-mono">{company.pin || company.password}</span>
+                    <div className="party-detail-row">
+                      <div className="party-detail-icon"><Key size={14} /></div>
+                      <p className="vd-mono">{company.pin || company.password}</p>
                     </div>
-                    <div className="vd-info-row">
-                      <span className="vd-info-label">Email:</span>
-                      <span className="vd-info-value">{company.email}</span>
+                    <div className="party-detail-row">
+                      <div className="party-detail-icon"><Mail size={14} /></div>
+                      <p>{company.email}</p>
                     </div>
-                    <div className="vd-info-row">
-                      <span className="vd-info-label">GST:</span>
-                      <span className="vd-info-value">{company.gst}</span>
+                    <div className="party-detail-row">
+                      <div className="party-detail-icon"><FileText size={14} /></div>
+                      <p>{company.gst}</p>
                     </div>
-                    <div className="vd-info-row">
-                      <span className="vd-info-label">Address:</span>
-                      <span className="vd-info-value tooltip-text" title={company.address}>
+                    <div className="party-detail-row">
+                      <div className="party-detail-icon"><MapPin size={14} /></div>
+                      <p className="tooltip-text" title={company.address}>
                         {company.address?.length > 25 ? company.address.substring(0, 25) + '...' : company.address}
-                      </span>
+                      </p>
                     </div>
                     {company.logo && (
-                      <div className="vd-info-row">
-                        <span className="vd-info-label">Logo:</span>
-                        <span className="vd-info-value"><img src={company.logo} alt="Logo" style={{ maxHeight: '30px', borderRadius: '4px' }} /></span>
+                      <div className="party-detail-row">
+                        <div className="party-detail-icon"><ImageIcon size={14} /></div>
+                        <p><img src={company.logo} alt="Logo" style={{ maxHeight: '30px', borderRadius: '4px' }} /></p>
                       </div>
                     )}
                   </div>

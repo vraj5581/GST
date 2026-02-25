@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Search, Edit, Trash2, Plus } from "lucide-react";
+import { Search, Edit, Trash2, Plus, DollarSign, FileCode2, FileText } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { collection, getDocs, deleteDoc, doc, query, where } from "firebase/firestore";
 import { db } from "../firebase";
@@ -107,16 +107,19 @@ function Products() {
                 </div>
 
                 <div className="product-details">
-                  <p>
-                    <strong>Price:</strong> ₹{p.price}/{p.unit}
-                  </p>
-                  <p>
-                    <strong>HSN:</strong> {p.hsn || "N/A"}
-                  </p>
+                  <div className="party-detail-row">
+                    <div className="party-detail-icon"><DollarSign size={14} /></div>
+                    <p>₹{p.price}/{p.unit}</p>
+                  </div>
+                  <div className="party-detail-row">
+                    <div className="party-detail-icon"><FileCode2 size={14} /></div>
+                    <p>{p.hsn || "N/A"}</p>
+                  </div>
                   {p.description && (
-                    <p className="product-description-italic">
-                      {p.description}
-                    </p>
+                    <div className="party-detail-row">
+                      <div className="party-detail-icon"><FileText size={14} /></div>
+                      <p className="product-description-italic">{p.description}</p>
+                    </div>
                   )}
                 </div>
               </div>

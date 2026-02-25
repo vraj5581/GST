@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Search, Edit, Trash2, Plus } from "lucide-react";
+import { Search, Edit, Trash2, Plus, Phone, Mail, FileText, MapPin } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { collection, getDocs, deleteDoc, doc, query, where } from "firebase/firestore";
 import { db } from "../firebase";
@@ -106,18 +106,22 @@ function Parties() {
                 </div>
 
                 <div className="party-card-details">
-                  <p>
-                    <strong>Mobile:</strong> {p.mobile}
-                  </p>
-                  <p>
-                    <strong>Email:</strong> {p.email}
-                  </p>
-                  <p>
-                    <strong>GST:</strong> {p.gst || "N/A"}
-                  </p>
-                  <p>
-                    <strong>Address:</strong> {p.address || "N/A"}
-                  </p>
+                  <div className="party-detail-row">
+                    <div className="party-detail-icon"><Phone size={14} /></div>
+                    <p>{p.mobile}</p>
+                  </div>
+                  <div className="party-detail-row">
+                    <div className="party-detail-icon"><Mail size={14} /></div>
+                    <p>{p.email}</p>
+                  </div>
+                  <div className="party-detail-row">
+                    <div className="party-detail-icon"><FileText size={14} /></div>
+                    <p>{p.gst || "N/A"}</p>
+                  </div>
+                  <div className="party-detail-row">
+                    <div className="party-detail-icon"><MapPin size={14} /></div>
+                    <p>{p.address || "N/A"}</p>
+                  </div>
                 </div>
               </div>
             ))

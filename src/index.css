@@ -181,86 +181,107 @@ a {
 }
 
 .btn-outline {
-  background: transparent;
-  border: 1px solid var(--border-color);
-  color: var(--text-secondary);
+  background: rgba(71, 85, 105, 0.03);
+  border: 1px solid #cbd5e1;
+  color: var(--text-primary);
+  border-radius: 6px;
 }
 
 .btn-outline:hover {
-  background: var(--bg-primary);
+  background: rgba(71, 85, 105, 0.08);
   color: var(--text-primary);
-  border-color: var(--text-secondary);
+  border-color: #94a3b8;
 }
 
 .btn-outline-danger {
-  background: transparent;
-  border: 1px solid var(--color-danger);
+  background: rgba(239, 68, 68, 0.03);
+  border: 1px solid rgba(239, 68, 68, 0.3);
   color: var(--color-danger);
+  border-radius: 6px;
 }
 
 .btn-outline-danger:hover {
-  background: transparent;
+  background: rgba(239, 68, 68, 0.08);
   color: var(--color-danger-hover);
-  border-color: var(--color-danger-hover);
+  border-color: rgba(239, 68, 68, 0.6);
 }
 
 .btn-icon {
-  padding: 0.625rem;
+  padding: 0.6rem;
   aspect-ratio: 1;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  height: 42px; /* Ensure same height as form-input */
 }
 
 /* Action Icon Buttons */
 .btn-action-edit {
-  color: var(--color-primary);
-  background: transparent;
-  border: 1px solid var(--border-color); /* Optional: add border or keep clear? Usually clear for row actions */
-  border: none;
+  border-radius: 10px;
+  background: rgba(37, 99, 235, 0.08); /* light blue */
+  color: #2563eb;
+  border: 1px solid rgba(37, 99, 235, 0.1);
   box-shadow: none;
-  padding: 0.4rem;
+  padding: 0.5rem;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .btn-action-edit:hover {
-  background: #eff6ff; /* light blue */
-  color: var(--color-primary-hover);
+  background: rgba(37, 99, 235, 0.15);
+  transform: scale(1.05);
+  color: #1d4ed8;
 }
 
 .btn-action-delete {
-  color: var(--color-danger);
-  background: transparent;
-  border: none;
+  border-radius: 10px;
+  background: rgba(239, 68, 68, 0.08); /* light red */
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.1);
   box-shadow: none;
-  padding: 0.4rem;
+  padding: 0.5rem;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .btn-action-delete:hover {
-  background: #fef2f2; /* light red */
-  color: var(--color-danger-hover);
+  background: rgba(239, 68, 68, 0.15);
+  transform: scale(1.05);
+  color: #dc2626;
 }
 
 .btn-action-print {
-  color: var(--text-secondary);
-  background: transparent;
-  border: none;
+  border-radius: 10px;
+  background: rgba(71, 85, 105, 0.08); /* light gray */
+  color: #475569;
+  border: 1px solid rgba(71, 85, 105, 0.1);
   box-shadow: none;
-  padding: 0.4rem;
+  padding: 0.5rem;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .btn-action-print:hover {
-  background: #f3f4f6; /* light gray */
-  color: var(--text-primary);
+  background: rgba(71, 85, 105, 0.15);
+  transform: scale(1.05);
+  color: #1e293b;
 }
 
 /* Outline Primary */
 .btn-outline-primary {
-  background: transparent;
-  border: 1px solid var(--color-primary);
+  background: rgba(37, 99, 235, 0.03);
+  border: 1px solid rgba(37, 99, 235, 0.3);
   color: var(--color-primary);
+  border-radius: 6px;
 }
 
 .btn-outline-primary:hover {
-  background: transparent;
+  background: rgba(37, 99, 235, 0.08);
   color: var(--color-primary-hover);
-  border-color: var(--color-primary-hover);
+  border-color: rgba(37, 99, 235, 0.6);
 }
 
 /* Search Bar */
