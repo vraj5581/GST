@@ -62,8 +62,7 @@ function Parties() {
 
         <Link
           to="/add-party"
-          className="btn btn-outline-primary btn-icon"
-          style={{ flexShrink: 0 }}
+          className="btn btn-outline-primary btn-icon parties-add-btn"
           title="Add Party"
         >
           <Plus size={23} />

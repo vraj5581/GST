@@ -77,7 +77,7 @@ const CompanyLogin = ({ onLogin }) => {
     <div className="company-login-container">
       <div className="company-login-card">
         <div className="company-login-header">
-          <img src={hitnishLogo} alt="Hitnish Logo" className="company-logo" style={{ maxHeight: '120px', width: 'auto' }} />
+          <img src={hitnishLogo} alt="Hitnish Logo" className="company-logo" />
           <h2>Sign In</h2>
           <p>Sign in to access your dashboard</p>
         </div>

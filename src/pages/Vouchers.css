@@ -162,7 +162,7 @@
 }
 
 /* QR Modal Styles */
-.qr-modal-overlay {
+.vouchers-page .qr-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -179,7 +179,7 @@
   animation: fadeIn 0.2s ease-out;
 }
 
-.qr-modal-content {
+.vouchers-page .qr-modal-content {
   background: var(--bg-primary);
   border-radius: 20px;
   width: 100%;
@@ -191,7 +191,7 @@
   flex-direction: column;
 }
 
-.qr-modal-header {
+.vouchers-page .qr-modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -200,14 +200,14 @@
   background: var(--bg-secondary);
 }
 
-.qr-modal-header h3 {
+.vouchers-page .qr-modal-header h3 {
   margin: 0;
   font-size: 1.1rem;
   color: #1e293b;
   font-weight: 700;
 }
 
-.qr-modal-close {
+.vouchers-page .qr-modal-close {
   background: transparent;
   border: none;
   color: #64748b;
@@ -220,12 +220,12 @@
   transition: all 0.2s;
 }
 
-.qr-modal-close:hover {
+.vouchers-page .qr-modal-close:hover {
   background: rgba(15, 23, 42, 0.05);
   color: #1e293b;
 }
 
-.qr-modal-body {
+.vouchers-page .qr-modal-body {
   padding: 2rem 1.5rem;
   display: flex;
   flex-direction: column;
@@ -234,7 +234,7 @@
   background: white;
 }
 
-.qr-modal-id {
+.vouchers-page .qr-modal-id {
   margin: 1.5rem 0 0.5rem 0;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-size: 1.1rem;
@@ -246,7 +246,7 @@
   letter-spacing: 1px;
 }
 
-.qr-modal-help {
+.vouchers-page .qr-modal-help {
   margin: 0;
   font-size: 0.9rem;
   color: #64748b;
@@ -275,7 +275,7 @@
   }
 }
 
-.filter-badge {
+.vouchers-page .filter-badge {
   position: absolute;
   top: -6px;
   right: -6px;
@@ -293,7 +293,7 @@
   pointer-events: none;
 }
 
-.filter-clear-link {
+.vouchers-page .filter-clear-link {
   font-size: 0.75rem;
   color: #ef4444;
   cursor: pointer;
@@ -302,11 +302,11 @@
   text-underline-offset: 2px;
 }
 
-.filter-clear-link:hover {
+.vouchers-page .filter-clear-link:hover {
   color: #dc2626;
 }
 
-.filter-group-header {
+.vouchers-page .filter-group-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -314,14 +314,14 @@
 }
 
 /* Dual Range Slider Styles */
-.price-range-display {
+.vouchers-page .price-range-display {
   font-size: 0.95rem;
   font-weight: 700;
   color: #1e293b;
   margin-bottom: 2rem;
 }
 
-.range-slider-container {
+.vouchers-page .range-slider-container {
   position: relative;
   width: 100%;
   height: 4px;
@@ -331,7 +331,7 @@
   margin-top: 1rem;
 }
 
-.range-slider-track {
+.vouchers-page .range-slider-track {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -340,7 +340,7 @@
   z-index: 1;
 }
 
-.range-slider-thumb {
+.vouchers-page .range-slider-thumb {
   position: absolute;
   top: -10px;
   left: 0;
@@ -355,7 +355,7 @@
   padding: 0;
 }
 
-.range-slider-thumb::-webkit-slider-thumb {
+.vouchers-page .range-slider-thumb::-webkit-slider-thumb {
   pointer-events: auto;
   -webkit-appearance: none;
   appearance: none;
@@ -370,12 +370,12 @@
   z-index: 5;
 }
 
-.range-slider-thumb:active::-webkit-slider-thumb,
-.range-slider-thumb:focus::-webkit-slider-thumb {
+.vouchers-page .range-slider-thumb:active::-webkit-slider-thumb,
+.vouchers-page .range-slider-thumb:focus::-webkit-slider-thumb {
   box-shadow: 0 0 0 4px rgba(29, 91, 159, 0.2);
 }
 
-.range-slider-thumb::-moz-range-thumb {
+.vouchers-page .range-slider-thumb::-moz-range-thumb {
   pointer-events: auto;
   width: 12px;
   height: 12px;
@@ -388,8 +388,8 @@
   z-index: 5;
 }
 
-.range-slider-thumb:active::-moz-range-thumb,
-.range-slider-thumb:focus::-moz-range-thumb {
+.vouchers-page .range-slider-thumb:active::-moz-range-thumb,
+.vouchers-page .range-slider-thumb:focus::-moz-range-thumb {
   box-shadow: 0 0 0 4px rgba(29, 91, 159, 0.2);
 }
 
@@ -399,4 +399,65 @@
 
 .thumb-right {
   z-index: 4;
+}
+
+/* Extracted from Vouchers.jsx inline styles */
+.vouchers-page .filter-btn-wrapper {
+  position: relative;
+}
+
+.vouchers-page .qr-code-img {
+  height: auto;
+  max-width: 100%;
+  width: 100%;
+}
+
+.vouchers-page .filter-modal-body {
+  align-items: stretch;
+  text-align: left;
+  padding: 1.5rem;
+}
+
+.vouchers-page .filter-form-group {
+  margin-bottom: 1.25rem;
+}
+
+.vouchers-page .filter-form-group-last {
+  margin-bottom: 1.5rem;
+}
+
+.vouchers-page .filter-label-bold {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #1e293b;
+  margin: 0;
+}
+
+.vouchers-page .filter-date-inputs {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.vouchers-page .filter-date-separator {
+  color: var(--text-secondary);
+}
+
+.vouchers-page .filter-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
+}
+
+.vouchers-page .filter-btn-clear {
+  flex: 1;
+  justify-content: center;
+  border-color: #ffc1c1;
+  background: transparent;
+}
+
+.vouchers-page .filter-btn-apply {
+  flex: 1;
+  justify-content: center;
 }

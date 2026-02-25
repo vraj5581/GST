@@ -41,6 +41,11 @@
   box-shadow: 0 4px 6px rgba(37, 99, 235, 0.1);
 }
 
+.company-logo {
+  max-height: 120px;
+  width: auto;
+}
+
 .logo-text {
   color: var(--color-primary, #3b82f6);
   font-weight: 800;

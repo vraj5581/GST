@@ -147,6 +147,13 @@ function App() {
 
   // If NOT a vendor route, and NO company is logged in, show company login
   if (!loggedCompany) {
+    if (location.pathname.startsWith("/voucher-print/")) {
+      return (
+        <Routes>
+          <Route path="/voucher-print/:id" element={<VoucherPrint />} />
+        </Routes>
+      );
+    }
     return (
       <Routes>
         <Route path="*" element={<CompanyLogin onLogin={handleCompanyLogin} />} />
@@ -165,12 +172,11 @@ function App() {
         {/* Sidebar */}
         <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
           <div className="sidebar-header">
-            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", width: "100%", position: "relative" }}>
-              <span style={{ fontWeight: "bold", fontSize: "1.5rem", letterSpacing: "1px" ,paddingRight:"1.5rem"}}>{loggedCompany?.companyName || "COMPANY"}</span>
+            <div className="sidebar-company-header">
+              <span className="sidebar-company-name">{loggedCompany?.companyName || "COMPANY"}</span>
               <button 
-                className="btn btn-icon desktop-hide" 
+                className="btn btn-icon desktop-hide sidebar-close-btn" 
                 onClick={() => setSidebarOpen(false)}
-                style={{ position: "absolute", right: "-0.5rem", background: "transparent", color: "var(--text-inverse)", padding: "0.25rem" }}
               >
                 <X size={28} />
               </button>
@@ -204,18 +210,10 @@ function App() {
             </NavLink>
           </nav>
           
-          <div style={{ marginTop: "auto", padding: "1rem" }}>
+          <div className="sidebar-logout-container">
             <button 
+              className="sidebar-logout-btn"
               onClick={handleCompanyLogout}
-              style={{
-                width: "100%", padding: "0.75rem", background: "rgba(239, 68, 68, 0.1)", 
-                color: "#ff8f8f", border: "1px solid rgba(239, 68, 68, 0.2)", 
-                borderRadius: "var(--radius-md)", display: "flex", alignItems: "center", 
-                justifyContent: "center", gap: "0.5rem", cursor: "pointer",
-                fontWeight: "600", transition: "all 0.2s"
-              }}
-              onMouseOver={(e) => { e.currentTarget.style.background = "rgba(239, 68, 68, 0.2)"; e.currentTarget.style.color = "#fff"; }}
-              onMouseOut={(e) => { e.currentTarget.style.background = "rgba(239, 68, 68, 0.1)"; e.currentTarget.style.color = "#ff8f8f"; }}
             >
               <LogOut size={18} />
               Sign Out
@@ -227,14 +225,8 @@ function App() {
           {isMainPage && !sidebarOpen && (
             <div className="mobile-menu-toggle">
               <button 
-                className="btn btn-icon"
+                className={`btn btn-icon mobile-menu-toggle-btn ${sidebarOpen ? "mobile-menu-toggle-btn-open" : "mobile-menu-toggle-btn-closed"}`}
                 onClick={() => setSidebarOpen(!sidebarOpen)}
-                style={{ 
-                  background: "transparent", 
-                  color: sidebarOpen ? "var(--text-inverse)" : "var(--text-primary)", 
-                  padding: "0.5rem",
-                  transition: "color 0.3s"
-                }}
               >
                 <Menu size={24} />
               </button>

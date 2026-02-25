@@ -354,3 +354,32 @@
     padding-bottom: 0;
   }
 }
+
+/* Extracted from AddVoucher.jsx inline styles */
+.add-voucher-page .av-products-group {
+  margin-bottom: 1.5rem;
+}
+
+.add-voucher-page .av-qty-cell-content {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.add-voucher-page .av-qty-input {
+  flex: 1;
+  min-width: 50px;
+}
+
+.add-voucher-page .av-qty-unit {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.add-voucher-page .av-empty-state {
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-secondary);
+}

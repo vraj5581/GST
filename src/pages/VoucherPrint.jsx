@@ -18,7 +18,7 @@ function VoucherPrint() {
 
   const [voucher, setVoucher] = useState(null);
   const [party, setParty] = useState(null);
-  const loggedCompany = JSON.parse(localStorage.getItem('loggedCompany')) || {};
+  const [clientCompany, setClientCompany] = useState(null);
 
   useEffect(() => {
     const fetchVoucherData = async () => {
@@ -28,11 +28,20 @@ function VoucherPrint() {
 
         if (voucherSnap.exists()) {
           const vData = voucherSnap.data();
+          const targetCompanyId = vData.companyId || JSON.parse(localStorage.getItem('loggedCompany'))?.id;
+
+          let fetchedCompany = JSON.parse(localStorage.getItem('loggedCompany')) || {};
+          if (targetCompanyId) {
+            const compSnap = await getDoc(doc(db, "companies", targetCompanyId));
+            if (compSnap.exists()) {
+              fetchedCompany = { id: compSnap.id, ...compSnap.data() };
+            }
+          }
+          setClientCompany(fetchedCompany);
 
           let fallbackInvoiceNumber = "";
-          if (!vData.invoiceNumber) {
-            const companyId = JSON.parse(localStorage.getItem('loggedCompany'))?.id;
-            const vouchersQ = query(collection(db, "vouchers"), where("companyId", "==", companyId));
+          if (!vData.invoiceNumber && targetCompanyId) {
+            const vouchersQ = query(collection(db, "vouchers"), where("companyId", "==", targetCompanyId));
             const allVouchersSnap = await getDocs(vouchersQ);
             let data = allVouchersSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
             data.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
@@ -100,18 +109,18 @@ function VoucherPrint() {
         <div className="invoice-preview-card">
           {/* Header */}
           <div className="print-doc-header">
-            <h1 className="print-company-name">{loggedCompany.companyName || "COMPANY NAME"}</h1>
+            <h1 className="print-company-name">{clientCompany?.companyName || "COMPANY NAME"}</h1>
             <div className="print-company-details">
               <p>
-                {loggedCompany.address || "Company Address"}
+                {clientCompany?.address || "Company Address"}
               </p>
               <p>
-                <strong>Mobile:</strong> {loggedCompany.phone || "+91 00000 00000"} |{" "}
-                <strong>Email:</strong> {loggedCompany.email || "contact@company.com"}
+                <strong>Mobile:</strong> {clientCompany?.phone || "+91 00000 00000"} |{" "}
+                <strong>Email:</strong> {clientCompany?.email || "contact@company.com"}
               </p>
-              {loggedCompany.gst && (
+              {clientCompany?.gst && (
                 <p>
-                  <strong>GSTIN:</strong> {loggedCompany.gst}
+                  <strong>GSTIN:</strong> {clientCompany.gst}
                 </p>
               )}
             </div>

@@ -4,6 +4,8 @@
 
 .parties-search-container {
   flex: 1;
+  min-width: 0;
+  margin-right: 0;
   margin-bottom: 0;
 }
 
@@ -272,65 +274,4 @@ tr:hover td {
     padding-right: 0.2rem;
     padding-bottom: 0.2rem;
   }
-}
-
-/* --- Party Details Extraction --- */
-.parties-page .party-details-header {
-  justify-content: flex-start;
-}
-
-.parties-page .party-details-back-btn {
-  flex-shrink: 0;
-}
-
-.parties-page .party-details-title {
-  margin: 0;
-  border: none;
-}
-
-.parties-page .party-details-wrapper {
-  padding: 1rem;
-}
-
-.parties-page .party-details-name {
-  font-size: 1.5rem;
-  margin-bottom: 0.5rem;
-  color: var(--color-primary);
-}
-
-.parties-page .party-details-grid {
-  gap: 0.7rem;
-}
-
-.parties-page .party-details-label {
-  margin-bottom: 0.25rem;
-}
-
-.parties-page .party-details-value {
-  font-size: 1.1rem;
-}
-
-.parties-page .party-details-value-break {
-  font-size: 1.1rem;
-  word-break: break-all;
-  overflow-wrap: anywhere;
-}
-
-.parties-page .party-details-address-col {
-  grid-column: 1 / -1;
-}
-
-.parties-page .party-details-address-value {
-  font-size: 1.1rem;
-  white-space: pre-wrap;
-  word-break: break-all;
-  overflow-wrap: anywhere;
-}
-
-.parties-page .party-details-actions {
-  display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
-  border-top: 1px solid var(--border-color);
-  padding-top: 1rem;
 }

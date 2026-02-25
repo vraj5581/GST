@@ -135,10 +135,9 @@ function Vouchers() {
         </div>
         <div className="vouchers-header-actions">
           <button
-            className={`btn btn-icon vouchers-filter-btn ${hasActiveFilters ? "btn-primary" : "btn-outline-primary"}`}
+            className={`btn btn-icon vouchers-filter-btn filter-btn-wrapper ${hasActiveFilters ? "btn-primary" : "btn-outline-primary"}`}
             onClick={() => setShowFilterModal(true)}
             title="Filter Options"
-            style={{ position: 'relative' }}
           >
             <Filter size={23} />
             {activeFilterCount > 0 && (
@@ -243,7 +242,7 @@ function Vouchers() {
               <QRCode
                 value={`${window.location.origin}/voucher-print/${qrVoucher.id}`}
                 size={220}
-                style={{ height: "auto", maxWidth: "100%", width: "100%" }}
+                className="qr-code-img"
               />
               <p className="qr-modal-id">{qrVoucher.invoiceNumber || `INV/25-26/${String(qrVoucher.originalIndex + 1).padStart(3, '0')}`}</p>
               <p className="qr-modal-help">Scan this QR code with any mobile camera to view and download the invoice.</p>
@@ -261,15 +260,15 @@ function Vouchers() {
                 <X size={20} />
               </button>
             </div>
-            <div className="qr-modal-body" style={{ alignItems: 'stretch', textAlign: 'left', padding: '1.5rem' }}>
-              <div className="form-group" style={{ marginBottom: '1.25rem' }}>
+            <div className="qr-modal-body filter-modal-body">
+              <div className="form-group filter-form-group">
                 <div className="filter-group-header">
-                  <label className="form-label" style={{ fontWeight: 700, fontSize: '0.95rem', color: '#1e293b', margin: 0 }}>Date Range</label>
+                  <label className="form-label filter-label-bold">Date Range</label>
                   {(filters.dateFrom || filters.dateTo) && (
                     <span className="filter-clear-link" onClick={() => setFilters({ ...filters, dateFrom: "", dateTo: "" })}>Clear</span>
                   )}
                 </div>
-                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                <div className="filter-date-inputs">
                   <input
                     type={filters.dateFrom ? "date" : "text"}
                     onFocus={(e) => { e.target.type = "date"; }}
@@ -287,7 +286,7 @@ function Vouchers() {
                     value={filters.dateFrom}
                     onChange={(e) => setFilters({ ...filters, dateFrom: e.target.value })}
                   />
-                  <span style={{color: 'var(--text-secondary)'}}>to</span>
+                  <span className="filter-date-separator">to</span>
                   <input
                     type={filters.dateTo ? "date" : "text"}
                     onFocus={(e) => { e.target.type = "date"; }}
@@ -308,9 +307,9 @@ function Vouchers() {
                 </div>
               </div>
 
-              <div className="form-group" style={{ marginBottom: '1.25rem' }}>
+              <div className="form-group filter-form-group">
                 <div className="filter-group-header">
-                  <label className="form-label" style={{ fontWeight: 700, fontSize: '0.95rem', color: '#1e293b', margin: 0 }}>Price</label>
+                  <label className="form-label filter-label-bold">Price</label>
                   {(filters.priceMin > 0 || filters.priceMax < 200000) && (
                     <span className="filter-clear-link" onClick={() => setFilters({ ...filters, priceMin: 0, priceMax: 200000 })}>Clear</span>
                   )}
@@ -350,9 +349,9 @@ function Vouchers() {
                 </div>
               </div>
 
-              <div className="form-group" style={{ marginBottom: '1.25rem' }}>
+              <div className="form-group filter-form-group">
                 <div className="filter-group-header">
-                  <label className="form-label" style={{ fontWeight: 700, fontSize: '0.95rem', color: '#1e293b', margin: 0 }}>Sort By Invoice Date</label>
+                  <label className="form-label filter-label-bold">Sort By Invoice Date</label>
                   {filters.sortInvoice !== "desc" && (
                     <span className="filter-clear-link" onClick={() => setFilters({ ...filters, sortInvoice: "desc" })}>Reset</span>
                   )}
@@ -367,9 +366,9 @@ function Vouchers() {
                 </select>
               </div>
 
-              <div className="form-group" style={{ marginBottom: '1.5rem' }}>
+              <div className="form-group filter-form-group-last">
                 <div className="filter-group-header">
-                  <label className="form-label" style={{ fontWeight: 700, fontSize: '0.95rem', color: '#1e293b', margin: 0 }}>Sort By Party Name</label>
+                  <label className="form-label filter-label-bold">Sort By Party Name</label>
                   {filters.sortParty !== "" && (
                     <span className="filter-clear-link" onClick={() => setFilters({ ...filters, sortParty: "" })}>Reset</span>
                   )}
@@ -385,10 +384,9 @@ function Vouchers() {
                 </select>
               </div>
 
-              <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end', marginTop: '0.5rem' }}>
+              <div className="filter-actions">
                 <button
-                  className="btn btn-outline-danger"
-                  style={{ flex: 1, justifyContent: 'center', borderColor: '#ffc1c1', background: 'transparent' }}
+                  className="btn btn-outline-danger filter-btn-clear"
                   onClick={() => {
                     setFilters({
                       dateFrom: "",
@@ -403,8 +401,7 @@ function Vouchers() {
                   Clear
                 </button>
                 <button
-                  className="btn btn-primary"
-                  style={{ flex: 1, justifyContent: 'center' }}
+                  className="btn btn-primary filter-btn-apply"
                   onClick={() => setShowFilterModal(false)}
                 >
                   Apply

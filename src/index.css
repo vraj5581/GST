@@ -94,6 +94,69 @@ a {
   color: var(--text-inverse);
 }
 
+.sidebar-company-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  position: relative;
+}
+
+.sidebar-company-name {
+  font-weight: bold;
+  font-size: 1.5rem;
+  letter-spacing: 1px;
+  padding-right: 1.5rem;
+}
+
+.sidebar-close-btn {
+  position: absolute;
+  right: -0.5rem;
+  background: transparent;
+  color: var(--text-inverse);
+  padding: 0.25rem;
+}
+
+.sidebar-logout-container {
+  margin-top: auto;
+  padding: 1rem;
+}
+
+.sidebar-logout-btn {
+  width: 100%;
+  padding: 0.75rem;
+  background: rgba(239, 68, 68, 0.1);
+  color: #ff8f8f;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.sidebar-logout-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  color: #fff;
+}
+
+.mobile-menu-toggle-btn {
+  background: transparent;
+  padding: 0.5rem;
+  transition: color 0.3s;
+}
+
+.mobile-menu-toggle-btn-closed {
+  color: var(--text-primary);
+}
+
+.mobile-menu-toggle-btn-open {
+  color: var(--text-inverse);
+}
+
 .sidebar-nav {
   padding: 1rem;
   flex: 1;

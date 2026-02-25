@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Edit, Trash2, ArrowLeft, Phone, Mail, FileText, MapPin } from "lucide-react";
 import { doc, getDoc, deleteDoc } from "firebase/firestore";
 import { db } from "../firebase";
-import "./Parties.css";
+import "./PartyDetails.css";
 
 function PartyDetails() {
   const { id } = useParams();
@@ -44,7 +44,7 @@ function PartyDetails() {
   if (!party) return <div>Loading...</div>;
 
   return (
-    <div className="parties-page">
+    <div className="party-details-page">
       <header className="fixed-header party-details-header">
         <button
           className="btn btn-outline btn-icon party-details-back-btn"

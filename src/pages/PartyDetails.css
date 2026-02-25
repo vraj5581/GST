@@ -1,0 +1,83 @@
+/* CSS for PartyDetails Page */
+
+/* Base container for PartyDetails to allow correct inner padding if needed */
+.party-details-page {
+  display: block; /* or flex if needed, inherited from App container context */
+}
+
+/* Form inputs & structure specific overrides */
+.party-details-page .content-below-fixed {
+  padding-top: 6rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  padding-bottom: 2rem;
+}
+
+@media (max-width: 768px) {
+  .party-details-page .content-below-fixed {
+    padding-top: 4.5rem;
+    padding-left: 0.2rem;
+    padding-right: 0.2rem;
+    padding-bottom: 0.2rem;
+  }
+}
+
+.party-details-page .party-details-header {
+  justify-content: flex-start;
+}
+
+.party-details-page .party-details-back-btn {
+  flex-shrink: 0;
+}
+
+.party-details-page .party-details-title {
+  margin: 0;
+  border: none;
+}
+
+.party-details-page .party-details-wrapper {
+  padding: 1rem;
+}
+
+.party-details-page .party-details-name {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: var(--color-primary);
+}
+
+.party-details-page .party-details-grid {
+  gap: 0.7rem;
+}
+
+.party-details-page .party-details-label {
+  margin-bottom: 0.25rem;
+}
+
+.party-details-page .party-details-value {
+  font-size: 1.1rem;
+}
+
+.party-details-page .party-details-value-break {
+  font-size: 1.1rem;
+  word-break: break-all;
+  overflow-wrap: anywhere;
+}
+
+.party-details-page .party-details-address-col {
+  grid-column: 1 / -1;
+}
+
+.party-details-page .party-details-address-value {
+  font-size: 1.1rem;
+  white-space: pre-wrap;
+  word-break: break-all;
+  overflow-wrap: anywhere;
+}
+
+.party-details-page .party-details-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+  border-top: 1px solid var(--border-color);
+  padding-top: 1rem;
+}

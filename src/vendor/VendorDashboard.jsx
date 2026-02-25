@@ -263,7 +263,7 @@ const VendorDashboard = () => {
           <Building size={22} />
           <h3>Vendor Dashboard</h3>
         </div>
-        <button className="btn btn-outline-primary" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }} onClick={handleLogout}>
+        <button className="btn btn-outline-primary vd-logout-btn" onClick={handleLogout}>
           <LogOut size={18} />
           <span>Logout</span>
         </button>
@@ -272,20 +272,18 @@ const VendorDashboard = () => {
       <main className="vd-main">
         {!isAdding && (
           <div className="vd-action-bar">
-            <div className="search-bar w-full-search" style={{ marginBottom: 0, flex: 1 }}>
+            <div className="search-bar w-full-search vd-search-wrapper">
               <Search className="search-icon" size={18} />
               <input
                 type="text"
-                className="form-input"
                 placeholder="Search company by Name or Phone..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                style={{ width: '100%', paddingLeft: '2.5rem' }}
+                className="form-input vd-search-input"
               />
             </div>
             <button
-              className="btn btn-outline-primary btn-icon"
-              style={{ flexShrink: 0, marginLeft: '0.2rem' }}
+              className="btn btn-outline-primary btn-icon vd-add-btn-wrapper"
               onClick={() => setIsAdding(true)}
               title="Add Company"
             >
@@ -302,7 +300,7 @@ const VendorDashboard = () => {
             <form onSubmit={handleAddCompany} className="vd-form">
               <div className="vd-form-row">
                 <div className="vd-input-group">
-                  <label>Company Name <span style={{ color: 'var(--color-danger)' }}>*</span></label>
+                  <label>Company Name <span className="vd-required-asterisk">*</span></label>
                   <input
                     type="text"
                     value={companyName}
@@ -312,7 +310,7 @@ const VendorDashboard = () => {
                   />
                 </div>
                 <div className="vd-input-group">
-                  <label>Mobile Number <span style={{ color: 'var(--color-danger)' }}>*</span></label>
+                  <label>Mobile Number <span className="vd-required-asterisk">*</span></label>
                   <input
                     type="tel"
                     value={phone}
@@ -323,7 +321,7 @@ const VendorDashboard = () => {
                   />
                 </div>
                 <div className="vd-input-group">
-                  <label>4-Digit PIN <span style={{ color: 'var(--color-danger)' }}>*</span></label>
+                  <label>4-Digit PIN <span className="vd-required-asterisk">*</span></label>
                   <input
                     type="password"
                     value={pin}
@@ -335,7 +333,7 @@ const VendorDashboard = () => {
                   />
                 </div>
                 <div className="vd-input-group">
-                  <label>Email <span style={{ color: 'var(--color-danger)' }}>*</span></label>
+                  <label>Email <span className="vd-required-asterisk">*</span></label>
                   <input
                     type="email"
                     value={email}
@@ -345,7 +343,7 @@ const VendorDashboard = () => {
                   />
                 </div>
                 <div className="vd-input-group">
-                  <label>GST No. <span style={{ color: 'var(--color-danger)' }}>*</span></label>
+                  <label>GST No. <span className="vd-required-asterisk">*</span></label>
                   <input
                     type="text"
                     value={gst}
@@ -355,8 +353,8 @@ const VendorDashboard = () => {
                     required
                   />
                 </div>
-                <div className="vd-input-group" style={{ gridColumn: "1 / -1" }}>
-                  <label>Address <span style={{ color: 'var(--color-danger)' }}>*</span></label>
+                <div className="vd-input-group vd-full-width-col">
+                  <label>Address <span className="vd-required-asterisk">*</span></label>
                   <textarea
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
@@ -365,19 +363,19 @@ const VendorDashboard = () => {
                     rows="3"
                   />
                 </div>
-                <div className="vd-input-group" style={{ gridColumn: "1 / -1" }}>
+                <div className="vd-input-group vd-full-width-col">
                   <label>Logo (Optional)</label>
                   <input
                     type="file"
                     accept="image/*"
                     onChange={handleImageUpload}
                   />
-                  {logo && <div style={{ marginTop: '10px' }}><img src={logo} alt="Company Logo" style={{ maxHeight: '50px' }} /></div>}
+                  {logo && <div className="vd-logo-preview-wrapper"><img src={logo} alt="Company Logo" className="vd-logo-preview-img" /></div>}
                 </div>
               </div>
-              <div className="vd-form-actions" style={{ gap: '1rem' }}>
-                <button type="submit" className="btn btn-outline-primary btn-mobile-flex" style={{ width: '130px' }}>{editingId ? "Update" : "Save"}</button>
-                <button type="button" className="btn btn-outline-danger btn-mobile-flex" style={{ width: '130px' }} onClick={resetForm}>Cancel</button>
+              <div className="vd-form-actions vd-form-actions-wrapper">
+                <button type="submit" className="btn btn-outline-primary btn-mobile-flex vd-form-action-btn-sized">{editingId ? "Update" : "Save"}</button>
+                <button type="button" className="btn btn-outline-danger btn-mobile-flex vd-form-action-btn-sized" onClick={resetForm}>Cancel</button>
               </div>
             </form>
           </div>
@@ -436,17 +434,16 @@ const VendorDashboard = () => {
                     {company.logo && (
                       <div className="party-detail-row">
                         <div className="party-detail-icon"><ImageIcon size={14} /></div>
-                        <p><img src={company.logo} alt="Logo" style={{ maxHeight: '30px', borderRadius: '4px' }} /></p>
+                        <p><img src={company.logo} alt="Logo" className="vd-card-logo-img" /></p>
                       </div>
                     )}
                   </div>
-                  <div className="vd-card-footer" style={{ justifyContent: "space-between", alignItems: "center" }}>
+                  <div className="vd-card-footer vd-card-footer-spaced">
                     <span className={`vd-status-badge ${company.isActive === false ? 'inactive' : 'active'}`}>
                       {company.isActive === false ? 'Deactive' : 'Active'}
                     </span>
                     <button
-                      className={`btn btn-outline ${company.isActive === false ? 'btn-outline-primary' : 'btn-outline-danger'}`}
-                      style={{ fontSize: '0.8rem', padding: '0.4rem 0.8rem', width: 'auto' }}
+                      className={`btn btn-outline ${company.isActive === false ? 'btn-outline-primary' : 'btn-outline-danger'} vd-status-btn-small`}
                       onClick={() => handleToggleStatus(company.id, company.isActive, company.companyName)}
                     >
                       {company.isActive === false ? 'Make Active  ' : 'Make Deactive'}

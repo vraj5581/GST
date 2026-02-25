@@ -220,8 +220,7 @@ function AddVoucher() {
 
           {/* Multi-Select Products Section */}
           <div
-            className="form-group"
-            style={{ marginBottom: "1.5rem" }}
+            className="form-group av-products-group"
             ref={productSelectRef}
           >
             <label className="form-label">Products</label>
@@ -274,20 +273,18 @@ function AddVoucher() {
                       <strong>{item.name}</strong>
                     </div>
                     <div
-                      className="voucher-cell voucher-col-qty"
+                      className="voucher-cell voucher-col-qty av-qty-cell-content"
                       data-label="QTY"
-                      style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
                     >
                       <input
                         type="number"
-                        className="form-input"
+                        className="form-input av-qty-input"
                         value={item.qty}
-                        style={{ flex: 1, minWidth: "50px" }}
                         onChange={(e) =>
                           handleItemChange(index, "qty", e.target.value)
                         }
                       />
-                      <span style={{ fontSize: "0.85rem", color: "var(--text-secondary)", fontWeight: "500", flexShrink: 0 }}>
+                      <span className="av-qty-unit">
                         {item.unit || "Pcs"}
                       </span>
                     </div>
@@ -313,13 +310,7 @@ function AddVoucher() {
                   </div>
                 ))
               ) : (
-                <div
-                  style={{
-                    padding: "2rem",
-                    textAlign: "center",
-                    color: "var(--text-secondary)",
-                  }}
-                >
+                <div className="av-empty-state">
                   No products selected.
                 </div>
               )}
