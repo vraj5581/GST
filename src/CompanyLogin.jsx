@@ -3,22 +3,23 @@ import { useNavigate } from 'react-router-dom';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from './firebase';
 import './CompanyLogin.css';
+import hitnishLogo from './contexts/hitnish.png';
 
 const CompanyLogin = ({ onLogin }) => {
-  const [userId, setUserId] = useState('');
-  const [password, setPassword] = useState('');
+  const [phone, setPhone] = useState('');
+  const [pin, setPin] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  
+
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
 
     // Vendor shortcut login
-    if (userId === 'hitnish' && password === '123456') {
+    if (phone === 'hitnish' && pin === '123456') {
       navigate('/vendor/dashboard');
       return;
     }
@@ -26,11 +27,11 @@ const CompanyLogin = ({ onLogin }) => {
     setLoading(true);
 
     try {
-      const q = query(collection(db, 'companies'), where("userId", "==", userId));
+      const q = query(collection(db, 'companies'), where("phone", "==", phone));
       const querySnapshot = await getDocs(q);
 
       if (querySnapshot.empty) {
-        setError("Invalid User ID or Password.");
+        setError("Invalid Mobile Number or PIN.");
         setLoading(false);
         return;
       }
@@ -40,14 +41,14 @@ const CompanyLogin = ({ onLogin }) => {
 
       querySnapshot.forEach((doc) => {
         const data = doc.data();
-        if (data.password === password) {
+        if (data.pin === pin || data.password === pin) {
           companyData = data;
           companyId = doc.id;
         }
       });
 
       if (!companyData) {
-        setError("Invalid User ID or Password.");
+        setError("Invalid Mobile Number or PIN.");
         setLoading(false);
         return;
       }
@@ -76,42 +77,45 @@ const CompanyLogin = ({ onLogin }) => {
     <div className="company-login-container">
       <div className="company-login-card">
         <div className="company-login-header">
+          <img src={hitnishLogo} alt="Hitnish Logo" className="company-logo" style={{ maxHeight: '115px', marginBottom: '1rem', width: 'auto' }} />
           <h2>Company Login</h2>
           <p>Sign in to access your dashboard</p>
         </div>
-        
+
         <form onSubmit={handleLogin} className="company-login-form">
           {error && <div className="company-error-message">{error}</div>}
-          
+
           <div className="company-input-group">
-            <label htmlFor="userId">User ID</label>
-            <input 
-              id="userId"
-              type="text" 
-              value={userId} 
-              onChange={(e) => setUserId(e.target.value)} 
-              placeholder="Enter your User ID"
+            <label htmlFor="phone">Mobile Number</label>
+            <input
+              id="phone"
+              type="text"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="Enter your Mobile Number"
+              maxLength={10}
               required
             />
           </div>
-          
+
           <div className="company-input-group">
-            <label htmlFor="password">Password</label>
-            <input 
-              id="password"
-              type="password" 
-              value={password} 
-              onChange={(e) => setPassword(e.target.value)} 
-              placeholder="Enter your Password"
+            <label htmlFor="pin">4-Digit PIN</label>
+            <input
+              id="pin"
+              type="password"
+              value={pin}
+              onChange={(e) => setPin(e.target.value)}
+              placeholder="Enter 4-Digit PIN"
+              maxLength={6} // Allow 6 for vendor shortcut
               required
             />
           </div>
-          
+
           <button type="submit" className="company-login-btn" disabled={loading}>
             {loading ? "Signing In..." : "Sign In"}
           </button>
         </form>
-        
+
         <div className="company-login-footer">
           <p>Protected by HITNISH Software</p>
         </div>
