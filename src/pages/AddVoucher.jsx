@@ -268,15 +268,20 @@ function AddVoucher() {
                     <div
                       className="voucher-cell voucher-col-qty"
                       data-label="QTY"
+                      style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
                     >
                       <input
                         type="number"
                         className="form-input"
                         value={item.qty}
+                        style={{ flex: 1, minWidth: "50px" }}
                         onChange={(e) =>
                           handleItemChange(index, "qty", e.target.value)
                         }
                       />
+                      <span style={{ fontSize: "0.85rem", color: "var(--text-secondary)", fontWeight: "500", flexShrink: 0 }}>
+                        {item.unit || "Pcs"}
+                      </span>
                     </div>
                     <div
                       className="voucher-cell voucher-col-price"
