@@ -19,7 +19,7 @@ const CompanyLogin = ({ onLogin }) => {
     setError('');
 
     // Vendor shortcut login
-    if (phone === 'hitnish' && pin === '123456') {
+    if (phone === 'hitnish' && pin === '1234') {
       navigate('/vendor/dashboard');
       return;
     }
@@ -103,10 +103,15 @@ const CompanyLogin = ({ onLogin }) => {
             <input
               id="pin"
               type="password"
+              inputMode="numeric"
               value={pin}
-              onChange={(e) => setPin(e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value.replace(/\D/g, '');
+                if (value.length <= 4) {
+                  setPin(value);
+                }
+              }}
               placeholder="Enter 4-Digit PIN"
-              maxLength={6} // Allow 6 for vendor shortcut
               required
             />
           </div>
