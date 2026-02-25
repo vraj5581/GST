@@ -150,6 +150,7 @@ function AddProduct() {
               <Select
                 options={[
                   { value: "Pcs", label: "Pcs" },
+                  { value: "Feet", label: "Feet" },
                   { value: "Box", label: "Box" },
                   { value: "Kg", label: "Kg" },
                   { value: "Ltr", label: "Ltr" },

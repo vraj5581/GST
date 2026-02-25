@@ -294,12 +294,12 @@ tr:hover td {
 
 .parties-page .party-details-name {
   font-size: 1.5rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.5rem;
   color: var(--color-primary);
 }
 
 .parties-page .party-details-grid {
-  gap: 2rem;
+  gap: 0.7rem;
 }
 
 .parties-page .party-details-label {
@@ -330,7 +330,7 @@ tr:hover td {
 .parties-page .party-details-actions {
   display: flex;
   gap: 1rem;
-  margin-top: 3rem;
+  margin-top: 1rem;
   border-top: 1px solid var(--border-color);
-  padding-top: 1.5rem;
+  padding-top: 1rem;
 }
