@@ -66,7 +66,7 @@ function Parties() {
           style={{ flexShrink: 0 }}
           title="Add Party"
         >
-          <Plus size={18} />
+          <Plus size={23} />
         </Link>
       </div>
 

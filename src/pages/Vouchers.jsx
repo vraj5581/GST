@@ -78,7 +78,7 @@ function Vouchers() {
           className="btn btn-outline-primary btn-icon vouchers-add-btn"
           title="Create Voucher"
         >
-          <Plus size={18} />
+          <Plus size={23} />
         </Link>
       </div>
 
@@ -167,7 +167,7 @@ function Vouchers() {
               </button>
             </div>
             <div className="qr-modal-body">
-              <QRCode 
+              <QRCode
                 value={`${window.location.origin}/voucher-print/${qrVoucher.id}`}
                 size={220}
                 style={{ height: "auto", maxWidth: "100%", width: "100%" }}

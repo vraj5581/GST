@@ -289,7 +289,7 @@ const VendorDashboard = () => {
               onClick={() => setIsAdding(true)}
               title="Add Company"
             >
-              <Plus size={18} />
+              <Plus size={23} />
             </button>
           </div>
         )}

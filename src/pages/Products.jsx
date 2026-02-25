@@ -65,7 +65,7 @@ function Products() {
           className="btn btn-outline-primary btn-icon products-add-btn"
           title="Add Product"
         >
-          <Plus size={18} />
+          <Plus size={23} />
         </Link>
       </div>
 
