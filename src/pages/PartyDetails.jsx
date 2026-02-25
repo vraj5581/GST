@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Edit, Trash2, ArrowLeft } from "lucide-react";
+import { Edit, Trash2, ArrowLeft, Phone, Mail, FileText, MapPin } from "lucide-react";
 import { doc, getDoc, deleteDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import "./Parties.css";
@@ -65,28 +65,40 @@ function PartyDetails() {
               <label className="form-label party-details-label">
                 Mobile Number
               </label>
-              <p className="party-details-value">{party.mobile}</p>
+              <div className="party-detail-row">
+                <div className="party-detail-icon"><Phone size={14} /></div>
+                <p className="party-details-value">{party.mobile}</p>
+              </div>
             </div>
 
             <div className="detail-item">
               <label className="form-label party-details-label">
                 Email Address
               </label>
-              <p className="party-details-value-break">{party.email}</p>
+              <div className="party-detail-row">
+                <div className="party-detail-icon"><Mail size={14} /></div>
+                <p className="party-details-value-break">{party.email}</p>
+              </div>
             </div>
 
             <div className="detail-item">
               <label className="form-label party-details-label">
                 GST Number
               </label>
-              <p className="party-details-value">{party.gst || "N/A"}</p>
+              <div className="party-detail-row">
+                <div className="party-detail-icon"><FileText size={14} /></div>
+                <p className="party-details-value">{party.gst || "N/A"}</p>
+              </div>
             </div>
 
             <div className="detail-item party-details-address-col">
               <label className="form-label party-details-label">Address</label>
-              <p className="party-details-address-value">
-                {party.address || "N/A"}
-              </p>
+              <div className="party-detail-row">
+                <div className="party-detail-icon"><MapPin size={14} /></div>
+                <p className="party-details-address-value">
+                  {party.address || "N/A"}
+                </p>
+              </div>
             </div>
           </div>
 

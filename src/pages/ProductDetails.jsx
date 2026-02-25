@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Edit, Trash2 } from "lucide-react";
+import { ArrowLeft, Edit, Trash2, IndianRupee, Hash, FileText } from "lucide-react";
 import { doc, getDoc, deleteDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import "./ProductDetails.css";
@@ -48,7 +48,7 @@ function ProductDetails() {
   if (!product) return <div>Loading...</div>;
 
   return (
-    <div className="product-details-page">
+    <div className="products-page">
       <header className="fixed-header product-details-header">
         <button
           className="btn btn-outline btn-icon product-details-back-btn"
@@ -61,45 +61,59 @@ function ProductDetails() {
       </header>
 
       <div className="content-below-fixed">
-        <div className="product-card-container">
-          {/* Details Section */}
-          <div className="product-info-section">
-            <h2 className="product-name-heading">{product.name}</h2>
-            {product.hsn && (
-              <p className="product-hsn-text">HSN Code: {product.hsn}</p>
-            )}
+        <div className="product-details-wrapper">
+          <h2 className="product-details-name">{product.name}</h2>
 
-            <div className="product-metrics-grid">
-              <div>
-                <p className="metric-label">Selling Price</p>
-                <p className="metric-value price">
+          <div className="grid grid-2 product-details-grid">
+            <div className="detail-item">
+              <label className="form-label product-details-label">Selling Price</label>
+              <div className="party-detail-row">
+                <div className="party-detail-icon">
+                  <IndianRupee size={14} />
+                </div>
+                <p className="product-details-value">
                   ₹{product.price}{" "}
-                  <span className="metric-unit">per {product.unit}</span>
+                  <span className="product-metric-unit">per {product.unit}</span>
                 </p>
               </div>
             </div>
 
-            {product.description && (
-              <div className="product-description-section">
-                <p className="description-heading">Description</p>
-                <p className="description-text">{product.description}</p>
+            <div className="detail-item">
+              <label className="form-label product-details-label">HSN/SAC Code</label>
+              <div className="party-detail-row">
+                <div className="party-detail-icon">
+                  <Hash size={14} />
+                </div>
+                <p className="product-details-value">{product.hsn || "N/A"}</p>
               </div>
-            )}
-
-            <div className="product-details-action-buttons">
-              <button
-                className="btn btn-outline-primary btn-mobile-flex"
-                onClick={handleEdit}
-              >
-                Edit
-              </button>
-              <button
-                className="btn btn-outline-danger btn-mobile-flex"
-                onClick={handleDelete}
-              >
-                Delete
-              </button>
             </div>
+
+            <div className="detail-item product-details-description-col">
+              <label className="form-label product-details-label">Description</label>
+              <div className="party-detail-row">
+                <div className="party-detail-icon">
+                  <FileText size={14} />
+                </div>
+                <p className="product-details-value">
+                  {product.description || "No description provided."}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="product-details-actions">
+            <button
+              className="btn btn-outline-primary btn-mobile-flex"
+              onClick={handleEdit}
+            >
+              Edit
+            </button>
+            <button
+              className="btn btn-outline-danger btn-mobile-flex"
+              onClick={handleDelete}
+            >
+              Delete
+            </button>
           </div>
         </div>
       </div>
