@@ -22,8 +22,8 @@
 .products-page .product-details-name {
   font-size: 1.4rem;
   font-weight: 800;
-  color: #1e293b;
-  margin-bottom: 1rem;
+  color: var(--color-primary);
+  margin-bottom: 0.5rem;
   letter-spacing: -0.02em;
   position: relative;
   z-index: 1;
