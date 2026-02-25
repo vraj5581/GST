@@ -3,48 +3,94 @@
 .print-page-header {
   justify-content: flex-start;
 }
+
 .print-back-btn {
   flex-shrink: 0;
 }
+
 .print-title-text {
   margin: 0;
   border: none;
 }
+
 .print-btn-right {
   margin-left: auto;
 }
 
 /* Document Header Sections */
 .print-doc-header {
-  text-align: center;
   border-bottom: 2px solid #000;
   padding-bottom: 1.5rem;
   margin-bottom: 2.4rem;
 }
+
+.print-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2rem;
+}
+
+.print-logo-section {
+  flex: 0 1 auto;
+}
+
+.print-main-logo {
+  max-width: 150px;
+  max-height: 100px;
+  object-fit: contain;
+}
+
+.print-company-info-section {
+  flex: 1;
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
 .print-company-name {
   font-size: 2.1rem;
   font-weight: 800;
-  margin: 0 0 0.2rem 0;
+  margin: 0 0 0.5rem 0;
   color: #000;
   letter-spacing: 1px;
+  text-transform: uppercase;
 }
+
 .print-company-details {
-  font-size: 0.85rem;
-  color: #333;
-  line-height: 1.3;
+  font-size: 0.9rem;
+  color: #000;
+  line-height: 1.4;
 }
+
 .print-company-details p {
-  margin: 0;
+  margin: 0 0 2px 0;
 }
+
+.print-address {
+  margin-bottom: 4px !important;
+}
+
 .print-invoice-title-wrapper {
   margin-top: 1.5rem;
+  text-align: center;
+  border-top: 1px solid #eee;
+  padding-top: 1rem;
 }
+
 .print-invoice-title {
-  font-size: 1.35rem;
-  font-weight: bold;
+  font-size: 1.5rem;
+  font-weight: 900;
   margin: 0;
-  text-decoration: underline;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: #000;
+  display: inline-block;
+  border-bottom: 3px double #000;
+  padding-bottom: 2px;
 }
+
 
 /* Bill To & Date Row */
 .print-bill-row {
@@ -52,23 +98,34 @@
   justify-content: space-between;
   margin-bottom: 2rem;
 }
+
 .print-bill-to-col {
   flex: 1;
 }
-.print-bill-to-heading {
+
+.print-bill-to-header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+}
+
+.print-bill-to-label {
   font-size: 1.1rem;
   font-weight: bold;
-  margin-bottom: 0.5rem;
 }
+
 .print-party-name {
   font-weight: bold;
-  font-size: 1rem;
+  font-size: 1.1rem;
 }
+
 .print-party-details {
   line-height: 1.3;
   font-size: 0.85rem;
   margin-top: 4px;
 }
+
 .print-meta-col {
   text-align: right;
   flex: 1;
@@ -81,52 +138,63 @@
   border-collapse: collapse;
   margin-bottom: 2rem;
 }
+
 .print-thead-row {
   background: #f0f0f0;
   border-bottom: 1px solid #ddd;
 }
+
 .print-th-left {
   padding: 0.75rem;
   text-align: left;
   border: 1px solid #ddd;
 }
+
 .print-th-center {
   padding: 0.75rem;
   text-align: center;
   border: 1px solid #ddd;
 }
+
 .print-th-right {
   padding: 0.75rem;
   text-align: right;
   border: 1px solid #ddd;
 }
+
 .print-td-default {
   padding: 0.75rem;
   border: 1px solid #ddd;
 }
+
 .print-td-center {
   padding: 0.75rem;
   text-align: center;
   border: 1px solid #ddd;
 }
+
 .print-td-right {
   padding: 0.75rem;
   text-align: right;
   border: 1px solid #ddd;
 }
+
 .print-td-right-bold {
   padding: 0.75rem;
   text-align: right;
   border: 1px solid #ddd;
   font-weight: bold;
 }
+
 .print-hsn-helper {
   font-size: 0.8rem;
   color: #666;
 }
+
 .print-tfoot-row {
   background: #f0f0f0;
 }
+
 .print-tfoot-label {
   padding: 1rem;
   font-size: 1.05rem;
@@ -134,6 +202,7 @@
   text-align: right;
   border-top: 1px solid #ddd;
 }
+
 .print-tfoot-value {
   padding: 1rem;
   font-size: 1.05rem;
@@ -149,17 +218,21 @@
   background: #f9f9f9;
   border-left: 4px solid #333;
 }
+
 .print-notes-heading {
   margin: 0 0 0.5rem 0;
 }
+
 .print-notes-body {
   margin: 0;
   white-space: pre-wrap;
 }
+
 .print-signatory-wrapper {
   margin-top: 4rem;
   text-align: right;
 }
+
 .print-signatory-line {
   border-top: 1px solid #000;
   display: inline-block;
@@ -192,15 +265,18 @@
     /* Setting margin to 0 prevents the browser from printing default headers (date/title) and footers (URL/page numbers) */
     margin: 0;
   }
+
   body {
     background: white;
     /* Since we removed the page margin, we add padding to the body so content doesn't hit the physical paper edge */
-    padding: 10mm 15mm !important; 
+    padding: 10mm 15mm !important;
     box-sizing: border-box;
   }
+
   .print-container .content-below-fixed {
     padding: 0 !important;
   }
+
   .invoice-preview-card {
     width: 100% !important;
     min-height: auto !important;
@@ -225,26 +301,32 @@
     flex-direction: row !important;
     gap: 0 !important;
   }
-  .invoice-header-row > div {
+
+  .invoice-header-row>div {
     text-align: left !important;
   }
-  .invoice-header-row > div:last-child {
+
+  .invoice-header-row>div:last-child {
     text-align: right !important;
   }
 
   .invoice-table-container {
     overflow: visible !important;
   }
+
   .invoice-table {
     display: table !important;
     width: 100% !important;
   }
+
   .invoice-table thead {
     display: table-header-group !important;
   }
+
   .invoice-table tbody {
     display: table-row-group !important;
   }
+
   .invoice-table tfoot {
     display: table-row-group !important;
   }
@@ -255,6 +337,7 @@
     display: table-row !important;
     margin: 0 !important;
   }
+
   .invoice-table th,
   .invoice-table td,
   .invoice-table tbody td {
@@ -267,13 +350,16 @@
     padding: 0.75rem !important;
     text-align: left !important;
   }
+
   .invoice-table tbody td[data-label="Price"],
   .invoice-table tbody td[data-label="Total"] {
     text-align: right !important;
   }
+
   .invoice-table tbody td[data-label="Qty"] {
     text-align: center !important;
   }
+
   .invoice-table tbody td::before {
     display: none !important;
   }
@@ -283,6 +369,7 @@
     padding: 0.75rem !important;
     width: auto !important;
   }
+
   .invoice-table tfoot tr:first-child td {
     border-top: 1px solid #ddd !important;
   }
@@ -309,9 +396,11 @@
   .print-company-name {
     font-size: 1.4rem;
   }
+
   .print-company-details {
     font-size: 0.65rem;
   }
+
   .print-invoice-title {
     font-size: 1rem;
     margin-top: 1rem;
@@ -327,9 +416,11 @@
     font-size: 0.85rem;
     margin-bottom: 0.25rem;
   }
+
   .print-party-name {
     font-size: 0.85rem;
   }
+
   .print-party-details {
     font-size: 0.65rem;
   }
@@ -340,6 +431,7 @@
     gap: 0.75rem;
     margin-bottom: 1.2rem;
   }
+
   .print-meta-col {
     text-align: left;
     background: var(--bg-primary);
@@ -347,6 +439,7 @@
     border-radius: var(--radius-md);
     font-size: 0.65rem;
   }
+
   .print-meta-col p {
     margin-bottom: 0.2rem;
   }
@@ -372,7 +465,8 @@
   .print-td-right {
     padding: 0.35rem 0.25rem;
     font-size: 0.6rem;
-    word-break: break-word; /* Ensure wrapping fits gracefully */
+    word-break: break-word;
+    /* Ensure wrapping fits gracefully */
   }
 
   .print-tfoot-label,
@@ -386,6 +480,7 @@
     font-size: 0.65rem;
     margin-top: 1.2rem;
   }
+
   .print-notes-heading {
     font-size: 0.75rem;
     margin-bottom: 0.25rem;
@@ -394,6 +489,7 @@
   .print-signatory-wrapper {
     margin-top: 2rem;
   }
+
   .print-signatory-line {
     font-size: 0.65rem;
     padding: 0.3rem 1rem 0 1rem;

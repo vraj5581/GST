@@ -109,20 +109,29 @@ function VoucherPrint() {
         <div className="invoice-preview-card">
           {/* Header */}
           <div className="print-doc-header">
-            <h1 className="print-company-name">{clientCompany?.companyName || "COMPANY NAME"}</h1>
-            <div className="print-company-details">
-              <p>
-                {clientCompany?.address || "Company Address"}
-              </p>
-              <p>
-                <strong>Mobile:</strong> {clientCompany?.phone || "+91 00000 00000"} |{" "}
-                <strong>Email:</strong> {clientCompany?.email || "contact@company.com"}
-              </p>
-              {clientCompany?.gst && (
-                <p>
-                  <strong>GSTIN:</strong> {clientCompany.gst}
-                </p>
-              )}
+            <div className="print-header-content">
+              <div className="print-logo-section">
+                {clientCompany?.logo && (
+                  <img src={clientCompany.logo} alt="Logo" className="print-main-logo" />
+                )}
+              </div>
+              <div className="print-company-info-section">
+                <h1 className="print-company-name">{clientCompany?.companyName || "COMPANY NAME"}</h1>
+                <div className="print-company-details">
+                  <p>
+                    <strong>Mobile:</strong> {clientCompany?.phone || "+91 00000 00000"}
+                  </p>
+                  <p>
+                    <strong>Email:</strong> {clientCompany?.email || "contact@company.com"}
+                  </p>
+                  {clientCompany?.gst && (
+                    <p>
+                      <strong>GSTIN:</strong> {clientCompany.gst}
+                    </p>
+                  )}
+                  <p className="print-address">{clientCompany?.address || "Company Address"}</p>
+                </div>
+              </div>
             </div>
             <div className="print-invoice-title-wrapper">
               <h2 className="print-invoice-title">INVOICE</h2>
@@ -131,8 +140,10 @@ function VoucherPrint() {
 
           <div className="invoice-header-row print-bill-row">
             <div className="print-bill-to-col">
-              <h3 className="print-bill-to-heading">Bill To:</h3>
-              <p className="print-party-name">{party?.name}</p>
+              <div className="print-bill-to-header">
+                <span className="print-bill-to-label">Bill To:</span>
+                <span className="print-party-name">{party?.name}</span>
+              </div>
               <div className="print-party-details">
                 {party?.address && <div>{party.address}</div>}
                 {party?.gst && (
