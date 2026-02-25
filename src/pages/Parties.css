@@ -36,7 +36,7 @@
   left: 0;
   width: 100%;
   height: 40%;
-  background: radial-gradient(ellipse at bottom, rgba(147, 197, 253, 0.15) 0%, rgba(255,255,255,0) 70%);
+  background: radial-gradient(ellipse at bottom, rgba(147, 197, 253, 0.15) 0%, rgba(255, 255, 255, 0) 70%);
   pointer-events: none;
 }
 
@@ -105,7 +105,7 @@
 .party-card-details {
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  gap: 0.5rem;
   position: relative;
   z-index: 1;
 }
@@ -169,10 +169,13 @@
 .form-input,
 .form-textarea {
   width: 100%;
-  height: 42px; /* Set exact height to match button */
+  height: 42px;
+  /* Set exact height to match button */
   padding: 0.5rem 0.875rem;
-  border-radius: 6px; /* Reduced from default roundness */
-  border: 1px solid #cbd5e1; /* Softer border */
+  border-radius: 6px;
+  /* Reduced from default roundness */
+  border: 1px solid #cbd5e1;
+  /* Softer border */
   background: var(--bg-secondary);
   font-size: 0.95rem;
   color: var(--text-primary);
@@ -190,7 +193,8 @@
 
 .form-textarea {
   min-height: 100px;
-  height: auto; /* Override the 42px from .form-input */
+  height: auto;
+  /* Override the 42px from .form-input */
   resize: vertical;
 }
 
@@ -198,13 +202,16 @@
 .w-full {
   width: 100%;
 }
+
 .grid {
   display: grid;
   gap: 1rem;
 }
+
 .grid-2 {
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 }
+
 @media (max-width: 768px) {
   .grid-2 {
     grid-template-columns: 1fr !important;
@@ -271,44 +278,55 @@ tr:hover td {
 .parties-page .party-details-header {
   justify-content: flex-start;
 }
+
 .parties-page .party-details-back-btn {
   flex-shrink: 0;
 }
+
 .parties-page .party-details-title {
   margin: 0;
   border: none;
 }
+
 .parties-page .party-details-wrapper {
   padding: 1rem;
 }
+
 .parties-page .party-details-name {
   font-size: 1.5rem;
   margin-bottom: 1.5rem;
   color: var(--color-primary);
 }
+
 .parties-page .party-details-grid {
   gap: 2rem;
 }
+
 .parties-page .party-details-label {
   margin-bottom: 0.25rem;
 }
+
 .parties-page .party-details-value {
   font-size: 1.1rem;
 }
+
 .parties-page .party-details-value-break {
   font-size: 1.1rem;
   word-break: break-all;
   overflow-wrap: anywhere;
 }
+
 .parties-page .party-details-address-col {
   grid-column: 1 / -1;
 }
+
 .parties-page .party-details-address-value {
   font-size: 1.1rem;
   white-space: pre-wrap;
   word-break: break-all;
   overflow-wrap: anywhere;
 }
+
 .parties-page .party-details-actions {
   display: flex;
   gap: 1rem;

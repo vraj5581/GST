@@ -111,14 +111,6 @@ function Parties() {
                     <p>{p.mobile}</p>
                   </div>
                   <div className="party-detail-row">
-                    <div className="party-detail-icon"><Mail size={14} /></div>
-                    <p>{p.email}</p>
-                  </div>
-                  <div className="party-detail-row">
-                    <div className="party-detail-icon"><FileText size={14} /></div>
-                    <p>{p.gst || "N/A"}</p>
-                  </div>
-                  <div className="party-detail-row">
                     <div className="party-detail-icon"><MapPin size={14} /></div>
                     <p>{p.address || "N/A"}</p>
                   </div>

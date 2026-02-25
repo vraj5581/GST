@@ -111,14 +111,11 @@ function Products() {
                     <div className="party-detail-icon"><DollarSign size={14} /></div>
                     <p>₹{p.price}/{p.unit}</p>
                   </div>
-                  <div className="party-detail-row">
-                    <div className="party-detail-icon"><FileCode2 size={14} /></div>
-                    <p>{p.hsn || "N/A"}</p>
-                  </div>
+
                   {p.description && (
                     <div className="party-detail-row">
                       <div className="party-detail-icon"><FileText size={14} /></div>
-                      <p className="product-description-italic">{p.description}</p>
+                      <p className="product-description">{p.description}</p>
                     </div>
                   )}
                 </div>
