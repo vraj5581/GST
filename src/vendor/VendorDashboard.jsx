@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { collection, addDoc, getDocs, deleteDoc, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, getDocs, deleteDoc, doc, updateDoc, serverTimestamp, query, where, writeBatch } from 'firebase/firestore';
 import { db } from '../firebase';
 import { Trash2, Plus, Building, LogOut, Edit2, Search, Phone, Key, Mail, FileText, MapPin, Image as ImageIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -217,13 +217,60 @@ const VendorDashboard = () => {
   };
 
   const handleDeleteCompany = async (id, name) => {
-    if (window.confirm(`Are you sure you want to delete ${name}?`)) {
+    if (window.confirm(`Are you sure you want to delete ${name}? This will permanently delete all data (Vouchers, Products, Parties) associated with this company.`)) {
       try {
+        // Delete all associated data first using a batch
+        const batch = writeBatch(db);
+        let batchCount = 0;
+        
+        // Helper function to commit and reset batch if limit (500) is reached
+        const checkBatchLimit = async () => {
+          if (batchCount >= 400) {
+            await batch.commit();
+            batchCount = 0;
+          }
+        };
+
+        // 1. Delete all vouchers
+        const vouchersQ = query(collection(db, "vouchers"), where("companyId", "==", id));
+        const vouchersSnap = await getDocs(vouchersQ);
+        vouchersSnap.forEach((docSnap) => {
+          batch.delete(doc(db, "vouchers", docSnap.id));
+          batchCount++;
+        });
+        await checkBatchLimit();
+
+        // 2. Delete all products
+        const productsQ = query(collection(db, "products"), where("companyId", "==", id));
+        const productsSnap = await getDocs(productsQ);
+        productsSnap.forEach((docSnap) => {
+          batch.delete(doc(db, "products", docSnap.id));
+          batchCount++;
+        });
+        await checkBatchLimit();
+
+        // 3. Delete all parties
+        const partiesQ = query(collection(db, "parties"), where("companyId", "==", id));
+        const partiesSnap = await getDocs(partiesQ);
+        partiesSnap.forEach((docSnap) => {
+          batch.delete(doc(db, "parties", docSnap.id));
+          batchCount++;
+        });
+        await checkBatchLimit();
+
+        // Commit any remaining deletions in the batch
+        if (batchCount > 0) {
+          await batch.commit();
+        }
+
+        // Finally, delete the company itself
         await deleteDoc(doc(db, 'companies', id));
+        
         setCompanies(companies.filter(c => c.id !== id));
+        alert('Company and all associated data successfully deleted.');
       } catch (error) {
-        console.error("Error deleting company:", error);
-        alert("Failed to delete company.");
+        console.error("Error deleting company and data:", error);
+        alert("Failed to delete company and associated data.");
       }
     }
   };
@@ -251,6 +298,7 @@ const VendorDashboard = () => {
     navigate('/vendor');
   };
 
+
   const filteredCompanies = companies.filter(company =>
     company.companyName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     (company.phone && company.phone.includes(searchQuery))
@@ -270,6 +318,7 @@ const VendorDashboard = () => {
       </header>
 
       <main className="vd-main">
+
         {!isAdding && (
           <div className="vd-action-bar">
             <div className="search-bar w-full-search vd-search-wrapper">

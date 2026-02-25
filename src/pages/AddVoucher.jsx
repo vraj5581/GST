@@ -258,6 +258,7 @@ function AddVoucher() {
             <div className="voucher-items-header-row">
               <div className="voucher-col voucher-col-product">Product</div>
               <div className="voucher-col voucher-col-qty">QTY</div>
+              <div className="voucher-col voucher-col-unit">UNIT</div>
               <div className="voucher-col voucher-col-price">Price</div>
               <div className="voucher-col voucher-col-total">Total</div>
             </div>
@@ -284,6 +285,11 @@ function AddVoucher() {
                           handleItemChange(index, "qty", e.target.value)
                         }
                       />
+                    </div>
+                    <div
+                      className="voucher-cell voucher-col-unit"
+                      data-label="UNIT"
+                    >
                       <span className="av-qty-unit">
                         {item.unit || "Pcs"}
                       </span>
