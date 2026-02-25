@@ -1,13 +1,15 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Vouchers.css";
-import { Plus, Printer, Edit, Trash2, Search, Hash, Calendar, Package, IndianRupee } from "lucide-react";
+import { Plus, QrCode, Edit, Trash2, Search, Hash, Calendar, Package, IndianRupee, X } from "lucide-react";
+import QRCode from "react-qr-code";
 import { collection, getDocs, deleteDoc, doc, query, where } from "firebase/firestore";
 import { db } from "../firebase";
 
 function Vouchers() {
   const [vouchers, setVouchers] = useState([]);
   const [search, setSearch] = useState("");
+  const [qrVoucher, setQrVoucher] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -98,11 +100,11 @@ function Vouchers() {
                       className="btn btn-action-print"
                       onClick={(e) => {
                         e.stopPropagation();
-                        navigate(`/voucher-print/${v.id}`);
+                        setQrVoucher(v);
                       }}
-                      title="Print / View"
+                      title="Show QR Code"
                     >
-                      <Printer size={16} />
+                      <QrCode size={16} />
                     </button>
                     <button
                       className="btn btn-action-edit"
@@ -154,6 +156,28 @@ function Vouchers() {
           )}
         </div>
       </div>
+
+      {qrVoucher && (
+        <div className="qr-modal-overlay" onClick={() => setQrVoucher(null)}>
+          <div className="qr-modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="qr-modal-header">
+              <h3>Scan to View Invoice</h3>
+              <button className="qr-modal-close" onClick={() => setQrVoucher(null)}>
+                <X size={20} />
+              </button>
+            </div>
+            <div className="qr-modal-body">
+              <QRCode 
+                value={`${window.location.origin}/voucher-print/${qrVoucher.id}`}
+                size={220}
+                style={{ height: "auto", maxWidth: "100%", width: "100%" }}
+              />
+              <p className="qr-modal-id">#INV-{String(qrVoucher.id).substring(0, 5).toUpperCase()}</p>
+              <p className="qr-modal-help">Scan this QR code with any mobile camera to view and download the invoice.</p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
