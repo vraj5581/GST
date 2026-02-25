@@ -145,6 +145,14 @@ function AddVoucher() {
       } else {
         // Assign creation timestamp if purely new
         finalVoucher.createdAt = Date.now();
+        
+        // Generate Invoice Number
+        const loggedCompanyId = JSON.parse(localStorage.getItem('loggedCompany'))?.id;
+        const vouchersQ = query(collection(db, "vouchers"), where("companyId", "==", loggedCompanyId));
+        const vouchersSnap = await getDocs(vouchersQ);
+        const nextInvoiceNum = `INV/25-26/${String(vouchersSnap.size + 1).padStart(3, '0')}`;
+        finalVoucher.invoiceNumber = nextInvoiceNum;
+
         await addDoc(collection(db, "vouchers"), finalVoucher);
       }
       navigate("/vouchers");

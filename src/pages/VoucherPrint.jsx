@@ -28,7 +28,19 @@ function VoucherPrint() {
 
         if (voucherSnap.exists()) {
           const vData = voucherSnap.data();
-          setVoucher({ id: voucherSnap.id, ...vData });
+
+          let fallbackInvoiceNumber = "";
+          if (!vData.invoiceNumber) {
+            const companyId = JSON.parse(localStorage.getItem('loggedCompany'))?.id;
+            const vouchersQ = query(collection(db, "vouchers"), where("companyId", "==", companyId));
+            const allVouchersSnap = await getDocs(vouchersQ);
+            let data = allVouchersSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+            data.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+            const myIndex = data.findIndex(d => d.id === voucherSnap.id);
+            fallbackInvoiceNumber = `INV/25-26/${String((myIndex !== -1 ? myIndex : 0) + 1).padStart(3, '0')}`;
+          }
+
+          setVoucher({ id: voucherSnap.id, fallbackInvoiceNumber, ...vData });
 
           // Fetch the associated party using query
           const q = query(
@@ -132,8 +144,7 @@ function VoucherPrint() {
                 {new Date(voucher.date).toLocaleDateString()}
               </p>
               <p>
-                <strong>Invoice No:</strong> #INV-
-                {String(voucher.id).substring(0, 5).toUpperCase()}
+                <strong>Invoice No:</strong> {voucher.invoiceNumber || voucher.fallbackInvoiceNumber}
               </p>
             </div>
           </div>

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Vouchers.css";
-import { Plus, QrCode, Edit, Trash2, Search, Hash, Calendar, Package, IndianRupee, X } from "lucide-react";
+import { Plus, QrCode, Edit, Trash2, Search, Hash, Calendar, Package, IndianRupee, X, Filter } from "lucide-react";
 import QRCode from "react-qr-code";
 import { collection, getDocs, deleteDoc, doc, query, where } from "firebase/firestore";
 import { db } from "../firebase";
@@ -9,8 +9,19 @@ import { db } from "../firebase";
 function Vouchers() {
   const [vouchers, setVouchers] = useState([]);
   const [search, setSearch] = useState("");
+  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [filters, setFilters] = useState({
+    dateFrom: "",
+    dateTo: "",
+    priceMin: 0,
+    priceMax: 200000,
+    sortInvoice: "desc", // "desc", "asc"
+    sortParty: "", // "", "asc", "desc"
+  });
   const [qrVoucher, setQrVoucher] = useState(null);
-  const navigate = useNavigate();
+  const navigate = useNavigate(
+    
+  );
 
   useEffect(() => {
     const fetchVouchers = async () => {
@@ -50,16 +61,65 @@ function Vouchers() {
     return items.reduce((sum, item) => sum + (item.amount || 0), 0);
   };
 
-  const filtered = vouchers.filter((v) => {
+  let filtered = vouchers.filter((v) => {
+    // Basic Search
     const searchLower = search.toLowerCase();
-    const invNo = String(v.invoiceNo || v.id)
-      .substring(0, 5)
-      .toUpperCase();
-    return (
-      (v.partyId && v.partyId.toLowerCase().includes(searchLower)) ||
-      invNo.includes(searchLower)
-    );
+    const invNo = String(v.invoiceNumber || `INV/25-26/${String(v.originalIndex + 1).padStart(3, '0')}`).toLowerCase();
+    
+    const matchesSearch = (v.partyId && v.partyId.toLowerCase().includes(searchLower)) || invNo.includes(searchLower);
+
+    // Advanced Filters
+    let matchesDateRange = true;
+    if (filters.dateFrom || filters.dateTo) {
+      const vDate = new Date(v.date);
+      vDate.setHours(0,0,0,0);
+      
+      if (filters.dateFrom) {
+        const fromDate = new Date(filters.dateFrom);
+        fromDate.setHours(0,0,0,0);
+        if (vDate < fromDate) matchesDateRange = false;
+      }
+      if (filters.dateTo) {
+        const toDate = new Date(filters.dateTo);
+        toDate.setHours(23,59,59,999);
+        if (vDate > toDate) matchesDateRange = false;
+      }
+    }
+
+    let matchesPrice = true;
+    const total = calculateTotal(v.items);
+    if (filters.priceMin > 0 && total < filters.priceMin) matchesPrice = false;
+    if (filters.priceMax < 200000 && total > filters.priceMax) matchesPrice = false;
+
+    return matchesSearch && matchesDateRange && matchesPrice;
   });
+
+  // Sorting
+  filtered.sort((a, b) => {
+    // 1. Sort by Party Name if selected
+    if (filters.sortParty === "asc") {
+      const cmp = (a.partyId || "").localeCompare(b.partyId || "");
+      if (cmp !== 0) return cmp;
+    } else if (filters.sortParty === "desc") {
+      const cmp = (b.partyId || "").localeCompare(a.partyId || "");
+      if (cmp !== 0) return cmp;
+    }
+
+    // 2. Fallback / Default sort by Invoice order
+    const isAsc = filters.sortInvoice === "asc";
+    const dateA = a.createdAt || new Date(a.date).getTime();
+    const dateB = b.createdAt || new Date(b.date).getTime();
+    return isAsc ? dateA - dateB : dateB - dateA;
+  });
+
+  const activeFiltersArr = [
+    filters.dateFrom || filters.dateTo,
+    filters.priceMin > 0 || filters.priceMax < 200000,
+    filters.sortInvoice !== "desc",
+    filters.sortParty !== ""
+  ].filter(Boolean);
+  const activeFilterCount = activeFiltersArr.length;
+  const hasActiveFilters = activeFilterCount > 0;
 
   return (
     <div className="vouchers-page">
@@ -73,13 +133,26 @@ function Vouchers() {
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
-        <Link
-          to="/add-voucher"
-          className="btn btn-outline-primary btn-icon vouchers-add-btn"
-          title="Create Voucher"
-        >
-          <Plus size={23} />
-        </Link>
+        <div className="vouchers-header-actions">
+          <button
+            className={`btn btn-icon vouchers-filter-btn ${hasActiveFilters ? "btn-primary" : "btn-outline-primary"}`}
+            onClick={() => setShowFilterModal(true)}
+            title="Filter Options"
+            style={{ position: 'relative' }}
+          >
+            <Filter size={23} />
+            {activeFilterCount > 0 && (
+              <span className="filter-badge">{activeFilterCount}</span>
+            )}
+          </button>
+          <Link
+            to="/add-voucher"
+            className="btn btn-outline-primary btn-icon vouchers-add-btn"
+            title="Create Voucher"
+          >
+            <Plus size={23} />
+          </Link>
+        </div>
       </div>
 
       <div className="content-below-fixed">
@@ -132,7 +205,7 @@ function Vouchers() {
                 <div className="voucher-card-details">
                   <div className="party-detail-row">
                     <div className="party-detail-icon"><Hash size={14} /></div>
-                    <p>#INV-{String(v.id).substring(0, 5).toUpperCase()}</p>
+                    <p>{v.invoiceNumber || `INV/25-26/${String(v.originalIndex + 1).padStart(3, '0')}`}</p>
                   </div>
                   <div className="party-detail-row">
                     <div className="party-detail-icon"><Calendar size={14} /></div>
@@ -172,8 +245,171 @@ function Vouchers() {
                 size={220}
                 style={{ height: "auto", maxWidth: "100%", width: "100%" }}
               />
-              <p className="qr-modal-id">#INV-{String(qrVoucher.id).substring(0, 5).toUpperCase()}</p>
+              <p className="qr-modal-id">{qrVoucher.invoiceNumber || `INV/25-26/${String(qrVoucher.originalIndex + 1).padStart(3, '0')}`}</p>
               <p className="qr-modal-help">Scan this QR code with any mobile camera to view and download the invoice.</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showFilterModal && (
+        <div className="qr-modal-overlay" onClick={() => setShowFilterModal(false)}>
+          <div className="qr-modal-content filter-modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="qr-modal-header">
+              <h3>Filter Options</h3>
+              <button className="qr-modal-close" onClick={() => setShowFilterModal(false)}>
+                <X size={20} />
+              </button>
+            </div>
+            <div className="qr-modal-body" style={{ alignItems: 'stretch', textAlign: 'left', padding: '1.5rem' }}>
+              <div className="form-group" style={{ marginBottom: '1.25rem' }}>
+                <div className="filter-group-header">
+                  <label className="form-label" style={{ fontWeight: 700, fontSize: '0.95rem', color: '#1e293b', margin: 0 }}>Date Range</label>
+                  {(filters.dateFrom || filters.dateTo) && (
+                    <span className="filter-clear-link" onClick={() => setFilters({ ...filters, dateFrom: "", dateTo: "" })}>Clear</span>
+                  )}
+                </div>
+                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                  <input
+                    type={filters.dateFrom ? "date" : "text"}
+                    onFocus={(e) => { e.target.type = "date"; }}
+                    onClick={(e) => { 
+                      e.target.type = "date"; 
+                      setTimeout(() => { try { e.target.showPicker(); } catch(err){} }, 50); 
+                    }}
+                    onTouchStart={(e) => { 
+                      e.target.type = "date"; 
+                      setTimeout(() => { try { e.target.showPicker(); } catch(err){} }, 50); 
+                    }}
+                    onBlur={(e) => { if (!e.target.value) e.target.type = "text"; }}
+                    placeholder="dd-mm-yyyy"
+                    className="form-input"
+                    value={filters.dateFrom}
+                    onChange={(e) => setFilters({ ...filters, dateFrom: e.target.value })}
+                  />
+                  <span style={{color: 'var(--text-secondary)'}}>to</span>
+                  <input
+                    type={filters.dateTo ? "date" : "text"}
+                    onFocus={(e) => { e.target.type = "date"; }}
+                    onClick={(e) => { 
+                      e.target.type = "date"; 
+                      setTimeout(() => { try { e.target.showPicker(); } catch(err){} }, 50); 
+                    }}
+                    onTouchStart={(e) => { 
+                      e.target.type = "date"; 
+                      setTimeout(() => { try { e.target.showPicker(); } catch(err){} }, 50); 
+                    }}
+                    onBlur={(e) => { if (!e.target.value) e.target.type = "text"; }}
+                    placeholder="dd-mm-yyyy"
+                    className="form-input"
+                    value={filters.dateTo}
+                    onChange={(e) => setFilters({ ...filters, dateTo: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div className="form-group" style={{ marginBottom: '1.25rem' }}>
+                <div className="filter-group-header">
+                  <label className="form-label" style={{ fontWeight: 700, fontSize: '0.95rem', color: '#1e293b', margin: 0 }}>Price</label>
+                  {(filters.priceMin > 0 || filters.priceMax < 200000) && (
+                    <span className="filter-clear-link" onClick={() => setFilters({ ...filters, priceMin: 0, priceMax: 200000 })}>Clear</span>
+                  )}
+                </div>
+                <div className="price-range-display">
+                  ₹{filters.priceMin.toLocaleString()} – ₹{filters.priceMax.toLocaleString()}{filters.priceMax >= 200000 ? '+' : ''}
+                </div>
+                <div className="range-slider-container">
+                  <div className="range-slider-track" style={{
+                    left: `${(filters.priceMin / 200000) * 100}%`,
+                    right: `${100 - (filters.priceMax / 200000) * 100}%`
+                  }}></div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="200000"
+                    step="100"
+                    value={filters.priceMin}
+                    onChange={(e) => {
+                      const val = Math.min(Number(e.target.value), filters.priceMax);
+                      setFilters({ ...filters, priceMin: val });
+                    }}
+                    className="range-slider-thumb thumb-left"
+                  />
+                  <input
+                    type="range"
+                    min="0"
+                    max="200000"
+                    step="100"
+                    value={filters.priceMax}
+                    onChange={(e) => {
+                      const val = Math.max(Number(e.target.value), filters.priceMin);
+                      setFilters({ ...filters, priceMax: val });
+                    }}
+                    className="range-slider-thumb thumb-right"
+                  />
+                </div>
+              </div>
+
+              <div className="form-group" style={{ marginBottom: '1.25rem' }}>
+                <div className="filter-group-header">
+                  <label className="form-label" style={{ fontWeight: 700, fontSize: '0.95rem', color: '#1e293b', margin: 0 }}>Sort By Invoice Date</label>
+                  {filters.sortInvoice !== "desc" && (
+                    <span className="filter-clear-link" onClick={() => setFilters({ ...filters, sortInvoice: "desc" })}>Reset</span>
+                  )}
+                </div>
+                <select
+                  className="form-input"
+                  value={filters.sortInvoice}
+                  onChange={(e) => setFilters({ ...filters, sortInvoice: e.target.value })}
+                >
+                  <option value="desc">Newest First</option>
+                  <option value="asc">Oldest First</option>
+                </select>
+              </div>
+
+              <div className="form-group" style={{ marginBottom: '1.5rem' }}>
+                <div className="filter-group-header">
+                  <label className="form-label" style={{ fontWeight: 700, fontSize: '0.95rem', color: '#1e293b', margin: 0 }}>Sort By Party Name</label>
+                  {filters.sortParty !== "" && (
+                    <span className="filter-clear-link" onClick={() => setFilters({ ...filters, sortParty: "" })}>Reset</span>
+                  )}
+                </div>
+                <select
+                  className="form-input"
+                  value={filters.sortParty}
+                  onChange={(e) => setFilters({ ...filters, sortParty: e.target.value })}
+                >
+                  <option value="">None</option>
+                  <option value="asc">A to Z</option>
+                  <option value="desc">Z to A</option>
+                </select>
+              </div>
+
+              <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end', marginTop: '0.5rem' }}>
+                <button
+                  className="btn btn-outline-danger"
+                  style={{ flex: 1, justifyContent: 'center', borderColor: '#ffc1c1', background: 'transparent' }}
+                  onClick={() => {
+                    setFilters({
+                      dateFrom: "",
+                      dateTo: "",
+                      priceMin: 0,
+                      priceMax: 200000,
+                      sortInvoice: "desc",
+                      sortParty: "",
+                    });
+                  }}
+                >
+                  Clear
+                </button>
+                <button
+                  className="btn btn-primary"
+                  style={{ flex: 1, justifyContent: 'center' }}
+                  onClick={() => setShowFilterModal(false)}
+                >
+                  Apply
+                </button>
+              </div>
             </div>
           </div>
         </div>
