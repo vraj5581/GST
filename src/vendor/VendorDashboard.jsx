@@ -8,13 +8,13 @@ import './VendorDashboard.css';
 const VendorDashboard = () => {
   const [companies, setCompanies] = useState([]);
   const [companyName, setCompanyName] = useState('');
-  const [userId, setUserId] = useState('');
-  const [password, setPassword] = useState('');
+  const [pin, setPin] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [gst, setGst] = useState('');
   const [address, setAddress] = useState('');
-  
+  const [logo, setLogo] = useState('');
+
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [error, setError] = useState('');
@@ -42,33 +42,33 @@ const VendorDashboard = () => {
           if (Array.isArray(localCompanies) && localCompanies.length > 0) {
             console.log("Migrating local storage companies to Firebase...");
             let migratedCount = 0;
-            
+
             for (const lc of localCompanies) {
               // Only migrate if the userId doesn't already exist in Firebase
-              const exists = data.find(dc => dc.userId === lc.userId);
-              if (!exists && lc.userId && lc.password) {
+              const exists = data.find(dc => dc.phone === lc.phone);
+              if (!exists && lc.phone && (lc.pin || lc.password)) {
                 const docRef = await addDoc(collection(db, 'companies'), {
-                  companyName: lc.companyName || lc.userId,
-                  userId: lc.userId,
-                  password: lc.password,
+                  companyName: lc.companyName || lc.phone,
+                  pin: lc.pin || lc.password,
                   email: lc.email || '',
                   phone: lc.phone || '',
                   gst: lc.gst || '',
                   address: lc.address || '',
+                  logo: lc.logo || '',
                   isActive: lc.isActive !== false,
                   createdAt: serverTimestamp()
                 });
-                
+
                 // Add the newly migrated company to our local array state
                 data.push({
                   id: docRef.id,
-                  companyName: lc.companyName || lc.userId,
-                  userId: lc.userId,
-                  password: lc.password,
+                  companyName: lc.companyName || lc.phone,
+                  pin: lc.pin || lc.password,
                   email: lc.email || '',
                   phone: lc.phone || '',
                   gst: lc.gst || '',
                   address: lc.address || '',
+                  logo: lc.logo || '',
                   isActive: lc.isActive !== false
                 });
                 migratedCount++;
@@ -93,11 +93,26 @@ const VendorDashboard = () => {
     }
   };
 
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) { // 2MB limit
+        setError("Logo image size should be less than 2MB.");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setLogo(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleAddCompany = async (e) => {
     e.preventDefault();
     setError('');
-    
-    if (!companyName.trim() || !userId.trim() || !password || !email.trim() || !phone.trim() || !gst.trim() || !address.trim()) {
+
+    if (!companyName.trim() || !pin || !email.trim() || !phone.trim() || !gst.trim() || !address.trim()) {
       setError("All fields are strictly required.");
       return;
     }
@@ -114,10 +129,16 @@ const VendorDashboard = () => {
       return;
     }
 
-    // Check if user ID already exists
-    const existingUser = companies.find(c => c.userId === userId && c.id !== editingId);
+    // PIN Validation (4 digits)
+    if (!/^\d{4}$/.test(pin)) {
+      setError("PIN must be exactly 4 digits.");
+      return;
+    }
+
+    // Check if Phone already exists
+    const existingUser = companies.find(c => c.phone === phone && c.id !== editingId);
     if (existingUser) {
-      setError("User ID already exists.");
+      setError("Mobile Number already exists.");
       return;
     }
 
@@ -126,43 +147,43 @@ const VendorDashboard = () => {
         const docRef = doc(db, 'companies', editingId);
         await updateDoc(docRef, {
           companyName,
-          userId,
-          password,
+          pin,
           email,
           phone,
           gst,
-          address
+          address,
+          logo
         });
-        
+
         setCompanies(companies.map(c => c.id === editingId ? {
-          ...c, companyName, userId, password, email, phone, gst, address
+          ...c, companyName, pin, email, phone, gst, address, logo
         } : c));
       } else {
         const docRef = await addDoc(collection(db, 'companies'), {
           companyName,
-          userId,
-          password,
+          pin,
           email,
           phone,
           gst,
           address,
+          logo,
           isActive: true,
           createdAt: serverTimestamp()
         });
-        
+
         setCompanies([...companies, {
           id: docRef.id,
           companyName,
-          userId,
-          password,
+          pin,
           email,
           phone,
           gst,
           address,
+          logo,
           isActive: true
         }]);
       }
-      
+
       resetForm();
     } catch (error) {
       console.error("Error saving company:", error);
@@ -172,24 +193,24 @@ const VendorDashboard = () => {
 
   const resetForm = () => {
     setCompanyName('');
-    setUserId('');
-    setPassword('');
+    setPin('');
     setEmail('');
     setPhone('');
     setGst('');
     setAddress('');
+    setLogo('');
     setIsAdding(false);
     setEditingId(null);
   };
 
   const handleEditCompany = (company) => {
     setCompanyName(company.companyName);
-    setUserId(company.userId);
-    setPassword(company.password);
+    setPin(company.pin || company.password || '');
     setEmail(company.email || '');
     setPhone(company.phone || '');
     setGst(company.gst || '');
     setAddress(company.address || '');
+    setLogo(company.logo || '');
     setEditingId(company.id);
     setIsAdding(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -230,9 +251,8 @@ const VendorDashboard = () => {
     navigate('/vendor');
   };
 
-  const filteredCompanies = companies.filter(company => 
-    company.companyName?.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    company.userId?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  const filteredCompanies = companies.filter(company =>
+    company.companyName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     (company.phone && company.phone.includes(searchQuery))
   );
 
@@ -254,16 +274,16 @@ const VendorDashboard = () => {
           <div className="vd-action-bar">
             <div className="search-bar w-full-search" style={{ marginBottom: 0, flex: 1 }}>
               <Search className="search-icon" size={18} />
-              <input 
-                type="text" 
-                className="form-input" 
-                placeholder="Search company by Name, ID, or Phone..." 
+              <input
+                type="text"
+                className="form-input"
+                placeholder="Search company by Name or Phone..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 style={{ width: '100%', paddingLeft: '2.5rem' }}
               />
             </div>
-            <button 
+            <button
               className="btn btn-outline-primary btn-icon"
               style={{ flexShrink: 0, marginLeft: '0.2rem' }}
               onClick={() => setIsAdding(true)}
@@ -282,9 +302,9 @@ const VendorDashboard = () => {
             <form onSubmit={handleAddCompany} className="vd-form">
               <div className="vd-form-row">
                 <div className="vd-input-group">
-                  <label>Company Name <span style={{color: 'var(--color-danger)'}}>*</span></label>
-                  <input 
-                    type="text" 
+                  <label>Company Name <span style={{ color: 'var(--color-danger)' }}>*</span></label>
+                  <input
+                    type="text"
                     value={companyName}
                     onChange={(e) => setCompanyName(e.target.value)}
                     placeholder="E.g. Tech Solutions"
@@ -292,29 +312,32 @@ const VendorDashboard = () => {
                   />
                 </div>
                 <div className="vd-input-group">
-                  <label>User ID <span style={{color: 'var(--color-danger)'}}>*</span></label>
-                  <input 
-                    type="text" 
-                    value={userId}
-                    onChange={(e) => setUserId(e.target.value)}
-                    placeholder="Login ID"
+                  <label>Mobile Number <span style={{ color: 'var(--color-danger)' }}>*</span></label>
+                  <input
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="10-digit Mobile Number"
+                    maxLength={10}
                     required
                   />
                 </div>
                 <div className="vd-input-group">
-                  <label>Password <span style={{color: 'var(--color-danger)'}}>*</span></label>
-                  <input 
-                    type="text" 
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Login Password"
+                  <label>4-Digit PIN <span style={{ color: 'var(--color-danger)' }}>*</span></label>
+                  <input
+                    type="password"
+                    value={pin}
+                    onChange={(e) => setPin(e.target.value)}
+                    placeholder="4-digit PIN"
+                    maxLength={4}
+                    pattern="\d{4}"
                     required
                   />
                 </div>
                 <div className="vd-input-group">
-                  <label>Email <span style={{color: 'var(--color-danger)'}}>*</span></label>
-                  <input 
-                    type="email" 
+                  <label>Email <span style={{ color: 'var(--color-danger)' }}>*</span></label>
+                  <input
+                    type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Company Email"
@@ -322,20 +345,9 @@ const VendorDashboard = () => {
                   />
                 </div>
                 <div className="vd-input-group">
-                  <label>Phone No. <span style={{color: 'var(--color-danger)'}}>*</span></label>
-                  <input 
-                    type="tel" 
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="10-digit Contact Number"
-                    maxLength={10}
-                    required
-                  />
-                </div>
-                <div className="vd-input-group">
-                  <label>GST No. <span style={{color: 'var(--color-danger)'}}>*</span></label>
-                  <input 
-                    type="text" 
+                  <label>GST No. <span style={{ color: 'var(--color-danger)' }}>*</span></label>
+                  <input
+                    type="text"
                     value={gst}
                     onChange={(e) => setGst(e.target.value.toUpperCase())}
                     placeholder="GSTIN"
@@ -344,14 +356,23 @@ const VendorDashboard = () => {
                   />
                 </div>
                 <div className="vd-input-group" style={{ gridColumn: "1 / -1" }}>
-                  <label>Address <span style={{color: 'var(--color-danger)'}}>*</span></label>
-                  <textarea 
+                  <label>Address <span style={{ color: 'var(--color-danger)' }}>*</span></label>
+                  <textarea
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
                     placeholder="Full Business Address"
                     required
                     rows="3"
                   />
+                </div>
+                <div className="vd-input-group" style={{ gridColumn: "1 / -1" }}>
+                  <label>Logo (Optional)</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                  />
+                  {logo && <div style={{ marginTop: '10px' }}><img src={logo} alt="Company Logo" style={{ maxHeight: '50px' }} /></div>}
                 </div>
               </div>
               <div className="vd-form-actions" style={{ gap: '1rem' }}>
@@ -365,81 +386,83 @@ const VendorDashboard = () => {
         {!isAdding && (
           <div className="vd-grid">
             {filteredCompanies.length > 0 ? (
-            filteredCompanies.map((company) => (
-              <div key={company.id} className="vd-card">
-                <div className="vd-card-header">
-                  <div className="vd-card-title">
-                    <Building className="vd-card-icon" size={20} />
-                    <h4>{company.companyName}</h4>
+              filteredCompanies.map((company) => (
+                <div key={company.id} className="vd-card">
+                  <div className="vd-card-header">
+                    <div className="vd-card-title">
+                      <Building className="vd-card-icon" size={20} />
+                      <h4>{company.companyName}</h4>
+                    </div>
+                    <div className="vd-card-actions">
+                      <button
+                        className="btn btn-action-edit"
+                        style={{ padding: '0.4rem', border: 'none', boxShadow: 'none' }}
+                        onClick={() => handleEditCompany(company)}
+                        title="Edit Company"
+                      >
+                        <Edit2 size={16} />
+                      </button>
+                      <button
+                        className="btn btn-action-delete"
+                        style={{ padding: '0.4rem', border: 'none', boxShadow: 'none' }}
+                        onClick={() => handleDeleteCompany(company.id, company.companyName)}
+                        title="Delete Company"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
                   </div>
-                  <div className="vd-card-actions">
-                    <button 
-                      className="btn btn-action-edit"
-                      style={{ padding: '0.4rem', border: 'none', boxShadow: 'none' }}
-                      onClick={() => handleEditCompany(company)}
-                      title="Edit Company"
-                    >
-                      <Edit2 size={16} />
-                    </button>
-                    <button 
-                      className="btn btn-action-delete"
-                      style={{ padding: '0.4rem', border: 'none', boxShadow: 'none' }}
-                      onClick={() => handleDeleteCompany(company.id, company.companyName)}
-                      title="Delete Company"
-                    >
-                      <Trash2 size={16} />
-                    </button>
+                  <div className="vd-card-body">
+                    <div className="vd-info-row">
+                      <span className="vd-info-label">Mobile No:</span>
+                      <span className="vd-info-value">{company.phone}</span>
+                    </div>
+                    <div className="vd-info-row">
+                      <span className="vd-info-label">4-Digit PIN:</span>
+                      <span className="vd-info-value vd-mono">{company.pin || company.password}</span>
+                    </div>
+                    <div className="vd-info-row">
+                      <span className="vd-info-label">Email:</span>
+                      <span className="vd-info-value">{company.email}</span>
+                    </div>
+                    <div className="vd-info-row">
+                      <span className="vd-info-label">GST:</span>
+                      <span className="vd-info-value">{company.gst}</span>
+                    </div>
+                    <div className="vd-info-row">
+                      <span className="vd-info-label">Address:</span>
+                      <span className="vd-info-value tooltip-text" title={company.address}>
+                        {company.address?.length > 25 ? company.address.substring(0, 25) + '...' : company.address}
+                      </span>
+                    </div>
+                    {company.logo && (
+                      <div className="vd-info-row">
+                        <span className="vd-info-label">Logo:</span>
+                        <span className="vd-info-value"><img src={company.logo} alt="Logo" style={{ maxHeight: '30px', borderRadius: '4px' }} /></span>
+                      </div>
+                    )}
                   </div>
-                </div>
-                <div className="vd-card-body">
-                  <div className="vd-info-row">
-                    <span className="vd-info-label">User ID:</span>
-                    <span className="vd-info-value">{company.userId}</span>
-                  </div>
-                  <div className="vd-info-row">
-                    <span className="vd-info-label">Password:</span>
-                    <span className="vd-info-value vd-mono">{company.password}</span>
-                  </div>
-                  <div className="vd-info-row">
-                    <span className="vd-info-label">Email:</span>
-                    <span className="vd-info-value">{company.email}</span>
-                  </div>
-                  <div className="vd-info-row">
-                    <span className="vd-info-label">Phone:</span>
-                    <span className="vd-info-value">{company.phone}</span>
-                  </div>
-                  <div className="vd-info-row">
-                    <span className="vd-info-label">GST:</span>
-                    <span className="vd-info-value">{company.gst}</span>
-                  </div>
-                  <div className="vd-info-row">
-                    <span className="vd-info-label">Address:</span>
-                    <span className="vd-info-value tooltip-text" title={company.address}>
-                      {company.address?.length > 25 ? company.address.substring(0, 25) + '...' : company.address}
+                  <div className="vd-card-footer" style={{ justifyContent: "space-between", alignItems: "center" }}>
+                    <span className={`vd-status-badge ${company.isActive === false ? 'inactive' : 'active'}`}>
+                      {company.isActive === false ? 'Deactive' : 'Active'}
                     </span>
+                    <button
+                      className={`btn btn-outline ${company.isActive === false ? 'btn-outline-primary' : 'btn-outline-danger'}`}
+                      style={{ fontSize: '0.8rem', padding: '0.4rem 0.8rem', width: 'auto' }}
+                      onClick={() => handleToggleStatus(company.id, company.isActive, company.companyName)}
+                    >
+                      {company.isActive === false ? 'Make Active  ' : 'Make Deactive'}
+                    </button>
                   </div>
                 </div>
-                <div className="vd-card-footer" style={{ justifyContent: "space-between", alignItems: "center" }}>
-                  <span className={`vd-status-badge ${company.isActive === false ? 'inactive' : 'active'}`}>
-                    {company.isActive === false ? 'Deactive' : 'Active'}
-                  </span>
-                  <button 
-                    className={`btn btn-outline ${company.isActive === false ? 'btn-outline-primary' : 'btn-outline-danger'}`}
-                    style={{ fontSize: '0.8rem', padding: '0.4rem 0.8rem', width: 'auto' }}
-                    onClick={() => handleToggleStatus(company.id, company.isActive, company.companyName)}
-                  >
-                    {company.isActive === false ? 'Make Active  ' : 'Make Deactive'}
-                  </button>
-                </div>
+              ))
+            ) : (
+              <div className="vd-empty-state">
+                <Building size={48} className="vd-empty-icon" />
+                <p>No companies found. Create one to get started.</p>
               </div>
-            ))
-          ) : (
-            <div className="vd-empty-state">
-              <Building size={48} className="vd-empty-icon" />
-              <p>No companies found. Create one to get started.</p>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
         )}
       </main>
     </div>
