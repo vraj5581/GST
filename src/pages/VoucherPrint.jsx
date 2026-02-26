@@ -65,7 +65,11 @@ function VoucherPrint() {
           }
         } else {
           console.error("No such voucher!");
-          navigate("/vouchers");
+          if (localStorage.getItem("loggedCompany")) {
+            navigate("/vouchers");
+          } else {
+            navigate(-1);
+          }
         }
       } catch (error) {
         console.error("Error fetching voucher for print:", error);
@@ -91,7 +95,13 @@ function VoucherPrint() {
       <div className="fixed-header no-print print-page-header">
         <button
           className="btn btn-outline btn-icon print-back-btn"
-          onClick={() => navigate("/vouchers")}
+          onClick={() => {
+            if (localStorage.getItem("loggedCompany")) {
+              navigate("/vouchers");
+            } else {
+              navigate(-1);
+            }
+          }}
           title="Back"
         >
           <ArrowLeft size={18} />
