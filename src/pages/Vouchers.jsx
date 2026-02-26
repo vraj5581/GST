@@ -20,7 +20,7 @@ function Vouchers() {
   });
   const [qrVoucher, setQrVoucher] = useState(null);
   const navigate = useNavigate(
-    
+
   );
 
   useEffect(() => {
@@ -65,23 +65,23 @@ function Vouchers() {
     // Basic Search
     const searchLower = search.toLowerCase();
     const invNo = String(v.invoiceNumber || `INV/25-26/${String(v.originalIndex + 1).padStart(3, '0')}`).toLowerCase();
-    
+
     const matchesSearch = (v.partyId && v.partyId.toLowerCase().includes(searchLower)) || invNo.includes(searchLower);
 
     // Advanced Filters
     let matchesDateRange = true;
     if (filters.dateFrom || filters.dateTo) {
       const vDate = new Date(v.date);
-      vDate.setHours(0,0,0,0);
-      
+      vDate.setHours(0, 0, 0, 0);
+
       if (filters.dateFrom) {
         const fromDate = new Date(filters.dateFrom);
-        fromDate.setHours(0,0,0,0);
+        fromDate.setHours(0, 0, 0, 0);
         if (vDate < fromDate) matchesDateRange = false;
       }
       if (filters.dateTo) {
         const toDate = new Date(filters.dateTo);
-        toDate.setHours(23,59,59,999);
+        toDate.setHours(23, 59, 59, 999);
         if (vDate > toDate) matchesDateRange = false;
       }
     }
@@ -272,13 +272,13 @@ function Vouchers() {
                   <input
                     type={filters.dateFrom ? "date" : "text"}
                     onFocus={(e) => { e.target.type = "date"; }}
-                    onClick={(e) => { 
-                      e.target.type = "date"; 
-                      setTimeout(() => { try { e.target.showPicker(); } catch(err){} }, 50); 
+                    onClick={(e) => {
+                      e.target.type = "date";
+                      setTimeout(() => { try { e.target.showPicker(); } catch (err) { } }, 50);
                     }}
-                    onTouchStart={(e) => { 
-                      e.target.type = "date"; 
-                      setTimeout(() => { try { e.target.showPicker(); } catch(err){} }, 50); 
+                    onTouchStart={(e) => {
+                      e.target.type = "date";
+                      setTimeout(() => { try { e.target.showPicker(); } catch (err) { } }, 50);
                     }}
                     onBlur={(e) => { if (!e.target.value) e.target.type = "text"; }}
                     placeholder="dd-mm-yyyy"
@@ -290,13 +290,13 @@ function Vouchers() {
                   <input
                     type={filters.dateTo ? "date" : "text"}
                     onFocus={(e) => { e.target.type = "date"; }}
-                    onClick={(e) => { 
-                      e.target.type = "date"; 
-                      setTimeout(() => { try { e.target.showPicker(); } catch(err){} }, 50); 
+                    onClick={(e) => {
+                      e.target.type = "date";
+                      setTimeout(() => { try { e.target.showPicker(); } catch (err) { } }, 50);
                     }}
-                    onTouchStart={(e) => { 
-                      e.target.type = "date"; 
-                      setTimeout(() => { try { e.target.showPicker(); } catch(err){} }, 50); 
+                    onTouchStart={(e) => {
+                      e.target.type = "date";
+                      setTimeout(() => { try { e.target.showPicker(); } catch (err) { } }, 50);
                     }}
                     onBlur={(e) => { if (!e.target.value) e.target.type = "text"; }}
                     placeholder="dd-mm-yyyy"
@@ -396,6 +396,7 @@ function Vouchers() {
                       sortInvoice: "desc",
                       sortParty: "",
                     });
+                    setShowFilterModal(false);
                   }}
                 >
                   Clear
