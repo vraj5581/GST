@@ -233,6 +233,12 @@
   text-align: right;
 }
 
+.print-signatory-img {
+  max-height: 100px;
+  max-width: 180px;
+  object-fit: contain;
+}
+
 .print-signatory-line {
   border-top: 1px solid #000;
   display: inline-block;
@@ -373,6 +379,16 @@
   .invoice-table tfoot tr:first-child td {
     border-top: 1px solid #ddd !important;
   }
+
+  .print-signatory-wrapper {
+    margin-top: 3rem !important;
+  }
+
+  .print-signatory-img {
+    max-height: 100px !important;
+    max-width: 180px !important;
+    object-fit: contain !important;
+  }
 }
 
 /* Screen Only Responsive Styles */
@@ -387,14 +403,34 @@
   .invoice-preview-card {
     padding: 1.5rem 1rem !important;
     width: 100% !important;
+    min-width: unset !important;
     min-height: auto !important;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05) !important;
     border-radius: var(--radius-md);
   }
 
+  /* Header adjustments for mobile */
+  .print-header-content {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .print-company-info-section {
+    text-align: center;
+    align-items: center;
+  }
+
+  .print-main-logo {
+    max-width: 100px;
+    max-height: 80px;
+  }
+
   /* Scale down headers heavily to fit narrow screens */
   .print-company-name {
     font-size: 1.4rem;
+    text-align: center;
   }
 
   .print-company-details {
@@ -411,12 +447,13 @@
     margin-bottom: 1.2rem;
   }
 
-  /* Shrink bill-to details */
-  .print-bill-to-heading {
-    font-size: 0.85rem;
-    margin-bottom: 0.25rem;
+  .print-bill-to-header {
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: flex-start;
   }
 
+  .print-bill-to-label,
   .print-party-name {
     font-size: 0.85rem;
   }
@@ -488,6 +525,15 @@
 
   .print-signatory-wrapper {
     margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  .print-signatory-img {
+    max-height: 80px !important;
+    max-width: 150px !important;
+    object-fit: contain !important;
   }
 
   .print-signatory-line {

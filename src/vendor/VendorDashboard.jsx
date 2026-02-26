@@ -14,6 +14,7 @@ const VendorDashboard = () => {
   const [gst, setGst] = useState('');
   const [address, setAddress] = useState('');
   const [logo, setLogo] = useState('');
+  const [signature, setSignature] = useState('');
 
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState(null);
@@ -55,6 +56,7 @@ const VendorDashboard = () => {
                   gst: lc.gst || '',
                   address: lc.address || '',
                   logo: lc.logo || '',
+                  signature: lc.signature || '',
                   isActive: lc.isActive !== false,
                   createdAt: serverTimestamp()
                 });
@@ -69,6 +71,7 @@ const VendorDashboard = () => {
                   gst: lc.gst || '',
                   address: lc.address || '',
                   logo: lc.logo || '',
+                  signature: lc.signature || '',
                   isActive: lc.isActive !== false
                 });
                 migratedCount++;
@@ -103,6 +106,21 @@ const VendorDashboard = () => {
       const reader = new FileReader();
       reader.onloadend = () => {
         setLogo(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSignatureUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) { // 2MB limit
+        setError("Signature image size should be less than 2MB.");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setSignature(reader.result);
       };
       reader.readAsDataURL(file);
     }
@@ -152,11 +170,12 @@ const VendorDashboard = () => {
           phone,
           gst,
           address,
-          logo
+          logo,
+          signature
         });
 
         setCompanies(companies.map(c => c.id === editingId ? {
-          ...c, companyName, pin, email, phone, gst, address, logo
+          ...c, companyName, pin, email, phone, gst, address, logo, signature
         } : c));
       } else {
         const docRef = await addDoc(collection(db, 'companies'), {
@@ -167,6 +186,7 @@ const VendorDashboard = () => {
           gst,
           address,
           logo,
+          signature,
           isActive: true,
           createdAt: serverTimestamp()
         });
@@ -180,6 +200,7 @@ const VendorDashboard = () => {
           gst,
           address,
           logo,
+          signature,
           isActive: true
         }]);
       }
@@ -199,6 +220,7 @@ const VendorDashboard = () => {
     setGst('');
     setAddress('');
     setLogo('');
+    setSignature('');
     setIsAdding(false);
     setEditingId(null);
   };
@@ -211,6 +233,7 @@ const VendorDashboard = () => {
     setGst(company.gst || '');
     setAddress(company.address || '');
     setLogo(company.logo || '');
+    setSignature(company.signature || '');
     setEditingId(company.id);
     setIsAdding(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -419,7 +442,30 @@ const VendorDashboard = () => {
                     accept="image/*"
                     onChange={handleImageUpload}
                   />
-                  {logo && <div className="vd-logo-preview-wrapper"><img src={logo} alt="Company Logo" className="vd-logo-preview-img" /></div>}
+                  {logo && (
+                    <div className="vd-logo-preview-wrapper" style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '10px' }}>
+                      <img src={logo} alt="Company Logo" className="vd-logo-preview-img" />
+                      <button type="button" className="btn btn-outline-danger btn-icon" onClick={() => setLogo('')} title="Remove Logo">
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  )}
+                </div>
+                <div className="vd-input-group vd-full-width-col">
+                  <label>Authorized Signatory Image (Optional)</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleSignatureUpload}
+                  />
+                  {signature && (
+                    <div className="vd-logo-preview-wrapper" style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '10px' }}>
+                      <img src={signature} alt="Signatory" className="vd-logo-preview-img" style={{ maxHeight: '60px' }} />
+                      <button type="button" className="btn btn-outline-danger btn-icon" onClick={() => setSignature('')} title="Remove Signature">
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="vd-form-actions vd-form-actions-wrapper">

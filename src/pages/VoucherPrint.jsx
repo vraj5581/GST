@@ -185,7 +185,7 @@ function VoucherPrint() {
               <thead>
                 <tr className="print-thead-row">
                   <th className="print-th-left">Sr No.</th>
-                  <th className="print-th-left">Item Name</th>
+                  <th className="print-th-left">Item </th>
                   <th className="print-th-right">Price</th>
                   <th className="print-th-center">Qty</th>
                   <th className="print-th-right">Total</th>
@@ -237,6 +237,15 @@ function VoucherPrint() {
           )}
 
           <div className="print-signatory-wrapper">
+            {clientCompany?.signature && (
+              <div className="print-signatory-img-wrapper" style={{ marginBottom: '10px' }}>
+                <img 
+                  src={clientCompany.signature} 
+                  alt="Authorized Signature" 
+                  className="print-signatory-img"
+                />
+              </div>
+            )}
             <p className="print-signatory-line">Authorized Signatory</p>
           </div>
         </div>
