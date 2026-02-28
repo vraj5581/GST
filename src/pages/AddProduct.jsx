@@ -3,10 +3,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Save, ArrowLeft } from "lucide-react";
 import Select from "react-select";
 import { collection, addDoc, doc, getDoc, updateDoc } from "firebase/firestore";
-import { db } from "../firebase";
+import { getDB } from "../firebase";
 import "./AddProduct.css";
 
 function AddProduct() {
+  const db = getDB();
   const { id } = useParams();
   const navigate = useNavigate();
 

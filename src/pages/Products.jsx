@@ -2,10 +2,11 @@ import { useState, useEffect } from "react";
 import { Search, Edit, Trash2, Plus, DollarSign, FileCode2, FileText } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { collection, getDocs, deleteDoc, doc, query, where } from "firebase/firestore";
-import { db } from "../firebase";
+import { getDB } from "../firebase";
 import "./Products.css";
 
 function Products() {
+  const db = getDB();
   const [products, setProducts] = useState([]);
   const [search, setSearch] = useState("");
   const navigate = useNavigate();

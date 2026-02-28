@@ -56,43 +56,7 @@ function App() {
     return () => unsubscribe();
   }, [loggedCompany?.id]);
 
-  // Run a one-time sweep to attach any orphaned data to this company
-  useEffect(() => {
-    if (!loggedCompany || !loggedCompany.id) return;
-    
-    // Only run this scan once per session to save Firestore reads
-    if (sessionStorage.getItem('orphanedDataScanned') === 'true') return;
-    
-    const attachOrphanedData = async () => {
-      try {
-        const collectionsToScan = ["parties", "products", "vouchers"];
-        let migratedCount = 0;
-        
-        for (const colName of collectionsToScan) {
-          const snapshot = await getDocs(collection(db, colName));
-          for (const docSnap of snapshot.docs) {
-            const docData = docSnap.data();
-            // If the record exists but has no companyId, it's from before the multi-tenant upgrade
-            if (!docData.companyId) {
-              await updateDoc(doc(db, colName, docSnap.id), {
-                companyId: loggedCompany.id
-              });
-              migratedCount++;
-            }
-          }
-        }
-        
-        if (migratedCount > 0) {
-          console.log(`Successfully attached ${migratedCount} orphaned legacy records to ${loggedCompany.companyName}.`);
-        }
-        sessionStorage.setItem('orphanedDataScanned', 'true');
-      } catch (error) {
-        console.error("Error migrating orphaned data:", error);
-      }
-    };
 
-    attachOrphanedData();
-  }, [loggedCompany]);
 
   const location = useLocation();
 

@@ -15,7 +15,12 @@ const VendorDashboard = () => {
   const [address, setAddress] = useState('');
   const [logo, setLogo] = useState('');
   const [signature, setSignature] = useState('');
-  const [firebaseConfig, setFirebaseConfig] = useState('');
+  const [fbApiKey, setFbApiKey] = useState('');
+  const [fbAuthDomain, setFbAuthDomain] = useState('');
+  const [fbProjectId, setFbProjectId] = useState('');
+  const [fbStorageBucket, setFbStorageBucket] = useState('');
+  const [fbMessagingSenderId, setFbMessagingSenderId] = useState('');
+  const [fbAppId, setFbAppId] = useState('');
 
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState(null);
@@ -162,6 +167,21 @@ const VendorDashboard = () => {
       return;
     }
 
+    let firebaseConfig = '';
+    const fbObj = {
+      apiKey: fbApiKey.trim(),
+      authDomain: fbAuthDomain.trim(),
+      projectId: fbProjectId.trim(),
+      storageBucket: fbStorageBucket.trim(),
+      messagingSenderId: fbMessagingSenderId.trim(),
+      appId: fbAppId.trim(),
+    };
+    
+    // Only save if at least projectId is provided
+    if (fbObj.projectId) {
+      firebaseConfig = JSON.stringify(fbObj);
+    }
+
     try {
       if (editingId) {
         const docRef = doc(db, 'companies', editingId);
@@ -226,7 +246,12 @@ const VendorDashboard = () => {
     setAddress('');
     setLogo('');
     setSignature('');
-    setFirebaseConfig('');
+    setFbApiKey('');
+    setFbAuthDomain('');
+    setFbProjectId('');
+    setFbStorageBucket('');
+    setFbMessagingSenderId('');
+    setFbAppId('');
     setIsAdding(false);
     setEditingId(null);
   };
@@ -240,7 +265,22 @@ const VendorDashboard = () => {
     setAddress(company.address || '');
     setLogo(company.logo || '');
     setSignature(company.signature || '');
-    setFirebaseConfig(company.firebaseConfig || '');
+    
+    let parsedFb = {};
+    if (company.firebaseConfig) {
+      try {
+        parsedFb = JSON.parse(company.firebaseConfig);
+      } catch (e) {
+        console.error("Failed to parse company firebase config for editing");
+      }
+    }
+    setFbApiKey(parsedFb.apiKey || '');
+    setFbAuthDomain(parsedFb.authDomain || '');
+    setFbProjectId(parsedFb.projectId || '');
+    setFbStorageBucket(parsedFb.storageBucket || '');
+    setFbMessagingSenderId(parsedFb.messagingSenderId || '');
+    setFbAppId(parsedFb.appId || '');
+
     setEditingId(company.id);
     setIsAdding(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -445,13 +485,16 @@ const VendorDashboard = () => {
                   />
                 </div>
                 <div className="vd-input-group vd-full-width-col">
-                  <label>Firebase Web Config JSON (Optional)</label>
-                  <textarea
-                    value={firebaseConfig}
-                    onChange={(e) => setFirebaseConfig(e.target.value)}
-                    placeholder="Provide the Firebase JSON Config for this company's DB. Leaving it blank uses the default main DB."
-                    rows="4"
-                  />
+                  <label>Firebase Web Config (Optional - Separate Fields)</label>
+                  <div className="vd-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginTop: '0.5rem' }}>
+                    <input type="text" value={fbApiKey} onChange={(e) => setFbApiKey(e.target.value)} placeholder="apiKey" />
+                    <input type="text" value={fbAuthDomain} onChange={(e) => setFbAuthDomain(e.target.value)} placeholder="authDomain" />
+                    <input type="text" value={fbProjectId} onChange={(e) => setFbProjectId(e.target.value)} placeholder="projectId" />
+                    <input type="text" value={fbStorageBucket} onChange={(e) => setFbStorageBucket(e.target.value)} placeholder="storageBucket" />
+                    <input type="text" value={fbMessagingSenderId} onChange={(e) => setFbMessagingSenderId(e.target.value)} placeholder="messagingSenderId" />
+                    <input type="text" value={fbAppId} onChange={(e) => setFbAppId(e.target.value)} placeholder="appId" />
+                  </div>
+                  <small style={{ color: 'var(--text-secondary)', marginTop: '0.5rem', display: 'block' }}>Provide the Firebase Config keys for this company's DB. Leaving them blank uses the default main DB. `projectId` is required to activate custom DB.</small>
                 </div>
                 <div className="vd-input-group vd-full-width-col">
                   <label>Logo (Optional)</label>

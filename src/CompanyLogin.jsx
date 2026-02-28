@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { collection, query, where, getDocs, updateDoc, doc, serverTimestamp, addDoc } from 'firebase/firestore';
 import { mainDb as db } from './firebase';
 import './CompanyLogin.css';
 import hitnishLogo from './contexts/hitnish.png';
@@ -59,7 +59,25 @@ const CompanyLogin = ({ onLogin }) => {
         return;
       }
 
-      // Successful login
+      // Successful login - Write fully detailed login record
+      try {
+        await updateDoc(doc(db, 'companies', companyId), {
+          lastLogin: serverTimestamp()
+        });
+        
+        // Also keep a dedicated log collection in the main DB
+        await addDoc(collection(db, 'login_history'), {
+          companyId: companyId,
+          companyName: companyData.companyName || 'Unknown',
+          phone: companyData.phone || '',
+          email: companyData.email || '',
+          timestamp: serverTimestamp(),
+          userAgent: navigator.userAgent
+        });
+      } catch (logErr) {
+        console.error("Failed to update login records:", logErr);
+      }
+
       onLogin({
         id: companyId,
         ...companyData

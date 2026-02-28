@@ -4,9 +4,10 @@ import "./Vouchers.css";
 import { Plus, QrCode, Edit, Trash2, Search, Hash, Calendar, Package, IndianRupee, X, Filter } from "lucide-react";
 import QRCode from "react-qr-code";
 import { collection, getDocs, deleteDoc, doc, query, where } from "firebase/firestore";
-import { db } from "../firebase";
+import { getDB } from "../firebase";
 
 function Vouchers() {
+  const db = getDB();
   const [vouchers, setVouchers] = useState([]);
   const [search, setSearch] = useState("");
   const [showFilterModal, setShowFilterModal] = useState(false);

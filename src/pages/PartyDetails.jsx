@@ -2,10 +2,11 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Edit, Trash2, ArrowLeft, Phone, Mail, FileText, MapPin } from "lucide-react";
 import { doc, getDoc, deleteDoc } from "firebase/firestore";
-import { db } from "../firebase";
+import { getDB } from "../firebase";
 import "./PartyDetails.css";
 
 function PartyDetails() {
+  const db = getDB();
   const { id } = useParams();
   const navigate = useNavigate();
   const [party, setParty] = useState(null);

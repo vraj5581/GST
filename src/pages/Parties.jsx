@@ -2,10 +2,11 @@ import { useEffect, useState } from "react";
 import { Search, Edit, Trash2, Plus, Phone, Mail, FileText, MapPin } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { collection, getDocs, deleteDoc, doc, query, where } from "firebase/firestore";
-import { db } from "../firebase";
+import { getDB } from "../firebase";
 import "./Parties.css";
 
 function Parties() {
+  const db = getDB();
   const [parties, setParties] = useState([]);
   const [search, setSearch] = useState("");
   const navigate = useNavigate();

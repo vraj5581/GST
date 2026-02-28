@@ -2,10 +2,11 @@ import { useRef, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, Edit, Trash2, IndianRupee, Hash, FileText } from "lucide-react";
 import { doc, getDoc, deleteDoc } from "firebase/firestore";
-import { db } from "../firebase";
+import { getDB } from "../firebase";
 import "./ProductDetails.css";
 
 function ProductDetails() {
+  const db = getDB();
   const { id } = useParams();
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);

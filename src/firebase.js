@@ -15,35 +15,34 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 export const mainDb = getFirestore(app);
 
-// Dynamic proxy allows any component importing "db" to implicitly interact with the tenant DB
-export const db = new Proxy(mainDb, {
-  get(target, prop, receiver) {
-    const currentDb = getDB();
-    const value = currentDb[prop];
-    if (typeof value === 'function') {
-      return value.bind(currentDb);
-    }
-    return value;
-  },
-  has(target, prop) {
-    return prop in getDB();
-  }
-});
-
 const parseConfigStr = (raw) => {
   if (!raw || typeof raw !== 'string') return null;
   try {
     const config = JSON.parse(raw);
-    if (config.projectId) return config;
-    return null;
+    if (config && config.projectId) return config;
   } catch (e) {
-    return null;
+    // Attempt to extract JS object literal if they pasted the whole variable declaration
+    try {
+      const start = raw.indexOf('{');
+      const end = raw.lastIndexOf('}');
+      if (start !== -1 && end !== -1 && end > start) {
+        const objStr = raw.substring(start, end + 1);
+        const relaxed = new Function('return ' + objStr)();
+        if (relaxed && relaxed.projectId) return relaxed;
+      }
+    } catch (e2) {
+      console.error("Failed to parse relaxed config:", e2);
+    }
   }
+  return null;
 };
 
 export const getTenantDb = (companyId, configStr) => {
   const config = parseConfigStr(configStr);
-  if (!config) return mainDb;
+  if (!config) {
+    alert("Missing or Invalid Firebase Config for this company. Please update the exact JSON in Vendor Dashboard. App will not save data to the vendor's main database anymore to protect privacy!");
+    throw new Error("Missing Firebase Config");
+  }
 
   const tenantId = `tenant_${companyId}`;
   try {
@@ -55,7 +54,8 @@ export const getTenantDb = (companyId, configStr) => {
     return getFirestore(tenantApp);
   } catch (e) {
     console.error("Tenant DP init error:", e);
-    return mainDb;
+    alert("Tenant DP init error: " + e.message);
+    throw e;
   }
 };
 
@@ -66,6 +66,7 @@ export const getDB = () => {
     const company = JSON.parse(raw);
     return getTenantDb(company.id, company.firebaseConfig);
   } catch (e) {
-    return mainDb;
+    console.error("getDB error:", e);
+    throw e;
   }
 };
