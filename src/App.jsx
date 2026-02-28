@@ -137,7 +137,11 @@ function App() {
         <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
           <div className="sidebar-header">
             <div className="sidebar-company-header">
-              <span className="sidebar-company-name">{loggedCompany?.companyName || "COMPANY"}</span>
+              {loggedCompany?.logo ? (
+                <img src={loggedCompany.logo} alt="Company Logo" className="sidebar-company-logo" />
+              ) : (
+                <span className="sidebar-company-name">{loggedCompany?.companyName || "COMPANY"}</span>
+              )}
               <button 
                 className="btn btn-icon desktop-hide sidebar-close-btn" 
                 onClick={() => setSidebarOpen(false)}

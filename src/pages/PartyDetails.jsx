@@ -63,9 +63,7 @@ function PartyDetails() {
 
           <div className="grid grid-2 party-details-grid">
             <div className="detail-item">
-              <label className="form-label party-details-label">
-                Mobile Number
-              </label>
+            
               <div className="party-detail-row">
                 <div className="party-detail-icon"><Phone size={14} /></div>
                 <p className="party-details-value">{party.mobile}</p>
@@ -73,9 +71,7 @@ function PartyDetails() {
             </div>
 
             <div className="detail-item">
-              <label className="form-label party-details-label">
-                Email Address
-              </label>
+          
               <div className="party-detail-row">
                 <div className="party-detail-icon"><Mail size={14} /></div>
                 <p className="party-details-value-break">{party.email}</p>
@@ -83,9 +79,6 @@ function PartyDetails() {
             </div>
 
             <div className="detail-item">
-              <label className="form-label party-details-label">
-                GST Number
-              </label>
               <div className="party-detail-row">
                 <div className="party-detail-icon"><FileText size={14} /></div>
                 <p className="party-details-value">{party.gst || "N/A"}</p>
@@ -93,7 +86,6 @@ function PartyDetails() {
             </div>
 
             <div className="detail-item party-details-address-col">
-              <label className="form-label party-details-label">Address</label>
               <div className="party-detail-row">
                 <div className="party-detail-icon"><MapPin size={14} /></div>
                 <p className="party-details-address-value">
