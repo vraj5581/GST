@@ -289,60 +289,75 @@ const VendorDashboard = () => {
   const handleDeleteCompany = async (company) => {
     if (window.confirm(`Are you sure you want to delete ${company.companyName}? This will permanently delete all data (Vouchers, Products, Parties) associated with this company.`)) {
       try {
-        const tenantDb = getTenantDb(company.id, company.firebaseConfig);
-        
-        // Delete all associated data first using a batch on TENANT db
-        const batch = writeBatch(tenantDb);
-        let batchCount = 0;
-        
-        // Helper function to commit and reset batch if limit (500) is reached
-        const checkBatchLimit = async () => {
-          if (batchCount >= 400) {
-            await batch.commit();
-            batchCount = 0;
+        let hasValidConfig = false;
+        if (company.firebaseConfig) {
+          try {
+            const parsed = JSON.parse(company.firebaseConfig);
+            if (parsed && parsed.projectId) hasValidConfig = true;
+          } catch (e) {}
+        }
+
+        if (hasValidConfig) {
+          try {
+            const tenantDb = getTenantDb(company.id, company.firebaseConfig);
+            
+            // Delete all associated data first using a batch on TENANT db
+            const batch = writeBatch(tenantDb);
+            let batchCount = 0;
+            
+            // Helper function to commit and reset batch if limit (500) is reached
+            const checkBatchLimit = async () => {
+              if (batchCount >= 400) {
+                await batch.commit();
+                batchCount = 0;
+              }
+            };
+
+            // 1. Delete all vouchers
+            const vouchersQ = query(collection(tenantDb, "vouchers"), where("companyId", "==", company.id));
+            const vouchersSnap = await getDocs(vouchersQ);
+            vouchersSnap.forEach((docSnap) => {
+              batch.delete(doc(tenantDb, "vouchers", docSnap.id));
+              batchCount++;
+            });
+            await checkBatchLimit();
+
+            // 2. Delete all products
+            const productsQ = query(collection(tenantDb, "products"), where("companyId", "==", company.id));
+            const productsSnap = await getDocs(productsQ);
+            productsSnap.forEach((docSnap) => {
+              batch.delete(doc(tenantDb, "products", docSnap.id));
+              batchCount++;
+            });
+            await checkBatchLimit();
+
+            // 3. Delete all parties
+            const partiesQ = query(collection(tenantDb, "parties"), where("companyId", "==", company.id));
+            const partiesSnap = await getDocs(partiesQ);
+            partiesSnap.forEach((docSnap) => {
+              batch.delete(doc(tenantDb, "parties", docSnap.id));
+              batchCount++;
+            });
+            await checkBatchLimit();
+
+            // Commit any remaining deletions in the batch
+            if (batchCount > 0) {
+              await batch.commit();
+            }
+          } catch (tenantErr) {
+            console.error("Warning: Failed to delete remote tenant DB data.", tenantErr);
+            // Non-fatal error so we continue and delete the company from main vendor list anyway.
           }
-        };
-
-        // 1. Delete all vouchers
-        const vouchersQ = query(collection(tenantDb, "vouchers"), where("companyId", "==", company.id));
-        const vouchersSnap = await getDocs(vouchersQ);
-        vouchersSnap.forEach((docSnap) => {
-          batch.delete(doc(tenantDb, "vouchers", docSnap.id));
-          batchCount++;
-        });
-        await checkBatchLimit();
-
-        // 2. Delete all products
-        const productsQ = query(collection(tenantDb, "products"), where("companyId", "==", company.id));
-        const productsSnap = await getDocs(productsQ);
-        productsSnap.forEach((docSnap) => {
-          batch.delete(doc(tenantDb, "products", docSnap.id));
-          batchCount++;
-        });
-        await checkBatchLimit();
-
-        // 3. Delete all parties
-        const partiesQ = query(collection(tenantDb, "parties"), where("companyId", "==", company.id));
-        const partiesSnap = await getDocs(partiesQ);
-        partiesSnap.forEach((docSnap) => {
-          batch.delete(doc(tenantDb, "parties", docSnap.id));
-          batchCount++;
-        });
-        await checkBatchLimit();
-
-        // Commit any remaining deletions in the batch
-        if (batchCount > 0) {
-          await batch.commit();
         }
 
         // Finally, delete the company itself from the MAIN db
         await deleteDoc(doc(db, 'companies', company.id));
         
         setCompanies(companies.filter(c => c.id !== company.id));
-        alert('Company and all associated data successfully deleted.');
+        alert('Company successfully deleted.');
       } catch (error) {
-        console.error("Error deleting company and data:", error);
-        alert("Failed to delete company and associated data.");
+        console.error("Error deleting company:", error);
+        alert("Failed to delete company.");
       }
     }
   };
@@ -485,7 +500,7 @@ const VendorDashboard = () => {
                   />
                 </div>
                 <div className="vd-input-group vd-full-width-col">
-                  <label>Firebase Web Config (Optional - Separate Fields)</label>
+                  <label>Firebase Web Config (Required - Separate Fields)</label>
                   <div className="vd-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginTop: '0.5rem' }}>
                     <input type="text" value={fbApiKey} onChange={(e) => setFbApiKey(e.target.value)} placeholder="apiKey" />
                     <input type="text" value={fbAuthDomain} onChange={(e) => setFbAuthDomain(e.target.value)} placeholder="authDomain" />
@@ -494,7 +509,7 @@ const VendorDashboard = () => {
                     <input type="text" value={fbMessagingSenderId} onChange={(e) => setFbMessagingSenderId(e.target.value)} placeholder="messagingSenderId" />
                     <input type="text" value={fbAppId} onChange={(e) => setFbAppId(e.target.value)} placeholder="appId" />
                   </div>
-                  <small style={{ color: 'var(--text-secondary)', marginTop: '0.5rem', display: 'block' }}>Provide the Firebase Config keys for this company's DB. Leaving them blank uses the default main DB. `projectId` is required to activate custom DB.</small>
+                  <small style={{ color: 'var(--text-secondary)', marginTop: '0.5rem', display: 'block' }}>Provide the Firebase Config keys for this company's DB. This is Required to activate their custom DB as data is no longer mixed in the main vendor DB.</small>
                 </div>
                 <div className="vd-input-group vd-full-width-col">
                   <label>Logo (Optional)</label>
