@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { collection, addDoc, getDocs, deleteDoc, doc, updateDoc, serverTimestamp, query, where, writeBatch } from 'firebase/firestore';
-import { db } from '../firebase';
+import { mainDb as db, getTenantDb } from '../firebase';
 import { Trash2, Plus, Building, LogOut, Edit2, Search, Phone, Key, Mail, FileText, MapPin, Image as ImageIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import './VendorDashboard.css';
@@ -15,6 +15,7 @@ const VendorDashboard = () => {
   const [address, setAddress] = useState('');
   const [logo, setLogo] = useState('');
   const [signature, setSignature] = useState('');
+  const [firebaseConfig, setFirebaseConfig] = useState('');
 
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState(null);
@@ -57,6 +58,7 @@ const VendorDashboard = () => {
                   address: lc.address || '',
                   logo: lc.logo || '',
                   signature: lc.signature || '',
+                  firebaseConfig: lc.firebaseConfig || '',
                   isActive: lc.isActive !== false,
                   createdAt: serverTimestamp()
                 });
@@ -171,11 +173,12 @@ const VendorDashboard = () => {
           gst,
           address,
           logo,
-          signature
+          signature,
+          firebaseConfig
         });
 
         setCompanies(companies.map(c => c.id === editingId ? {
-          ...c, companyName, pin, email, phone, gst, address, logo, signature
+          ...c, companyName, pin, email, phone, gst, address, logo, signature, firebaseConfig
         } : c));
       } else {
         const docRef = await addDoc(collection(db, 'companies'), {
@@ -187,6 +190,7 @@ const VendorDashboard = () => {
           address,
           logo,
           signature,
+          firebaseConfig,
           isActive: true,
           createdAt: serverTimestamp()
         });
@@ -201,6 +205,7 @@ const VendorDashboard = () => {
           address,
           logo,
           signature,
+          firebaseConfig,
           isActive: true
         }]);
       }
@@ -221,6 +226,7 @@ const VendorDashboard = () => {
     setAddress('');
     setLogo('');
     setSignature('');
+    setFirebaseConfig('');
     setIsAdding(false);
     setEditingId(null);
   };
@@ -234,16 +240,19 @@ const VendorDashboard = () => {
     setAddress(company.address || '');
     setLogo(company.logo || '');
     setSignature(company.signature || '');
+    setFirebaseConfig(company.firebaseConfig || '');
     setEditingId(company.id);
     setIsAdding(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleDeleteCompany = async (id, name) => {
-    if (window.confirm(`Are you sure you want to delete ${name}? This will permanently delete all data (Vouchers, Products, Parties) associated with this company.`)) {
+  const handleDeleteCompany = async (company) => {
+    if (window.confirm(`Are you sure you want to delete ${company.companyName}? This will permanently delete all data (Vouchers, Products, Parties) associated with this company.`)) {
       try {
-        // Delete all associated data first using a batch
-        const batch = writeBatch(db);
+        const tenantDb = getTenantDb(company.id, company.firebaseConfig);
+        
+        // Delete all associated data first using a batch on TENANT db
+        const batch = writeBatch(tenantDb);
         let batchCount = 0;
         
         // Helper function to commit and reset batch if limit (500) is reached
@@ -255,28 +264,28 @@ const VendorDashboard = () => {
         };
 
         // 1. Delete all vouchers
-        const vouchersQ = query(collection(db, "vouchers"), where("companyId", "==", id));
+        const vouchersQ = query(collection(tenantDb, "vouchers"), where("companyId", "==", company.id));
         const vouchersSnap = await getDocs(vouchersQ);
         vouchersSnap.forEach((docSnap) => {
-          batch.delete(doc(db, "vouchers", docSnap.id));
+          batch.delete(doc(tenantDb, "vouchers", docSnap.id));
           batchCount++;
         });
         await checkBatchLimit();
 
         // 2. Delete all products
-        const productsQ = query(collection(db, "products"), where("companyId", "==", id));
+        const productsQ = query(collection(tenantDb, "products"), where("companyId", "==", company.id));
         const productsSnap = await getDocs(productsQ);
         productsSnap.forEach((docSnap) => {
-          batch.delete(doc(db, "products", docSnap.id));
+          batch.delete(doc(tenantDb, "products", docSnap.id));
           batchCount++;
         });
         await checkBatchLimit();
 
         // 3. Delete all parties
-        const partiesQ = query(collection(db, "parties"), where("companyId", "==", id));
+        const partiesQ = query(collection(tenantDb, "parties"), where("companyId", "==", company.id));
         const partiesSnap = await getDocs(partiesQ);
         partiesSnap.forEach((docSnap) => {
-          batch.delete(doc(db, "parties", docSnap.id));
+          batch.delete(doc(tenantDb, "parties", docSnap.id));
           batchCount++;
         });
         await checkBatchLimit();
@@ -286,10 +295,10 @@ const VendorDashboard = () => {
           await batch.commit();
         }
 
-        // Finally, delete the company itself
-        await deleteDoc(doc(db, 'companies', id));
+        // Finally, delete the company itself from the MAIN db
+        await deleteDoc(doc(db, 'companies', company.id));
         
-        setCompanies(companies.filter(c => c.id !== id));
+        setCompanies(companies.filter(c => c.id !== company.id));
         alert('Company and all associated data successfully deleted.');
       } catch (error) {
         console.error("Error deleting company and data:", error);
@@ -436,6 +445,15 @@ const VendorDashboard = () => {
                   />
                 </div>
                 <div className="vd-input-group vd-full-width-col">
+                  <label>Firebase Web Config JSON (Optional)</label>
+                  <textarea
+                    value={firebaseConfig}
+                    onChange={(e) => setFirebaseConfig(e.target.value)}
+                    placeholder="Provide the Firebase JSON Config for this company's DB. Leaving it blank uses the default main DB."
+                    rows="4"
+                  />
+                </div>
+                <div className="vd-input-group vd-full-width-col">
                   <label>Logo (Optional)</label>
                   <input
                     type="file"
@@ -496,7 +514,7 @@ const VendorDashboard = () => {
                       </button>
                       <button
                         className="btn btn-action-delete"
-                        onClick={() => handleDeleteCompany(company.id, company.companyName)}
+                        onClick={() => handleDeleteCompany(company)}
                         title="Delete Company"
                       >
                         <Trash2 size={16} />

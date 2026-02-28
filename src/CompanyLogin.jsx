@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { collection, query, where, getDocs } from 'firebase/firestore';
-import { db } from './firebase';
+import { mainDb as db } from './firebase';
 import './CompanyLogin.css';
 import hitnishLogo from './contexts/hitnish.png';
 

@@ -2,7 +2,7 @@ import { Routes, Route, NavLink, useLocation, Navigate } from "react-router-dom"
 import { Users, Package, FileText, Menu, X, LogOut, CheckCircle } from "lucide-react";
 import { useState, useEffect } from "react";
 import { doc, onSnapshot, collection, getDocs, updateDoc } from "firebase/firestore";
-import { db } from "./firebase";
+import { mainDb as db } from "./firebase";
 
 import AddParty from "./pages/AddParty";
 import Parties from "./pages/Parties";
