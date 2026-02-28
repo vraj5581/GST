@@ -40,27 +40,8 @@ const parseConfigStr = (raw) => {
 export const getTenantDb = (companyId, configStr) => {
   const config = parseConfigStr(configStr);
   if (!config) {
-    // If they have not configured their own database, provide a dummy isolated environment
-    // to GUARANTEE their data is not saved to the owner's main system DB!
-    const dummyId = `tenant_dummy`;
-    try {
-      const existingApps = getApps();
-      let tenantApp = existingApps.find(a => a.name === dummyId);
-      if (!tenantApp) {
-        tenantApp = initializeApp({
-          apiKey: "fake-security-key",
-          authDomain: "fake-tenant.firebaseapp.com",
-          projectId: "fake-tenant-database",
-          storageBucket: "fake-tenant-database.appspot.com",
-          messagingSenderId: "000000000000",
-          appId: "1:000000000:web:0000000000"
-        }, dummyId);
-      }
-      return getFirestore(tenantApp);
-    } catch(e) {
-      console.error("Dummy init error", e);
-      return mainDb; // Fallback just to not crash react
-    }
+    // If no custom config is provided, fallback to the main Database
+    return mainDb;
   }
 
   const tenantId = `tenant_${companyId}`;

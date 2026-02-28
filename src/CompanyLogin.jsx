@@ -59,23 +59,13 @@ const CompanyLogin = ({ onLogin }) => {
         return;
       }
 
-      // Successful login - Write fully detailed login record
+      // Successful login - update lastLogin only
       try {
         await updateDoc(doc(db, 'companies', companyId), {
           lastLogin: serverTimestamp()
         });
-        
-        // Also keep a dedicated log collection in the main DB
-        await addDoc(collection(db, 'login_history'), {
-          companyId: companyId,
-          companyName: companyData.companyName || 'Unknown',
-          phone: companyData.phone || '',
-          email: companyData.email || '',
-          timestamp: serverTimestamp(),
-          userAgent: navigator.userAgent
-        });
       } catch (logErr) {
-        console.error("Failed to update login records:", logErr);
+        console.error("Failed to update lastLogin:", logErr);
       }
 
       onLogin({

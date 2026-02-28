@@ -26,6 +26,7 @@ const VendorDashboard = () => {
   const [editingId, setEditingId] = useState(null);
   const [error, setError] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -182,6 +183,7 @@ const VendorDashboard = () => {
       firebaseConfig = JSON.stringify(fbObj);
     }
 
+    setIsSubmitting(true);
     try {
       if (editingId) {
         const docRef = doc(db, 'companies', editingId);
@@ -234,6 +236,8 @@ const VendorDashboard = () => {
     } catch (error) {
       console.error("Error saving company:", error);
       setError("Failed to save company.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -254,6 +258,7 @@ const VendorDashboard = () => {
     setFbAppId('');
     setIsAdding(false);
     setEditingId(null);
+    setIsSubmitting(false);
   };
 
   const handleEditCompany = (company) => {
@@ -297,57 +302,64 @@ const VendorDashboard = () => {
           } catch (e) {}
         }
 
+        // Helper function to safely delete documents in batches under a 400 limit
+        const deleteDataWithBatches = async (targetDb) => {
+          const collectionsToDelete = ["vouchers", "products", "parties"];
+          let currentBatch = writeBatch(targetDb);
+          let count = 0;
+
+          // Delete from specific collections
+          for (const collName of collectionsToDelete) {
+            const q = query(collection(targetDb, collName), where("companyId", "==", company.id));
+            const snap = await getDocs(q);
+            for (const docSnap of snap.docs) {
+              currentBatch.delete(doc(targetDb, collName, docSnap.id));
+              count++;
+              if (count >= 400) {
+                await currentBatch.commit();
+                currentBatch = writeBatch(targetDb);
+                count = 0;
+              }
+            }
+          }
+
+          // Delete login history subcollections
+          const histColNames = ["login_history", "loginHistory"];
+          for (const hCol of histColNames) {
+            try {
+              const hSnap = await getDocs(collection(targetDb, `companies/${company.id}/${hCol}`));
+              for (const docSnap of hSnap.docs) {
+                currentBatch.delete(docSnap.ref);
+                count++;
+                if (count >= 400) {
+                  await currentBatch.commit();
+                  currentBatch = writeBatch(targetDb);
+                  count = 0;
+                }
+              }
+            } catch (e) { /* subcollection might not exist, silently ignore */ }
+          }
+          
+          if (count > 0) {
+            await currentBatch.commit();
+          }
+        };
+
         if (hasValidConfig) {
           try {
             const tenantDb = getTenantDb(company.id, company.firebaseConfig);
-            
-            // Delete all associated data first using a batch on TENANT db
-            const batch = writeBatch(tenantDb);
-            let batchCount = 0;
-            
-            // Helper function to commit and reset batch if limit (500) is reached
-            const checkBatchLimit = async () => {
-              if (batchCount >= 400) {
-                await batch.commit();
-                batchCount = 0;
-              }
-            };
-
-            // 1. Delete all vouchers
-            const vouchersQ = query(collection(tenantDb, "vouchers"), where("companyId", "==", company.id));
-            const vouchersSnap = await getDocs(vouchersQ);
-            vouchersSnap.forEach((docSnap) => {
-              batch.delete(doc(tenantDb, "vouchers", docSnap.id));
-              batchCount++;
-            });
-            await checkBatchLimit();
-
-            // 2. Delete all products
-            const productsQ = query(collection(tenantDb, "products"), where("companyId", "==", company.id));
-            const productsSnap = await getDocs(productsQ);
-            productsSnap.forEach((docSnap) => {
-              batch.delete(doc(tenantDb, "products", docSnap.id));
-              batchCount++;
-            });
-            await checkBatchLimit();
-
-            // 3. Delete all parties
-            const partiesQ = query(collection(tenantDb, "parties"), where("companyId", "==", company.id));
-            const partiesSnap = await getDocs(partiesQ);
-            partiesSnap.forEach((docSnap) => {
-              batch.delete(doc(tenantDb, "parties", docSnap.id));
-              batchCount++;
-            });
-            await checkBatchLimit();
-
-            // Commit any remaining deletions in the batch
-            if (batchCount > 0) {
-              await batch.commit();
-            }
+            await deleteDataWithBatches(tenantDb);
           } catch (tenantErr) {
             console.error("Warning: Failed to delete remote tenant DB data.", tenantErr);
             // Non-fatal error so we continue and delete the company from main vendor list anyway.
           }
+        }
+
+        // ALWAYS delete the data from the MAIN database as well to ensure master is clean
+        try {
+          await deleteDataWithBatches(db);
+        } catch (mainErr) {
+          console.error("Warning: Failed to delete main DB data.", mainErr);
         }
 
         // Finally, delete the company itself from the MAIN db
@@ -545,8 +557,12 @@ const VendorDashboard = () => {
                 </div>
               </div>
               <div className="vd-form-actions vd-form-actions-wrapper">
-                <button type="submit" className="btn btn-outline-primary btn-mobile-flex vd-form-action-btn-sized">{editingId ? "Update" : "Save"}</button>
-                <button type="button" className="btn btn-outline-danger btn-mobile-flex vd-form-action-btn-sized" onClick={resetForm}>Cancel</button>
+                <button type="submit" className="btn btn-outline-primary btn-mobile-flex vd-form-action-btn-sized" disabled={isSubmitting}>
+                  {isSubmitting ? "Saving..." : editingId ? "Update" : "Save"}
+                </button>
+                <button type="button" className="btn btn-outline-danger btn-mobile-flex vd-form-action-btn-sized" onClick={resetForm} disabled={isSubmitting}>
+                  Cancel
+                </button>
               </div>
             </form>
           </div>
