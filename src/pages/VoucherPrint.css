@@ -211,6 +211,42 @@
   border-top: 1px solid #ddd;
 }
 
+.print-payment-summary {
+  margin-top: 1rem;
+  margin-left: auto;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 1rem;
+  background-color: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.print-payment-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: #334155;
+}
+
+.print-payment-row strong {
+  color: #0f172a;
+}
+
+@media screen and (max-width: 768px) {
+  .print-payment-summary {
+    width: 100%;
+    margin-top: 0.75rem;
+    padding: 0.75rem;
+  }
+
+  .print-payment-row {
+    font-size: 0.75rem;
+  }
+}
+
 /* Notes & Footer */
 .print-notes-container {
   margin-top: 2rem;

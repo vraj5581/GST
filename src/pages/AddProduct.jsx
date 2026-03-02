@@ -20,6 +20,7 @@ function AddProduct() {
   });
 
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -71,6 +72,7 @@ function AddProduct() {
       return;
     }
 
+    setLoading(true);
     try {
       if (id) {
         // Update existing
@@ -84,6 +86,8 @@ function AddProduct() {
     } catch (error) {
       console.error("Error saving product:", error);
       alert("Failed to save product. Check console for details.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -191,8 +195,9 @@ function AddProduct() {
             <button
               type="submit"
               className="btn btn-outline-primary btn-mobile-flex"
+              disabled={loading}
             >
-              {id ? "Update" : "Save"}
+              {loading ? "Processing..." : (id ? "Update" : "Save")}
             </button>
             <button
               type="button"

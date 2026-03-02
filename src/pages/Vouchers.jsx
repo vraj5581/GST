@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Vouchers.css";
-import { Plus, QrCode, Edit, Trash2, Search, Hash, Calendar, Package, IndianRupee, X, Filter } from "lucide-react";
+import { Plus, QrCode, Edit, Trash2, Search, Hash, Calendar, Package, IndianRupee, X, Filter, CreditCard } from "lucide-react";
 import QRCode from "react-qr-code";
 import { collection, getDocs, deleteDoc, doc, query, where } from "firebase/firestore";
 import { getDB } from "../firebase";
@@ -18,6 +18,8 @@ function Vouchers() {
     priceMax: 200000,
     sortInvoice: "desc", // "desc", "asc"
     sortParty: "", // "", "asc", "desc"
+    status: "", // "", "Paid", "Unpaid", "Partial"
+    paymentMethod: "", // "", "Cash", "Online"
   });
   const [qrVoucher, setQrVoucher] = useState(null);
   const navigate = useNavigate(
@@ -92,7 +94,13 @@ function Vouchers() {
     if (filters.priceMin > 0 && total < filters.priceMin) matchesPrice = false;
     if (filters.priceMax < 200000 && total > filters.priceMax) matchesPrice = false;
 
-    return matchesSearch && matchesDateRange && matchesPrice;
+    let matchesStatus = true;
+    if (filters.status && v.status !== filters.status) matchesStatus = false;
+
+    let matchesMethod = true;
+    if (filters.paymentMethod && v.paymentMethod !== filters.paymentMethod) matchesMethod = false;
+
+    return matchesSearch && matchesDateRange && matchesPrice && matchesStatus && matchesMethod;
   });
 
   // Sorting
@@ -117,7 +125,9 @@ function Vouchers() {
     filters.dateFrom || filters.dateTo,
     filters.priceMin > 0 || filters.priceMax < 200000,
     filters.sortInvoice !== "desc",
-    filters.sortParty !== ""
+    filters.sortParty !== "",
+    filters.status !== "",
+    filters.paymentMethod !== ""
   ].filter(Boolean);
   const activeFilterCount = activeFiltersArr.length;
   const hasActiveFilters = activeFilterCount > 0;
@@ -165,9 +175,14 @@ function Vouchers() {
                 onClick={() => navigate(`/voucher-print/${v.id}`)}
               >
                 <div className="voucher-card-header">
-                  <h4 className="voucher-card-title voucher-card-title-cutoff">
-                    {v.partyId}
-                  </h4>
+                  <div className="voucher-card-title-group">
+                    <h4 className="voucher-card-title voucher-card-title-cutoff">
+                      {v.partyId}
+                    </h4>
+                    <span className={`status-badge ${v.status?.toLowerCase() || 'unpaid'}`}>
+                      {v.status || 'Unpaid'}
+                    </span>
+                  </div>
                   <div className="voucher-card-actions">
                     <button
                       className="btn btn-action-print"
@@ -203,23 +218,36 @@ function Vouchers() {
                 </div>
 
                 <div className="voucher-card-details">
-                  <div className="party-detail-row">
-                    <div className="party-detail-icon"><Hash size={14} /></div>
-                    <p>{v.invoiceNumber || `INV/25-26/${String(v.originalIndex + 1).padStart(3, '0')}`}</p>
+                  <div className="voucher-meta-grid">
+                    <div className="party-detail-row">
+                      <div className="party-detail-icon"><Hash size={14} /></div>
+                      <p>{v.invoiceNumber || `INV/25-26/${String(v.originalIndex + 1).padStart(3, '0')}`}</p>
+                    </div>
+                    <div className="party-detail-row">
+                      <div className="party-detail-icon"><Calendar size={14} /></div>
+                      <p>{new Date(v.date).toLocaleDateString()}</p>
+                    </div>
+                    <div className="party-detail-row">
+                      <div className="party-detail-icon"><CreditCard size={14} /></div>
+                      <p>{v.paymentMethod || 'Cash'}</p>
+                    </div>
+                    <div className="party-detail-row">
+                      <div className="party-detail-icon"><Package size={14} /></div>
+                      <p>{v.items.length} Items</p>
+                    </div>
                   </div>
-                  <div className="party-detail-row">
-                    <div className="party-detail-icon"><Calendar size={14} /></div>
-                    <p>{new Date(v.date).toLocaleDateString()}</p>
-                  </div>
-                  <div className="party-detail-row">
-                    <div className="party-detail-icon"><Package size={14} /></div>
-                    <p>{v.items.length} Items</p>
-                  </div>
-                  <div className="party-detail-row">
-                    <div className="party-detail-icon"><IndianRupee size={14} /></div>
-                    <p>
+
+                  <div className="voucher-card-footer">
+                    <div className="voucher-price-info">
+                      <span className="price-label">Total Amount</span>
                       <strong className="voucher-total-highlight">₹{calculateTotal(v.items).toFixed(2)}</strong>
-                    </p>
+                    </div>
+                    {v.status === 'Partial' && (
+                      <div className="voucher-remaining-info">
+                        <span className="price-label">Remaining</span>
+                        <span className="remaining-value">₹{(v.remainingAmount !== undefined ? v.remainingAmount : calculateTotal(v.items)).toFixed(2)}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -352,6 +380,43 @@ function Vouchers() {
 
               <div className="form-group filter-form-group">
                 <div className="filter-group-header">
+                  <label className="form-label filter-label-bold">Voucher Status</label>
+                  {filters.status !== "" && (
+                    <span className="filter-clear-link" onClick={() => setFilters({ ...filters, status: "" })}>Reset</span>
+                  )}
+                </div>
+                <select
+                  className="form-input"
+                  value={filters.status}
+                  onChange={(e) => setFilters({ ...filters, status: e.target.value })}
+                >
+                  <option value="">All Statuses</option>
+                  <option value="Paid">Paid</option>
+                  <option value="Unpaid">Unpaid</option>
+                  <option value="Partial">Partial</option>
+                </select>
+              </div>
+
+              <div className="form-group filter-form-group">
+                <div className="filter-group-header">
+                  <label className="form-label filter-label-bold">Payment Method</label>
+                  {filters.paymentMethod !== "" && (
+                    <span className="filter-clear-link" onClick={() => setFilters({ ...filters, paymentMethod: "" })}>Reset</span>
+                  )}
+                </div>
+                <select
+                  className="form-input"
+                  value={filters.paymentMethod}
+                  onChange={(e) => setFilters({ ...filters, paymentMethod: e.target.value })}
+                >
+                  <option value="">All Methods</option>
+                  <option value="Cash">Cash</option>
+                  <option value="Online">Online</option>
+                </select>
+              </div>
+
+              <div className="form-group filter-form-group">
+                <div className="filter-group-header">
                   <label className="form-label filter-label-bold">Sort By Invoice Date</label>
                   {filters.sortInvoice !== "desc" && (
                     <span className="filter-clear-link" onClick={() => setFilters({ ...filters, sortInvoice: "desc" })}>Reset</span>
@@ -396,6 +461,8 @@ function Vouchers() {
                       priceMax: 200000,
                       sortInvoice: "desc",
                       sortParty: "",
+                      status: "",
+                      paymentMethod: "",
                     });
                     setShowFilterModal(false);
                   }}

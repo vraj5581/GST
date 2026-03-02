@@ -18,6 +18,7 @@ function AddParty() {
   });
 
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -98,6 +99,7 @@ function AddParty() {
       return;
     }
 
+    setLoading(true);
     try {
       if (id) {
         // Update existing
@@ -111,6 +113,8 @@ function AddParty() {
     } catch (error) {
       console.error("Error saving party:", error);
       alert("Failed to save party. Check console for details.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -217,8 +221,9 @@ function AddParty() {
             <button
               type="submit"
               className="btn btn-outline-primary btn-mobile-flex"
+              disabled={loading}
             >
-              {id ? "Update" : "Save"}
+              {loading ? "Processing..." : (id ? "Update" : "Save")}
             </button>
             <button
               type="button"

@@ -40,26 +40,43 @@
 
 .add-voucher-page .voucher-totals-container {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: flex-end;
   gap: 2rem;
-  padding: 1rem;
+  padding: 1.5rem;
   background: var(--bg-primary);
-  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
   flex-wrap: wrap;
+  margin-top: 2rem;
+}
+
+.add-voucher-page .voucher-payment-calcs {
+  display: flex;
+  gap: 1.5rem;
+  flex: 1;
+  min-width: 300px;
+}
+
+.add-voucher-page .voucher-payment-calcs .form-group {
+  flex: 1;
 }
 
 .add-voucher-page .voucher-total-block {
   text-align: right;
-  min-width: 100px;
+  min-width: 150px;
 }
 
 .add-voucher-page .voucher-total-label {
   color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
 }
 
 .add-voucher-page .voucher-grand-total-value {
-  font-size: 1.25rem;
-  font-weight: 700;
+  font-size: 1.75rem;
+  font-weight: 800;
   color: var(--color-primary);
 }
 
@@ -163,10 +180,12 @@
 .add-voucher-page .w-full {
   width: 100%;
 }
+
 .add-voucher-page .grid {
   display: grid;
   gap: 0.7rem;
 }
+
 .add-voucher-page .grid-2 {
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 }
@@ -284,7 +303,8 @@
 
   /* Micro-typography to fit 5 columns onto a phone screen without scroll */
   .add-voucher-page .voucher-items-wrapper {
-    overflow-x: hidden; /* Lock scroll completely */
+    overflow-x: hidden;
+    /* Lock scroll completely */
   }
 
   .add-voucher-page .voucher-items-header-row {

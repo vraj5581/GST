@@ -23,6 +23,7 @@ function AddVoucher() {
   const [parties, setParties] = useState([]);
   const [products, setProducts] = useState([]);
 
+  const [loading, setLoading] = useState(false);
   const productSelectRef = useRef(null);
 
   const [voucher, setVoucher] = useState({
@@ -30,6 +31,9 @@ function AddVoucher() {
     partyId: "",
     items: [],
     note: "",
+    paymentMethod: "Cash",
+    status: "Paid",
+    paidAmount: 0,
   });
 
   // Load parties and products for dropdowns
@@ -37,7 +41,7 @@ function AddVoucher() {
     const fetchData = async () => {
       try {
         const loggedCompanyId = JSON.parse(localStorage.getItem('loggedCompany'))?.id;
-        
+
         const partiesQ = query(collection(db, "parties"), where("companyId", "==", loggedCompanyId));
         const partiesSnap = await getDocs(partiesQ);
         setParties(
@@ -53,7 +57,13 @@ function AddVoucher() {
         if (id) {
           const voucherSnap = await getDoc(doc(db, "vouchers", id));
           if (voucherSnap.exists()) {
-            setVoucher(voucherSnap.data());
+            const data = voucherSnap.data();
+            setVoucher({
+              paymentMethod: "Cash",
+              status: "Paid",
+              paidAmount: 0,
+              ...data
+            });
           }
         }
       } catch (error) {
@@ -61,7 +71,7 @@ function AddVoucher() {
       }
     };
     fetchData();
-  }, [id]);
+  }, [id, db]);
 
   const handleProductSelect = (selectedOptions) => {
     // Handle the multi-select options
@@ -122,6 +132,17 @@ function AddVoucher() {
   };
 
   const totals = calculateTotals();
+  const remainingAmount = totals.total - (parseFloat(voucher.paidAmount) || 0);
+
+  // Auto-sync paidAmount when status is 'Paid'
+  useEffect(() => {
+    if (voucher.status === "Paid" && voucher.paidAmount !== totals.total) {
+      setVoucher(prev => ({
+        ...prev,
+        paidAmount: totals.total
+      }));
+    }
+  }, [totals.total, voucher.status]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -134,9 +155,12 @@ function AddVoucher() {
       return;
     }
 
-    const finalVoucher = { 
-      ...voucher, 
+    setLoading(true);
+    const finalVoucher = {
+      ...voucher,
       items: cleanedItems,
+      totalAmount: totals.total,
+      remainingAmount: remainingAmount,
       companyId: JSON.parse(localStorage.getItem('loggedCompany'))?.id
     };
 
@@ -146,7 +170,7 @@ function AddVoucher() {
       } else {
         // Assign creation timestamp if purely new
         finalVoucher.createdAt = Date.now();
-        
+
         // Generate Invoice Number
         const loggedCompanyId = JSON.parse(localStorage.getItem('loggedCompany'))?.id;
         const vouchersQ = query(collection(db, "vouchers"), where("companyId", "==", loggedCompanyId));
@@ -160,7 +184,45 @@ function AddVoucher() {
     } catch (error) {
       console.error("Error saving voucher:", error);
       alert("Failed to save voucher. Check console for details.");
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const handleStatusChange = (newStatus) => {
+    let newPaidAmount = voucher.paidAmount;
+
+    if (newStatus === "Paid") {
+      newPaidAmount = totals.total;
+    } else if (newStatus === "Unpaid") {
+      newPaidAmount = 0;
+    }
+    // For "Partial", we keep the current paid amount or let user edit
+
+    setVoucher({
+      ...voucher,
+      status: newStatus,
+      paidAmount: newPaidAmount
+    });
+  };
+
+  const handlePaidAmountChange = (val) => {
+    const newPaidAmount = parseFloat(val) || 0;
+    let newStatus = voucher.status;
+
+    if (newPaidAmount >= totals.total && totals.total > 0) {
+      newStatus = "Paid";
+    } else if (newPaidAmount > 0) {
+      newStatus = "Partial";
+    } else {
+      newStatus = "Unpaid";
+    }
+
+    setVoucher({
+      ...voucher,
+      paidAmount: val,
+      status: newStatus
+    });
   };
 
   return (
@@ -324,7 +386,57 @@ function AddVoucher() {
             </div>
           </div>
 
+          <div className="grid grid-2 voucher-header-info">
+            <div className="form-group">
+              <label className="form-label">Payment Method</label>
+              <select
+                className="form-input"
+                value={voucher.paymentMethod}
+                onChange={(e) => setVoucher({ ...voucher, paymentMethod: e.target.value })}
+              >
+                <option value="Cash">Cash</option>
+                <option value="Online">Online</option>
+              </select>
+            </div>
+            <div className="form-group">
+              <label className="form-label">Voucher Status</label>
+              <select
+                className="form-input"
+                value={voucher.status}
+                onChange={(e) => handleStatusChange(e.target.value)}
+              >
+                <option value="Unpaid">Unpaid</option>
+                <option value="Partial">Partial</option>
+                <option value="Paid">Paid</option>
+              </select>
+            </div>
+          </div>
+
           <div className="voucher-totals-container">
+            {voucher.status === "Partial" && (
+              <div className="voucher-payment-calcs">
+                <div className="form-group">
+                  <label className="form-label">Amount Paid (₹)</label>
+                  <input
+                    type="number"
+                    className="form-input"
+                    value={voucher.paidAmount}
+                    onChange={(e) => handlePaidAmountChange(e.target.value)}
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Balance Remaining (₹)</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    value={remainingAmount.toFixed(2)}
+                    readOnly
+                    style={{ backgroundColor: '#f9f9f9', fontWeight: 'bold', color: remainingAmount > 0 ? '#e74c3c' : '#27ae60' }}
+                  />
+                </div>
+              </div>
+            )}
+
             <div className="voucher-total-block">
               <h3 className="voucher-total-label">Total</h3>
               <h3 className="voucher-grand-total-value">
@@ -348,8 +460,9 @@ function AddVoucher() {
             <button
               type="submit"
               className="btn btn-outline-primary btn-mobile-flex"
+              disabled={loading}
             >
-              Save Voucher
+              {loading ? "Processing..." : "Save Voucher"}
             </button>
           </div>
         </form>
