@@ -585,7 +585,7 @@ function Vouchers() {
                     </span>
                   )}
                 </div>
-                <Select
+                <Select 
                   menuPortalTarget={document.body}
                   options={[
                     { value: "", label: "All Statuses" },
