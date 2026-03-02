@@ -1,9 +1,30 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Vouchers.css";
-import { Plus, QrCode, Edit, Trash2, Search, Hash, Calendar, Package, IndianRupee, X, Filter, CreditCard } from "lucide-react";
+import {
+  Plus,
+  QrCode,
+  Edit,
+  Trash2,
+  Search,
+  Hash,
+  Calendar,
+  Package,
+  IndianRupee,
+  X,
+  Filter,
+  CreditCard,
+} from "lucide-react";
 import QRCode from "react-qr-code";
-import { collection, getDocs, deleteDoc, doc, query, where } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  deleteDoc,
+  doc,
+  query,
+  where,
+  updateDoc,
+} from "firebase/firestore";
 import { getDB } from "../firebase";
 
 function Vouchers() {
@@ -22,14 +43,26 @@ function Vouchers() {
     paymentMethod: "", // "", "Cash", "Online"
   });
   const [qrVoucher, setQrVoucher] = useState(null);
-  const navigate = useNavigate(
-
-  );
+  const [statusModalVoucher, setStatusModalVoucher] = useState(null);
+  const [updatingStatus, setUpdatingStatus] = useState(false);
+  const [tempStatusData, setTempStatusData] = useState({
+    status: "",
+    paidAmount: 0,
+  });
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchVouchers = async () => {
       try {
-        const q = query(collection(db, "vouchers"), where("companyId", "==", JSON.parse(localStorage.getItem('loggedCompany'))?.id)); const querySnapshot = await getDocs(q);
+        const q = query(
+          collection(db, "vouchers"),
+          where(
+            "companyId",
+            "==",
+            JSON.parse(localStorage.getItem("loggedCompany"))?.id,
+          ),
+        );
+        const querySnapshot = await getDocs(q);
         let data = querySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
@@ -47,6 +80,41 @@ function Vouchers() {
     };
     fetchVouchers();
   }, []);
+
+  const handleStatusUpdate = async () => {
+    if (!statusModalVoucher) return;
+    setUpdatingStatus(true);
+    try {
+      const total = calculateTotal(statusModalVoucher.items);
+      let updates = {
+        status: tempStatusData.status,
+        paidAmount: parseFloat(tempStatusData.paidAmount) || 0,
+      };
+
+      if (updates.status === "Paid") {
+        updates.paidAmount = total;
+        updates.remainingAmount = 0;
+      } else if (updates.status === "Unpaid") {
+        updates.paidAmount = 0;
+        updates.remainingAmount = total;
+      } else if (updates.status === "Partial") {
+        updates.remainingAmount = total - updates.paidAmount;
+      }
+
+      await updateDoc(doc(db, "vouchers", statusModalVoucher.id), updates);
+      setVouchers(
+        vouchers.map((v) =>
+          v.id === statusModalVoucher.id ? { ...v, ...updates } : v,
+        ),
+      );
+      setStatusModalVoucher(null);
+    } catch (error) {
+      console.error("Error updating status:", error);
+      alert("Failed to update status.");
+    } finally {
+      setUpdatingStatus(false);
+    }
+  };
 
   const handleDelete = async (index, id) => {
     if (window.confirm("Are you sure you want to delete this voucher?")) {
@@ -67,9 +135,14 @@ function Vouchers() {
   let filtered = vouchers.filter((v) => {
     // Basic Search
     const searchLower = search.toLowerCase();
-    const invNo = String(v.invoiceNumber || `INV/25-26/${String(v.originalIndex + 1).padStart(3, '0')}`).toLowerCase();
+    const invNo = String(
+      v.invoiceNumber ||
+        `INV/25-26/${String(v.originalIndex + 1).padStart(3, "0")}`,
+    ).toLowerCase();
 
-    const matchesSearch = (v.partyId && v.partyId.toLowerCase().includes(searchLower)) || invNo.includes(searchLower);
+    const matchesSearch =
+      (v.partyId && v.partyId.toLowerCase().includes(searchLower)) ||
+      invNo.includes(searchLower);
 
     // Advanced Filters
     let matchesDateRange = true;
@@ -92,15 +165,23 @@ function Vouchers() {
     let matchesPrice = true;
     const total = calculateTotal(v.items);
     if (filters.priceMin > 0 && total < filters.priceMin) matchesPrice = false;
-    if (filters.priceMax < 200000 && total > filters.priceMax) matchesPrice = false;
+    if (filters.priceMax < 200000 && total > filters.priceMax)
+      matchesPrice = false;
 
     let matchesStatus = true;
     if (filters.status && v.status !== filters.status) matchesStatus = false;
 
     let matchesMethod = true;
-    if (filters.paymentMethod && v.paymentMethod !== filters.paymentMethod) matchesMethod = false;
+    if (filters.paymentMethod && v.paymentMethod !== filters.paymentMethod)
+      matchesMethod = false;
 
-    return matchesSearch && matchesDateRange && matchesPrice && matchesStatus && matchesMethod;
+    return (
+      matchesSearch &&
+      matchesDateRange &&
+      matchesPrice &&
+      matchesStatus &&
+      matchesMethod
+    );
   });
 
   // Sorting
@@ -127,7 +208,7 @@ function Vouchers() {
     filters.sortInvoice !== "desc",
     filters.sortParty !== "",
     filters.status !== "",
-    filters.paymentMethod !== ""
+    filters.paymentMethod !== "",
   ].filter(Boolean);
   const activeFilterCount = activeFiltersArr.length;
   const hasActiveFilters = activeFilterCount > 0;
@@ -179,8 +260,20 @@ function Vouchers() {
                     <h4 className="voucher-card-title voucher-card-title-cutoff">
                       {v.partyId}
                     </h4>
-                    <span className={`status-badge ${v.status?.toLowerCase() || 'unpaid'}`}>
-                      {v.status || 'Unpaid'}
+                    <span
+                      className={`status-badge ${v.status?.toLowerCase() || "unpaid"}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setStatusModalVoucher(v);
+                        setTempStatusData({
+                          status: v.status || "Unpaid",
+                          paidAmount: v.paidAmount || 0,
+                        });
+                      }}
+                      title="Click to update status"
+                      style={{ cursor: "pointer" }}
+                    >
+                      {v.status || "Unpaid"}
                     </span>
                   </div>
                   <div className="voucher-card-actions">
@@ -220,19 +313,30 @@ function Vouchers() {
                 <div className="voucher-card-details">
                   <div className="voucher-meta-grid">
                     <div className="party-detail-row">
-                      <div className="party-detail-icon"><Hash size={14} /></div>
-                      <p>{v.invoiceNumber || `INV/25-26/${String(v.originalIndex + 1).padStart(3, '0')}`}</p>
+                      <div className="party-detail-icon">
+                        <Hash size={14} />
+                      </div>
+                      <p>
+                        {v.invoiceNumber ||
+                          `INV/25-26/${String(v.originalIndex + 1).padStart(3, "0")}`}
+                      </p>
                     </div>
                     <div className="party-detail-row">
-                      <div className="party-detail-icon"><Calendar size={14} /></div>
+                      <div className="party-detail-icon">
+                        <Calendar size={14} />
+                      </div>
                       <p>{new Date(v.date).toLocaleDateString()}</p>
                     </div>
                     <div className="party-detail-row">
-                      <div className="party-detail-icon"><CreditCard size={14} /></div>
-                      <p>{v.paymentMethod || 'Cash'}</p>
+                      <div className="party-detail-icon">
+                        <CreditCard size={14} />
+                      </div>
+                      <p>{v.paymentMethod || "Cash"}</p>
                     </div>
                     <div className="party-detail-row">
-                      <div className="party-detail-icon"><Package size={14} /></div>
+                      <div className="party-detail-icon">
+                        <Package size={14} />
+                      </div>
                       <p>{v.items.length} Items</p>
                     </div>
                   </div>
@@ -240,12 +344,20 @@ function Vouchers() {
                   <div className="voucher-card-footer">
                     <div className="voucher-price-info">
                       <span className="price-label">Total Amount</span>
-                      <strong className="voucher-total-highlight">₹{calculateTotal(v.items).toFixed(2)}</strong>
+                      <strong className="voucher-total-highlight">
+                        ₹{calculateTotal(v.items).toFixed(2)}
+                      </strong>
                     </div>
-                    {v.status === 'Partial' && (
+                    {v.status === "Partial" && (
                       <div className="voucher-remaining-info">
                         <span className="price-label">Remaining</span>
-                        <span className="remaining-value">₹{(v.remainingAmount !== undefined ? v.remainingAmount : calculateTotal(v.items)).toFixed(2)}</span>
+                        <span className="remaining-value">
+                          ₹
+                          {(v.remainingAmount !== undefined
+                            ? v.remainingAmount
+                            : calculateTotal(v.items)
+                          ).toFixed(2)}
+                        </span>
                       </div>
                     )}
                   </div>
@@ -260,10 +372,16 @@ function Vouchers() {
 
       {qrVoucher && (
         <div className="qr-modal-overlay" onClick={() => setQrVoucher(null)}>
-          <div className="qr-modal-content" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="qr-modal-content"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="qr-modal-header">
               <h3>Scan to View Invoice</h3>
-              <button className="qr-modal-close" onClick={() => setQrVoucher(null)}>
+              <button
+                className="qr-modal-close"
+                onClick={() => setQrVoucher(null)}
+              >
                 <X size={20} />
               </button>
             </div>
@@ -273,65 +391,117 @@ function Vouchers() {
                 size={220}
                 className="qr-code-img"
               />
-              <p className="qr-modal-id">{qrVoucher.invoiceNumber || `INV/25-26/${String(qrVoucher.originalIndex + 1).padStart(3, '0')}`}</p>
-              <p className="qr-modal-help">Scan this QR code with any mobile camera to view and download the invoice.</p>
+              <p className="qr-modal-id">
+                {qrVoucher.invoiceNumber ||
+                  `INV/25-26/${String(qrVoucher.originalIndex + 1).padStart(3, "0")}`}
+              </p>
+              <p className="qr-modal-help">
+                Scan this QR code with any mobile camera to view and download
+                the invoice.
+              </p>
             </div>
           </div>
         </div>
       )}
 
       {showFilterModal && (
-        <div className="qr-modal-overlay" onClick={() => setShowFilterModal(false)}>
-          <div className="qr-modal-content filter-modal-content" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="qr-modal-overlay"
+          onClick={() => setShowFilterModal(false)}
+        >
+          <div
+            className="qr-modal-content filter-modal-content"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="qr-modal-header">
               <h3>Filter Options</h3>
-              <button className="qr-modal-close" onClick={() => setShowFilterModal(false)}>
+              <button
+                className="qr-modal-close"
+                onClick={() => setShowFilterModal(false)}
+              >
                 <X size={20} />
               </button>
             </div>
             <div className="qr-modal-body filter-modal-body">
               <div className="form-group filter-form-group">
                 <div className="filter-group-header">
-                  <label className="form-label filter-label-bold">Date Range</label>
+                  <label className="form-label filter-label-bold">
+                    Date Range
+                  </label>
                   {(filters.dateFrom || filters.dateTo) && (
-                    <span className="filter-clear-link" onClick={() => setFilters({ ...filters, dateFrom: "", dateTo: "" })}>Clear</span>
+                    <span
+                      className="filter-clear-link"
+                      onClick={() =>
+                        setFilters({ ...filters, dateFrom: "", dateTo: "" })
+                      }
+                    >
+                      Clear
+                    </span>
                   )}
                 </div>
                 <div className="filter-date-inputs">
                   <input
                     type={filters.dateFrom ? "date" : "text"}
-                    onFocus={(e) => { e.target.type = "date"; }}
+                    onFocus={(e) => {
+                      e.target.type = "date";
+                    }}
                     onClick={(e) => {
                       e.target.type = "date";
-                      setTimeout(() => { try { e.target.showPicker(); } catch (err) { } }, 50);
+                      setTimeout(() => {
+                        try {
+                          e.target.showPicker();
+                        } catch (err) {}
+                      }, 50);
                     }}
                     onTouchStart={(e) => {
                       e.target.type = "date";
-                      setTimeout(() => { try { e.target.showPicker(); } catch (err) { } }, 50);
+                      setTimeout(() => {
+                        try {
+                          e.target.showPicker();
+                        } catch (err) {}
+                      }, 50);
                     }}
-                    onBlur={(e) => { if (!e.target.value) e.target.type = "text"; }}
+                    onBlur={(e) => {
+                      if (!e.target.value) e.target.type = "text";
+                    }}
                     placeholder="dd-mm-yyyy"
                     className="form-input"
                     value={filters.dateFrom}
-                    onChange={(e) => setFilters({ ...filters, dateFrom: e.target.value })}
+                    onChange={(e) =>
+                      setFilters({ ...filters, dateFrom: e.target.value })
+                    }
                   />
                   <span className="filter-date-separator">to</span>
                   <input
                     type={filters.dateTo ? "date" : "text"}
-                    onFocus={(e) => { e.target.type = "date"; }}
+                    onFocus={(e) => {
+                      e.target.type = "date";
+                    }}
                     onClick={(e) => {
                       e.target.type = "date";
-                      setTimeout(() => { try { e.target.showPicker(); } catch (err) { } }, 50);
+                      setTimeout(() => {
+                        try {
+                          e.target.showPicker();
+                        } catch (err) {}
+                      }, 50);
                     }}
                     onTouchStart={(e) => {
                       e.target.type = "date";
-                      setTimeout(() => { try { e.target.showPicker(); } catch (err) { } }, 50);
+                      setTimeout(() => {
+                        try {
+                          e.target.showPicker();
+                        } catch (err) {}
+                      }, 50);
                     }}
-                    onBlur={(e) => { if (!e.target.value) e.target.type = "text"; }}
+                    onBlur={(e) => {
+                      if (!e.target.value) e.target.type = "text";
+                    }}
                     placeholder="dd-mm-yyyy"
                     className="form-input"
                     value={filters.dateTo}
-                    onChange={(e) => setFilters({ ...filters, dateTo: e.target.value })}
+                    onChange={(e) =>
+                      setFilters({ ...filters, dateTo: e.target.value })
+                    }
                   />
                 </div>
               </div>
@@ -340,17 +510,33 @@ function Vouchers() {
                 <div className="filter-group-header">
                   <label className="form-label filter-label-bold">Price</label>
                   {(filters.priceMin > 0 || filters.priceMax < 200000) && (
-                    <span className="filter-clear-link" onClick={() => setFilters({ ...filters, priceMin: 0, priceMax: 200000 })}>Clear</span>
+                    <span
+                      className="filter-clear-link"
+                      onClick={() =>
+                        setFilters({
+                          ...filters,
+                          priceMin: 0,
+                          priceMax: 200000,
+                        })
+                      }
+                    >
+                      Clear
+                    </span>
                   )}
                 </div>
                 <div className="price-range-display">
-                  ₹{filters.priceMin.toLocaleString()} – ₹{filters.priceMax.toLocaleString()}{filters.priceMax >= 200000 ? '+' : ''}
+                  ₹{filters.priceMin.toLocaleString()} – ₹
+                  {filters.priceMax.toLocaleString()}
+                  {filters.priceMax >= 200000 ? "+" : ""}
                 </div>
                 <div className="range-slider-container">
-                  <div className="range-slider-track" style={{
-                    left: `${(filters.priceMin / 200000) * 100}%`,
-                    right: `${100 - (filters.priceMax / 200000) * 100}%`
-                  }}></div>
+                  <div
+                    className="range-slider-track"
+                    style={{
+                      left: `${(filters.priceMin / 200000) * 100}%`,
+                      right: `${100 - (filters.priceMax / 200000) * 100}%`,
+                    }}
+                  ></div>
                   <input
                     type="range"
                     min="0"
@@ -358,7 +544,10 @@ function Vouchers() {
                     step="100"
                     value={filters.priceMin}
                     onChange={(e) => {
-                      const val = Math.min(Number(e.target.value), filters.priceMax);
+                      const val = Math.min(
+                        Number(e.target.value),
+                        filters.priceMax,
+                      );
                       setFilters({ ...filters, priceMin: val });
                     }}
                     className="range-slider-thumb thumb-left"
@@ -370,7 +559,10 @@ function Vouchers() {
                     step="100"
                     value={filters.priceMax}
                     onChange={(e) => {
-                      const val = Math.max(Number(e.target.value), filters.priceMin);
+                      const val = Math.max(
+                        Number(e.target.value),
+                        filters.priceMin,
+                      );
                       setFilters({ ...filters, priceMax: val });
                     }}
                     className="range-slider-thumb thumb-right"
@@ -380,15 +572,24 @@ function Vouchers() {
 
               <div className="form-group filter-form-group">
                 <div className="filter-group-header">
-                  <label className="form-label filter-label-bold">Voucher Status</label>
+                  <label className="form-label filter-label-bold">
+                    Voucher Status
+                  </label>
                   {filters.status !== "" && (
-                    <span className="filter-clear-link" onClick={() => setFilters({ ...filters, status: "" })}>Reset</span>
+                    <span
+                      className="filter-clear-link"
+                      onClick={() => setFilters({ ...filters, status: "" })}
+                    >
+                      Reset
+                    </span>
                   )}
                 </div>
                 <select
                   className="form-input"
                   value={filters.status}
-                  onChange={(e) => setFilters({ ...filters, status: e.target.value })}
+                  onChange={(e) =>
+                    setFilters({ ...filters, status: e.target.value })
+                  }
                 >
                   <option value="">All Statuses</option>
                   <option value="Paid">Paid</option>
@@ -399,15 +600,26 @@ function Vouchers() {
 
               <div className="form-group filter-form-group">
                 <div className="filter-group-header">
-                  <label className="form-label filter-label-bold">Payment Method</label>
+                  <label className="form-label filter-label-bold">
+                    Payment Method
+                  </label>
                   {filters.paymentMethod !== "" && (
-                    <span className="filter-clear-link" onClick={() => setFilters({ ...filters, paymentMethod: "" })}>Reset</span>
+                    <span
+                      className="filter-clear-link"
+                      onClick={() =>
+                        setFilters({ ...filters, paymentMethod: "" })
+                      }
+                    >
+                      Reset
+                    </span>
                   )}
                 </div>
                 <select
                   className="form-input"
                   value={filters.paymentMethod}
-                  onChange={(e) => setFilters({ ...filters, paymentMethod: e.target.value })}
+                  onChange={(e) =>
+                    setFilters({ ...filters, paymentMethod: e.target.value })
+                  }
                 >
                   <option value="">All Methods</option>
                   <option value="Cash">Cash</option>
@@ -417,15 +629,26 @@ function Vouchers() {
 
               <div className="form-group filter-form-group">
                 <div className="filter-group-header">
-                  <label className="form-label filter-label-bold">Sort By Invoice Date</label>
+                  <label className="form-label filter-label-bold">
+                    Sort By Invoice Date
+                  </label>
                   {filters.sortInvoice !== "desc" && (
-                    <span className="filter-clear-link" onClick={() => setFilters({ ...filters, sortInvoice: "desc" })}>Reset</span>
+                    <span
+                      className="filter-clear-link"
+                      onClick={() =>
+                        setFilters({ ...filters, sortInvoice: "desc" })
+                      }
+                    >
+                      Reset
+                    </span>
                   )}
                 </div>
                 <select
                   className="form-input"
                   value={filters.sortInvoice}
-                  onChange={(e) => setFilters({ ...filters, sortInvoice: e.target.value })}
+                  onChange={(e) =>
+                    setFilters({ ...filters, sortInvoice: e.target.value })
+                  }
                 >
                   <option value="desc">Newest First</option>
                   <option value="asc">Oldest First</option>
@@ -434,15 +657,24 @@ function Vouchers() {
 
               <div className="form-group filter-form-group-last">
                 <div className="filter-group-header">
-                  <label className="form-label filter-label-bold">Sort By Party Name</label>
+                  <label className="form-label filter-label-bold">
+                    Sort By Party Name
+                  </label>
                   {filters.sortParty !== "" && (
-                    <span className="filter-clear-link" onClick={() => setFilters({ ...filters, sortParty: "" })}>Reset</span>
+                    <span
+                      className="filter-clear-link"
+                      onClick={() => setFilters({ ...filters, sortParty: "" })}
+                    >
+                      Reset
+                    </span>
                   )}
                 </div>
                 <select
                   className="form-input"
                   value={filters.sortParty}
-                  onChange={(e) => setFilters({ ...filters, sortParty: e.target.value })}
+                  onChange={(e) =>
+                    setFilters({ ...filters, sortParty: e.target.value })
+                  }
                 >
                   <option value="">None</option>
                   <option value="asc">A to Z</option>
@@ -474,6 +706,101 @@ function Vouchers() {
                   onClick={() => setShowFilterModal(false)}
                 >
                   Apply
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {statusModalVoucher && (
+        <div
+          className="qr-modal-overlay"
+          onClick={() => setStatusModalVoucher(null)}
+        >
+          <div
+            className="qr-modal-content filter-modal-content"
+            onClick={(e) => e.stopPropagation()}
+            style={{ maxWidth: "400px" }}
+          >
+            <div className="qr-modal-header">
+              <h3>Update Status</h3>
+              <button
+                className="qr-modal-close"
+                onClick={() => setStatusModalVoucher(null)}
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <div className="qr-modal-body filter-modal-body">
+              <div className="form-group filter-form-group">
+                <label className="form-label filter-label-bold">Status</label>
+                <select
+                  className="form-input"
+                  value={tempStatusData.status}
+                  onChange={(e) =>
+                    setTempStatusData({
+                      ...tempStatusData,
+                      status: e.target.value,
+                      paidAmount:
+                        e.target.value === "Paid"
+                          ? calculateTotal(statusModalVoucher.items)
+                          : e.target.value === "Unpaid"
+                            ? 0
+                            : tempStatusData.paidAmount,
+                    })
+                  }
+                >
+                  <option value="Paid">Paid</option>
+                  <option value="Partial">Partial</option>
+                  <option value="Unpaid">Unpaid</option>
+                </select>
+              </div>
+
+              {tempStatusData.status === "Partial" && (
+                <div className="form-group filter-form-group">
+                  <label className="form-label filter-label-bold">
+                    Amount Paid (₹)
+                  </label>
+                  <input
+                    type="number"
+                    className="form-input"
+                    value={tempStatusData.paidAmount}
+                    onChange={(e) =>
+                      setTempStatusData({
+                        ...tempStatusData,
+                        paidAmount: e.target.value,
+                      })
+                    }
+                  />
+                  <div
+                    style={{
+                      marginTop: "0.5rem",
+                      fontSize: "0.85rem",
+                      color: "var(--text-secondary)",
+                    }}
+                  >
+                    Balance: ₹
+                    {(
+                      calculateTotal(statusModalVoucher.items) -
+                      (parseFloat(tempStatusData.paidAmount) || 0)
+                    ).toFixed(2)}
+                  </div>
+                </div>
+              )}
+
+              <div className="filter-actions" style={{ marginTop: "1rem" }}>
+                <button
+                  className="btn btn-outline-danger filter-btn-clear"
+                  onClick={() => setStatusModalVoucher(null)}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="btn btn-primary filter-btn-apply"
+                  onClick={handleStatusUpdate}
+                  disabled={updatingStatus}
+                >
+                  {updatingStatus ? "Updating..." : "Update Status"}
                 </button>
               </div>
             </div>

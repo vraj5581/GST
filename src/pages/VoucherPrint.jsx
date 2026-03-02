@@ -177,45 +177,8 @@ function VoucherPrint() {
               <p>
                 <strong>Invoice No:</strong> {voucher.invoiceNumber || voucher.fallbackInvoiceNumber}
               </p>
-              <p>
-                <strong>Pay Method:</strong> {voucher.paymentMethod || 'Cash'}
-              </p>
-              <p>
-                <strong>Status:</strong> <span style={{ color: voucher.status === 'Paid' ? '#15803d' : voucher.status === 'Partial' ? '#b45309' : '#b91c1c' }}>{voucher.status || 'Unpaid'}</span>
-              </p>
             </div>
           </div>
-
-          {voucher.status === 'Partial' ? (
-            <div className="print-payment-summary">
-              <div className="print-payment-row">
-                <span>Total Amount:</span>
-                <strong>₹{calculateTotal(voucher.items).toFixed(2)}</strong>
-              </div>
-              <div className="print-payment-row">
-                <span>Amount Paid:</span>
-                <strong>₹{Number(voucher.paidAmount || 0).toFixed(2)}</strong>
-              </div>
-              <div className="print-payment-row">
-                <span>Balance Due:</span>
-                <strong style={{ color: '#b91c1c' }}>
-                  ₹{(voucher.remainingAmount !== undefined ? voucher.remainingAmount : (calculateTotal(voucher.items) - (voucher.paidAmount || 0))).toFixed(2)}
-                </strong>
-              </div>
-            </div>
-          ) : (
-            <div className="print-payment-summary simple-summary">
-              <div className="print-payment-row">
-                <span>Total Amount:</span>
-                <strong>₹{calculateTotal(voucher.items).toFixed(2)}</strong>
-              </div>
-              {voucher.status === 'Paid' && (
-                <div className="print-payment-row">
-                  <span style={{ color: '#15803d', fontWeight: 'bold' }}>FULL PAYMENT RECEIVED</span>
-                </div>
-              )}
-            </div>
-          )}
 
           {/* Table */}
           <div className="invoice-table-container">
@@ -277,9 +240,9 @@ function VoucherPrint() {
           <div className="print-signatory-wrapper">
             {clientCompany?.signature && (
               <div className="print-signatory-img-wrapper" style={{ marginBottom: '10px' }}>
-                <img
-                  src={clientCompany.signature}
-                  alt="Authorized Signature"
+                <img 
+                  src={clientCompany.signature} 
+                  alt="Authorized Signature" 
                   className="print-signatory-img"
                 />
               </div>
