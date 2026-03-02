@@ -1,31 +1,55 @@
-import React, { useState, useEffect } from 'react';
-import { collection, addDoc, getDocs, deleteDoc, doc, updateDoc, serverTimestamp, query, where, writeBatch } from 'firebase/firestore';
-import { mainDb as db, getTenantDb } from '../firebase';
-import { Trash2, Plus, Building, LogOut, Edit2, Search, Phone, Key, Mail, FileText, MapPin, Image as ImageIcon } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import './VendorDashboard.css';
+import React, { useState, useEffect } from "react";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  deleteDoc,
+  doc,
+  updateDoc,
+  serverTimestamp,
+  query,
+  where,
+  writeBatch,
+} from "firebase/firestore";
+import { mainDb as db, getTenantDb } from "../firebase";
+import {
+  Trash2,
+  Plus,
+  Building,
+  LogOut,
+  Edit2,
+  Search,
+  Phone,
+  Key,
+  Mail,
+  FileText,
+  MapPin,
+  Image as ImageIcon,
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import "./VendorDashboard.css";
 
 const VendorDashboard = () => {
   const [companies, setCompanies] = useState([]);
-  const [companyName, setCompanyName] = useState('');
-  const [pin, setPin] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [gst, setGst] = useState('');
-  const [address, setAddress] = useState('');
-  const [logo, setLogo] = useState('');
-  const [signature, setSignature] = useState('');
-  const [fbApiKey, setFbApiKey] = useState('');
-  const [fbAuthDomain, setFbAuthDomain] = useState('');
-  const [fbProjectId, setFbProjectId] = useState('');
-  const [fbStorageBucket, setFbStorageBucket] = useState('');
-  const [fbMessagingSenderId, setFbMessagingSenderId] = useState('');
-  const [fbAppId, setFbAppId] = useState('');
+  const [companyName, setCompanyName] = useState("");
+  const [pin, setPin] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [gst, setGst] = useState("");
+  const [address, setAddress] = useState("");
+  const [logo, setLogo] = useState("");
+  const [signature, setSignature] = useState("");
+  const [fbApiKey, setFbApiKey] = useState("");
+  const [fbAuthDomain, setFbAuthDomain] = useState("");
+  const [fbProjectId, setFbProjectId] = useState("");
+  const [fbStorageBucket, setFbStorageBucket] = useState("");
+  const [fbMessagingSenderId, setFbMessagingSenderId] = useState("");
+  const [fbAppId, setFbAppId] = useState("");
 
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState(null);
-  const [error, setError] = useState('');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [error, setError] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
@@ -36,14 +60,14 @@ const VendorDashboard = () => {
   const fetchCompanies = async () => {
     try {
       // 1. First run the fetch as normal
-      const querySnapshot = await getDocs(collection(db, 'companies'));
-      let data = querySnapshot.docs.map(doc => ({
+      const querySnapshot = await getDocs(collection(db, "companies"));
+      let data = querySnapshot.docs.map((doc) => ({
         id: doc.id,
-        ...doc.data()
+        ...doc.data(),
       }));
 
       // 2. Data Migration: Check if old localStorage 'companies' exists
-      const localCompaniesRaw = localStorage.getItem('companies');
+      const localCompaniesRaw = localStorage.getItem("companies");
       if (localCompaniesRaw) {
         try {
           const localCompanies = JSON.parse(localCompaniesRaw);
@@ -53,20 +77,20 @@ const VendorDashboard = () => {
 
             for (const lc of localCompanies) {
               // Only migrate if the userId doesn't already exist in Firebase
-              const exists = data.find(dc => dc.phone === lc.phone);
+              const exists = data.find((dc) => dc.phone === lc.phone);
               if (!exists && lc.phone && (lc.pin || lc.password)) {
-                const docRef = await addDoc(collection(db, 'companies'), {
+                const docRef = await addDoc(collection(db, "companies"), {
                   companyName: lc.companyName || lc.phone,
                   pin: lc.pin || lc.password,
-                  email: lc.email || '',
-                  phone: lc.phone || '',
-                  gst: lc.gst || '',
-                  address: lc.address || '',
-                  logo: lc.logo || '',
-                  signature: lc.signature || '',
-                  firebaseConfig: lc.firebaseConfig || '',
+                  email: lc.email || "",
+                  phone: lc.phone || "",
+                  gst: lc.gst || "",
+                  address: lc.address || "",
+                  logo: lc.logo || "",
+                  signature: lc.signature || "",
+                  firebaseConfig: lc.firebaseConfig || "",
                   isActive: lc.isActive !== false,
-                  createdAt: serverTimestamp()
+                  createdAt: serverTimestamp(),
                 });
 
                 // Add the newly migrated company to our local array state
@@ -74,22 +98,24 @@ const VendorDashboard = () => {
                   id: docRef.id,
                   companyName: lc.companyName || lc.phone,
                   pin: lc.pin || lc.password,
-                  email: lc.email || '',
-                  phone: lc.phone || '',
-                  gst: lc.gst || '',
-                  address: lc.address || '',
-                  logo: lc.logo || '',
-                  signature: lc.signature || '',
-                  isActive: lc.isActive !== false
+                  email: lc.email || "",
+                  phone: lc.phone || "",
+                  gst: lc.gst || "",
+                  address: lc.address || "",
+                  logo: lc.logo || "",
+                  signature: lc.signature || "",
+                  isActive: lc.isActive !== false,
                 });
                 migratedCount++;
               }
             }
             // Once migration is complete, clear the old localStorage key
             if (migratedCount > 0) {
-              alert(`Successfully migrated ${migratedCount} existing companies from local storage to Firebase!`);
+              alert(
+                `Successfully migrated ${migratedCount} existing companies from local storage to Firebase!`,
+              );
             }
-            localStorage.removeItem('companies');
+            localStorage.removeItem("companies");
           }
         } catch (e) {
           console.error("Error migrating local companies:", e);
@@ -107,7 +133,8 @@ const VendorDashboard = () => {
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      if (file.size > 2 * 1024 * 1024) { // 2MB limit
+      if (file.size > 2 * 1024 * 1024) {
+        // 2MB limit
         setError("Logo image size should be less than 2MB.");
         return;
       }
@@ -122,7 +149,8 @@ const VendorDashboard = () => {
   const handleSignatureUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      if (file.size > 2 * 1024 * 1024) { // 2MB limit
+      if (file.size > 2 * 1024 * 1024) {
+        // 2MB limit
         setError("Signature image size should be less than 2MB.");
         return;
       }
@@ -136,9 +164,16 @@ const VendorDashboard = () => {
 
   const handleAddCompany = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
-    if (!companyName.trim() || !pin || !email.trim() || !phone.trim() || !gst.trim() || !address.trim()) {
+    if (
+      !companyName.trim() ||
+      !pin ||
+      !email.trim() ||
+      !phone.trim() ||
+      !gst.trim() ||
+      !address.trim()
+    ) {
       setError("All fields are strictly required.");
       return;
     }
@@ -162,13 +197,15 @@ const VendorDashboard = () => {
     }
 
     // Check if Phone already exists
-    const existingUser = companies.find(c => c.phone === phone && c.id !== editingId);
+    const existingUser = companies.find(
+      (c) => c.phone === phone && c.id !== editingId,
+    );
     if (existingUser) {
       setError("Mobile Number already exists.");
       return;
     }
 
-    let firebaseConfig = '';
+    let firebaseConfig = "";
     const fbObj = {
       apiKey: fbApiKey.trim(),
       authDomain: fbAuthDomain.trim(),
@@ -177,7 +214,7 @@ const VendorDashboard = () => {
       messagingSenderId: fbMessagingSenderId.trim(),
       appId: fbAppId.trim(),
     };
-    
+
     // Only save if at least projectId is provided
     if (fbObj.projectId) {
       firebaseConfig = JSON.stringify(fbObj);
@@ -186,7 +223,7 @@ const VendorDashboard = () => {
     setIsSubmitting(true);
     try {
       if (editingId) {
-        const docRef = doc(db, 'companies', editingId);
+        const docRef = doc(db, "companies", editingId);
         await updateDoc(docRef, {
           companyName,
           pin,
@@ -196,14 +233,29 @@ const VendorDashboard = () => {
           address,
           logo,
           signature,
-          firebaseConfig
+          firebaseConfig,
         });
 
-        setCompanies(companies.map(c => c.id === editingId ? {
-          ...c, companyName, pin, email, phone, gst, address, logo, signature, firebaseConfig
-        } : c));
+        setCompanies(
+          companies.map((c) =>
+            c.id === editingId
+              ? {
+                  ...c,
+                  companyName,
+                  pin,
+                  email,
+                  phone,
+                  gst,
+                  address,
+                  logo,
+                  signature,
+                  firebaseConfig,
+                }
+              : c,
+          ),
+        );
       } else {
-        const docRef = await addDoc(collection(db, 'companies'), {
+        const docRef = await addDoc(collection(db, "companies"), {
           companyName,
           pin,
           email,
@@ -214,22 +266,25 @@ const VendorDashboard = () => {
           signature,
           firebaseConfig,
           isActive: true,
-          createdAt: serverTimestamp()
+          createdAt: serverTimestamp(),
         });
 
-        setCompanies([...companies, {
-          id: docRef.id,
-          companyName,
-          pin,
-          email,
-          phone,
-          gst,
-          address,
-          logo,
-          signature,
-          firebaseConfig,
-          isActive: true
-        }]);
+        setCompanies([
+          ...companies,
+          {
+            id: docRef.id,
+            companyName,
+            pin,
+            email,
+            phone,
+            gst,
+            address,
+            logo,
+            signature,
+            firebaseConfig,
+            isActive: true,
+          },
+        ]);
       }
 
       resetForm();
@@ -242,20 +297,20 @@ const VendorDashboard = () => {
   };
 
   const resetForm = () => {
-    setCompanyName('');
-    setPin('');
-    setEmail('');
-    setPhone('');
-    setGst('');
-    setAddress('');
-    setLogo('');
-    setSignature('');
-    setFbApiKey('');
-    setFbAuthDomain('');
-    setFbProjectId('');
-    setFbStorageBucket('');
-    setFbMessagingSenderId('');
-    setFbAppId('');
+    setCompanyName("");
+    setPin("");
+    setEmail("");
+    setPhone("");
+    setGst("");
+    setAddress("");
+    setLogo("");
+    setSignature("");
+    setFbApiKey("");
+    setFbAuthDomain("");
+    setFbProjectId("");
+    setFbStorageBucket("");
+    setFbMessagingSenderId("");
+    setFbAppId("");
     setIsAdding(false);
     setEditingId(null);
     setIsSubmitting(false);
@@ -263,14 +318,14 @@ const VendorDashboard = () => {
 
   const handleEditCompany = (company) => {
     setCompanyName(company.companyName);
-    setPin(company.pin || company.password || '');
-    setEmail(company.email || '');
-    setPhone(company.phone || '');
-    setGst(company.gst || '');
-    setAddress(company.address || '');
-    setLogo(company.logo || '');
-    setSignature(company.signature || '');
-    
+    setPin(company.pin || company.password || "");
+    setEmail(company.email || "");
+    setPhone(company.phone || "");
+    setGst(company.gst || "");
+    setAddress(company.address || "");
+    setLogo(company.logo || "");
+    setSignature(company.signature || "");
+
     let parsedFb = {};
     if (company.firebaseConfig) {
       try {
@@ -279,20 +334,24 @@ const VendorDashboard = () => {
         console.error("Failed to parse company firebase config for editing");
       }
     }
-    setFbApiKey(parsedFb.apiKey || '');
-    setFbAuthDomain(parsedFb.authDomain || '');
-    setFbProjectId(parsedFb.projectId || '');
-    setFbStorageBucket(parsedFb.storageBucket || '');
-    setFbMessagingSenderId(parsedFb.messagingSenderId || '');
-    setFbAppId(parsedFb.appId || '');
+    setFbApiKey(parsedFb.apiKey || "");
+    setFbAuthDomain(parsedFb.authDomain || "");
+    setFbProjectId(parsedFb.projectId || "");
+    setFbStorageBucket(parsedFb.storageBucket || "");
+    setFbMessagingSenderId(parsedFb.messagingSenderId || "");
+    setFbAppId(parsedFb.appId || "");
 
     setEditingId(company.id);
     setIsAdding(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleDeleteCompany = async (company) => {
-    if (window.confirm(`Are you sure you want to delete ${company.companyName}? This will permanently delete all data (Vouchers, Products, Parties) associated with this company.`)) {
+    if (
+      window.confirm(
+        `Are you sure you want to delete ${company.companyName}? This will permanently delete all data (Vouchers, Products, Parties) associated with this company.`,
+      )
+    ) {
       try {
         let hasValidConfig = false;
         if (company.firebaseConfig) {
@@ -310,7 +369,10 @@ const VendorDashboard = () => {
 
           // Delete from specific collections
           for (const collName of collectionsToDelete) {
-            const q = query(collection(targetDb, collName), where("companyId", "==", company.id));
+            const q = query(
+              collection(targetDb, collName),
+              where("companyId", "==", company.id),
+            );
             const snap = await getDocs(q);
             for (const docSnap of snap.docs) {
               currentBatch.delete(doc(targetDb, collName, docSnap.id));
@@ -327,7 +389,9 @@ const VendorDashboard = () => {
           const histColNames = ["login_history", "loginHistory"];
           for (const hCol of histColNames) {
             try {
-              const hSnap = await getDocs(collection(targetDb, `companies/${company.id}/${hCol}`));
+              const hSnap = await getDocs(
+                collection(targetDb, `companies/${company.id}/${hCol}`),
+              );
               for (const docSnap of hSnap.docs) {
                 currentBatch.delete(docSnap.ref);
                 count++;
@@ -337,9 +401,11 @@ const VendorDashboard = () => {
                   count = 0;
                 }
               }
-            } catch (e) { /* subcollection might not exist, silently ignore */ }
+            } catch (e) {
+              /* subcollection might not exist, silently ignore */
+            }
           }
-          
+
           if (count > 0) {
             await currentBatch.commit();
           }
@@ -350,7 +416,10 @@ const VendorDashboard = () => {
             const tenantDb = getTenantDb(company.id, company.firebaseConfig);
             await deleteDataWithBatches(tenantDb);
           } catch (tenantErr) {
-            console.error("Warning: Failed to delete remote tenant DB data.", tenantErr);
+            console.error(
+              "Warning: Failed to delete remote tenant DB data.",
+              tenantErr,
+            );
             // Non-fatal error so we continue and delete the company from main vendor list anyway.
           }
         }
@@ -363,10 +432,10 @@ const VendorDashboard = () => {
         }
 
         // Finally, delete the company itself from the MAIN db
-        await deleteDoc(doc(db, 'companies', company.id));
-        
-        setCompanies(companies.filter(c => c.id !== company.id));
-        alert('Company successfully deleted.');
+        await deleteDoc(doc(db, "companies", company.id));
+
+        setCompanies(companies.filter((c) => c.id !== company.id));
+        alert("Company successfully deleted.");
       } catch (error) {
         console.error("Error deleting company:", error);
         alert("Failed to delete company.");
@@ -375,17 +444,21 @@ const VendorDashboard = () => {
   };
 
   const handleToggleStatus = async (id, currentStatus, companyName) => {
-    const actionText = currentStatus === false ? 'activate' : 'deactivate';
-    if (!window.confirm(`Are you sure you want to ${actionText} ${companyName}?`)) {
+    const actionText = currentStatus === false ? "activate" : "deactivate";
+    if (
+      !window.confirm(`Are you sure you want to ${actionText} ${companyName}?`)
+    ) {
       return;
     }
 
     try {
       // If currentStatus is undefined, it means it's an old record without isActive field, so treat as true (active).
       const newStatus = currentStatus === false ? true : false;
-      const docRef = doc(db, 'companies', id);
+      const docRef = doc(db, "companies", id);
       await updateDoc(docRef, { isActive: newStatus });
-      setCompanies(companies.map(c => c.id === id ? { ...c, isActive: newStatus } : c));
+      setCompanies(
+        companies.map((c) => (c.id === id ? { ...c, isActive: newStatus } : c)),
+      );
     } catch (error) {
       console.error("Error toggling status:", error);
       alert("Failed to change company status.");
@@ -394,13 +467,13 @@ const VendorDashboard = () => {
 
   const handleLogout = () => {
     // Basic logout logic for now
-    navigate('/vendor');
+    navigate("/vendor");
   };
 
-
-  const filteredCompanies = companies.filter(company =>
-    company.companyName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (company.phone && company.phone.includes(searchQuery))
+  const filteredCompanies = companies.filter(
+    (company) =>
+      company.companyName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (company.phone && company.phone.includes(searchQuery)),
   );
 
   return (
@@ -410,14 +483,16 @@ const VendorDashboard = () => {
           <Building size={22} />
           <h3>Vendor Dashboard</h3>
         </div>
-        <button className="btn btn-outline-primary vd-logout-btn" onClick={handleLogout}>
+        <button
+          className="btn btn-outline-primary vd-logout-btn"
+          onClick={handleLogout}
+        >
           <LogOut size={18} />
-          <span>Logout</span>
+          {/* <span>Logout</span> */}
         </button>
       </header>
 
       <main className="vd-main">
-
         {!isAdding && (
           <div className="vd-action-bar">
             <div className="search-bar w-full-search vd-search-wrapper">
@@ -448,7 +523,9 @@ const VendorDashboard = () => {
             <form onSubmit={handleAddCompany} className="vd-form">
               <div className="vd-form-row">
                 <div className="vd-input-group">
-                  <label>Company Name <span className="vd-required-asterisk">*</span></label>
+                  <label>
+                    Company Name <span className="vd-required-asterisk">*</span>
+                  </label>
                   <input
                     type="text"
                     value={companyName}
@@ -458,7 +535,10 @@ const VendorDashboard = () => {
                   />
                 </div>
                 <div className="vd-input-group">
-                  <label>Mobile Number <span className="vd-required-asterisk">*</span></label>
+                  <label>
+                    Mobile Number{" "}
+                    <span className="vd-required-asterisk">*</span>
+                  </label>
                   <input
                     type="tel"
                     value={phone}
@@ -469,7 +549,9 @@ const VendorDashboard = () => {
                   />
                 </div>
                 <div className="vd-input-group">
-                  <label>4-Digit PIN <span className="vd-required-asterisk">*</span></label>
+                  <label>
+                    4-Digit PIN <span className="vd-required-asterisk">*</span>
+                  </label>
                   <input
                     type="password"
                     value={pin}
@@ -481,7 +563,9 @@ const VendorDashboard = () => {
                   />
                 </div>
                 <div className="vd-input-group">
-                  <label>Email <span className="vd-required-asterisk">*</span></label>
+                  <label>
+                    Email <span className="vd-required-asterisk">*</span>
+                  </label>
                   <input
                     type="email"
                     value={email}
@@ -491,7 +575,9 @@ const VendorDashboard = () => {
                   />
                 </div>
                 <div className="vd-input-group">
-                  <label>GST No. <span className="vd-required-asterisk">*</span></label>
+                  <label>
+                    GST No. <span className="vd-required-asterisk">*</span>
+                  </label>
                   <input
                     type="text"
                     value={gst}
@@ -502,7 +588,9 @@ const VendorDashboard = () => {
                   />
                 </div>
                 <div className="vd-input-group vd-full-width-col">
-                  <label>Address <span className="vd-required-asterisk">*</span></label>
+                  <label>
+                    Address <span className="vd-required-asterisk">*</span>
+                  </label>
                   <textarea
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
@@ -512,16 +600,66 @@ const VendorDashboard = () => {
                   />
                 </div>
                 <div className="vd-input-group vd-full-width-col">
-                  <label>Firebase Web Config (Required - Separate Fields)</label>
-                  <div className="vd-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginTop: '0.5rem' }}>
-                    <input type="text" value={fbApiKey} onChange={(e) => setFbApiKey(e.target.value)} placeholder="apiKey" />
-                    <input type="text" value={fbAuthDomain} onChange={(e) => setFbAuthDomain(e.target.value)} placeholder="authDomain" />
-                    <input type="text" value={fbProjectId} onChange={(e) => setFbProjectId(e.target.value)} placeholder="projectId" />
-                    <input type="text" value={fbStorageBucket} onChange={(e) => setFbStorageBucket(e.target.value)} placeholder="storageBucket" />
-                    <input type="text" value={fbMessagingSenderId} onChange={(e) => setFbMessagingSenderId(e.target.value)} placeholder="messagingSenderId" />
-                    <input type="text" value={fbAppId} onChange={(e) => setFbAppId(e.target.value)} placeholder="appId" />
+                  <label>
+                    Firebase Web Config (Required - Separate Fields)
+                  </label>
+                  <div
+                    className="vd-grid"
+                    style={{
+                      gridTemplateColumns:
+                        "repeat(auto-fit, minmax(200px, 1fr))",
+                      gap: "1rem",
+                      marginTop: "0.5rem",
+                    }}
+                  >
+                    <input
+                      type="text"
+                      value={fbApiKey}
+                      onChange={(e) => setFbApiKey(e.target.value)}
+                      placeholder="apiKey"
+                    />
+                    <input
+                      type="text"
+                      value={fbAuthDomain}
+                      onChange={(e) => setFbAuthDomain(e.target.value)}
+                      placeholder="authDomain"
+                    />
+                    <input
+                      type="text"
+                      value={fbProjectId}
+                      onChange={(e) => setFbProjectId(e.target.value)}
+                      placeholder="projectId"
+                    />
+                    <input
+                      type="text"
+                      value={fbStorageBucket}
+                      onChange={(e) => setFbStorageBucket(e.target.value)}
+                      placeholder="storageBucket"
+                    />
+                    <input
+                      type="text"
+                      value={fbMessagingSenderId}
+                      onChange={(e) => setFbMessagingSenderId(e.target.value)}
+                      placeholder="messagingSenderId"
+                    />
+                    <input
+                      type="text"
+                      value={fbAppId}
+                      onChange={(e) => setFbAppId(e.target.value)}
+                      placeholder="appId"
+                    />
                   </div>
-                  <small style={{ color: 'var(--text-secondary)', marginTop: '0.5rem', display: 'block' }}>Provide the Firebase Config keys for this company's DB. This is Required to activate their custom DB as data is no longer mixed in the main vendor DB.</small>
+                  <small
+                    style={{
+                      color: "var(--text-secondary)",
+                      marginTop: "0.5rem",
+                      display: "block",
+                    }}
+                  >
+                    Provide the Firebase Config keys for this company's DB. This
+                    is Required to activate their custom DB as data is no longer
+                    mixed in the main vendor DB.
+                  </small>
                 </div>
                 <div className="vd-input-group vd-full-width-col">
                   <label>Logo (Optional)</label>
@@ -531,9 +669,26 @@ const VendorDashboard = () => {
                     onChange={handleImageUpload}
                   />
                   {logo && (
-                    <div className="vd-logo-preview-wrapper" style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '10px' }}>
-                      <img src={logo} alt="Company Logo" className="vd-logo-preview-img" />
-                      <button type="button" className="btn btn-outline-danger btn-icon" onClick={() => setLogo('')} title="Remove Logo">
+                    <div
+                      className="vd-logo-preview-wrapper"
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "10px",
+                        marginTop: "10px",
+                      }}
+                    >
+                      <img
+                        src={logo}
+                        alt="Company Logo"
+                        className="vd-logo-preview-img"
+                      />
+                      <button
+                        type="button"
+                        className="btn btn-outline-danger btn-icon"
+                        onClick={() => setLogo("")}
+                        title="Remove Logo"
+                      >
                         <Trash2 size={16} />
                       </button>
                     </div>
@@ -547,9 +702,27 @@ const VendorDashboard = () => {
                     onChange={handleSignatureUpload}
                   />
                   {signature && (
-                    <div className="vd-logo-preview-wrapper" style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '10px' }}>
-                      <img src={signature} alt="Signatory" className="vd-logo-preview-img" style={{ maxHeight: '60px' }} />
-                      <button type="button" className="btn btn-outline-danger btn-icon" onClick={() => setSignature('')} title="Remove Signature">
+                    <div
+                      className="vd-logo-preview-wrapper"
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "10px",
+                        marginTop: "10px",
+                      }}
+                    >
+                      <img
+                        src={signature}
+                        alt="Signatory"
+                        className="vd-logo-preview-img"
+                        style={{ maxHeight: "60px" }}
+                      />
+                      <button
+                        type="button"
+                        className="btn btn-outline-danger btn-icon"
+                        onClick={() => setSignature("")}
+                        title="Remove Signature"
+                      >
                         <Trash2 size={16} />
                       </button>
                     </div>
@@ -557,10 +730,19 @@ const VendorDashboard = () => {
                 </div>
               </div>
               <div className="vd-form-actions vd-form-actions-wrapper">
-                <button type="submit" className="btn btn-outline-primary btn-mobile-flex vd-form-action-btn-sized" disabled={isSubmitting}>
+                <button
+                  type="submit"
+                  className="btn btn-outline-primary btn-mobile-flex vd-form-action-btn-sized"
+                  disabled={isSubmitting}
+                >
                   {isSubmitting ? "Saving..." : editingId ? "Update" : "Save"}
                 </button>
-                <button type="button" className="btn btn-outline-danger btn-mobile-flex vd-form-action-btn-sized" onClick={resetForm} disabled={isSubmitting}>
+                <button
+                  type="button"
+                  className="btn btn-outline-danger btn-mobile-flex vd-form-action-btn-sized"
+                  onClick={resetForm}
+                  disabled={isSubmitting}
+                >
                   Cancel
                 </button>
               </div>
@@ -597,43 +779,75 @@ const VendorDashboard = () => {
                   </div>
                   <div className="vd-card-body">
                     <div className="party-detail-row">
-                      <div className="party-detail-icon"><Phone size={14} /></div>
+                      <div className="party-detail-icon">
+                        <Phone size={14} />
+                      </div>
                       <p>{company.phone}</p>
                     </div>
                     <div className="party-detail-row">
-                      <div className="party-detail-icon"><Key size={14} /></div>
-                      <p className="vd-mono">{company.pin || company.password}</p>
+                      <div className="party-detail-icon">
+                        <Key size={14} />
+                      </div>
+                      <p className="vd-mono">
+                        {company.pin || company.password}
+                      </p>
                     </div>
                     <div className="party-detail-row">
-                      <div className="party-detail-icon"><Mail size={14} /></div>
+                      <div className="party-detail-icon">
+                        <Mail size={14} />
+                      </div>
                       <p>{company.email}</p>
                     </div>
                     <div className="party-detail-row">
-                      <div className="party-detail-icon"><FileText size={14} /></div>
+                      <div className="party-detail-icon">
+                        <FileText size={14} />
+                      </div>
                       <p>{company.gst}</p>
                     </div>
                     <div className="party-detail-row">
-                      <div className="party-detail-icon"><MapPin size={14} /></div>
+                      <div className="party-detail-icon">
+                        <MapPin size={14} />
+                      </div>
                       <p className="tooltip-text" title={company.address}>
-                        {company.address?.length > 25 ? company.address.substring(0, 25) + '...' : company.address}
+                        {company.address?.length > 25
+                          ? company.address.substring(0, 25) + "..."
+                          : company.address}
                       </p>
                     </div>
                     {company.logo && (
                       <div className="party-detail-row">
-                        <div className="party-detail-icon"><ImageIcon size={14} /></div>
-                        <p><img src={company.logo} alt="Logo" className="vd-card-logo-img" /></p>
+                        <div className="party-detail-icon">
+                          <ImageIcon size={14} />
+                        </div>
+                        <p>
+                          <img
+                            src={company.logo}
+                            alt="Logo"
+                            className="vd-card-logo-img"
+                          />
+                        </p>
                       </div>
                     )}
                   </div>
                   <div className="vd-card-footer vd-card-footer-spaced">
-                    <span className={`vd-status-badge ${company.isActive === false ? 'inactive' : 'active'}`}>
-                      {company.isActive === false ? 'Deactive' : 'Active'}
+                    <span
+                      className={`vd-status-badge ${company.isActive === false ? "inactive" : "active"}`}
+                    >
+                      {company.isActive === false ? "Deactive" : "Active"}
                     </span>
                     <button
-                      className={`btn btn-outline ${company.isActive === false ? 'btn-outline-primary' : 'btn-outline-danger'} vd-status-btn-small`}
-                      onClick={() => handleToggleStatus(company.id, company.isActive, company.companyName)}
+                      className={`btn btn-outline ${company.isActive === false ? "btn-outline-primary" : "btn-outline-danger"} vd-status-btn-small`}
+                      onClick={() =>
+                        handleToggleStatus(
+                          company.id,
+                          company.isActive,
+                          company.companyName,
+                        )
+                      }
                     >
-                      {company.isActive === false ? 'Make Active  ' : 'Make Deactive'}
+                      {company.isActive === false
+                        ? "Make Active  "
+                        : "Make Deactive"}
                     </button>
                   </div>
                 </div>
