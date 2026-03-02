@@ -29,11 +29,16 @@ function VoucherPrint() {
 
         if (voucherSnap.exists()) {
           const vData = voucherSnap.data();
-          const targetCompanyId = vData.companyId || JSON.parse(localStorage.getItem('loggedCompany'))?.id;
+          const targetCompanyId =
+            vData.companyId ||
+            JSON.parse(localStorage.getItem("loggedCompany"))?.id;
 
-          let fetchedCompany = JSON.parse(localStorage.getItem('loggedCompany')) || {};
+          let fetchedCompany =
+            JSON.parse(localStorage.getItem("loggedCompany")) || {};
           if (targetCompanyId) {
-            const compSnap = await getDoc(doc(db, "companies", targetCompanyId));
+            const compSnap = await getDoc(
+              doc(db, "companies", targetCompanyId),
+            );
             if (compSnap.exists()) {
               fetchedCompany = { id: compSnap.id, ...compSnap.data() };
             }
@@ -42,12 +47,18 @@ function VoucherPrint() {
 
           let fallbackInvoiceNumber = "";
           if (!vData.invoiceNumber && targetCompanyId) {
-            const vouchersQ = query(collection(db, "vouchers"), where("companyId", "==", targetCompanyId));
+            const vouchersQ = query(
+              collection(db, "vouchers"),
+              where("companyId", "==", targetCompanyId),
+            );
             const allVouchersSnap = await getDocs(vouchersQ);
-            let data = allVouchersSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+            let data = allVouchersSnap.docs.map((d) => ({
+              id: d.id,
+              ...d.data(),
+            }));
             data.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
-            const myIndex = data.findIndex(d => d.id === voucherSnap.id);
-            fallbackInvoiceNumber = `INV/25-26/${String((myIndex !== -1 ? myIndex : 0) + 1).padStart(3, '0')}`;
+            const myIndex = data.findIndex((d) => d.id === voucherSnap.id);
+            fallbackInvoiceNumber = `INV/25-26/${String((myIndex !== -1 ? myIndex : 0) + 1).padStart(3, "0")}`;
           }
 
           setVoucher({ id: voucherSnap.id, fallbackInvoiceNumber, ...vData });
@@ -123,24 +134,34 @@ function VoucherPrint() {
             <div className="print-header-content">
               <div className="print-logo-section">
                 {clientCompany?.logo && (
-                  <img src={clientCompany.logo} alt="Logo" className="print-main-logo" />
+                  <img
+                    src={clientCompany.logo}
+                    alt="Logo"
+                    className="print-main-logo"
+                  />
                 )}
               </div>
               <div className="print-company-info-section">
-                <h1 className="print-company-name">{clientCompany?.companyName || "COMPANY NAME"}</h1>
+                <h1 className="print-company-name">
+                  {clientCompany?.companyName || "COMPANY NAME"}
+                </h1>
                 <div className="print-company-details">
                   <p>
-                    <strong>Mobile:</strong> {clientCompany?.phone || "+91 00000 00000"}
+                    <strong>Mobile:</strong>{" "}
+                    {clientCompany?.phone || "+91 00000 00000"}
                   </p>
                   <p>
-                    <strong>Email:</strong> {clientCompany?.email || "contact@company.com"}
+                    <strong>Email:</strong>{" "}
+                    {clientCompany?.email || "contact@company.com"}
                   </p>
                   {clientCompany?.gst && (
                     <p>
                       <strong>GSTIN:</strong> {clientCompany.gst}
                     </p>
                   )}
-                  <p className="print-address">{clientCompany?.address || "Company Address"}</p>
+                  <p className="print-address">
+                    {clientCompany?.address || "Company Address"}
+                  </p>
                 </div>
               </div>
             </div>
@@ -175,7 +196,8 @@ function VoucherPrint() {
                 {new Date(voucher.date).toLocaleDateString()}
               </p>
               <p>
-                <strong>Invoice No:</strong> {voucher.invoiceNumber || voucher.fallbackInvoiceNumber}
+                <strong>Invoice No:</strong>{" "}
+                {voucher.invoiceNumber || voucher.fallbackInvoiceNumber}
               </p>
             </div>
           </div>
@@ -229,25 +251,71 @@ function VoucherPrint() {
             </table>
           </div>
 
-          {/* Footer Notes */}
-          {voucher.note && (
-            <div className="print-notes-container">
-              <h4 className="print-notes-heading">Notes:</h4>
-              <p className="print-notes-body">{voucher.note}</p>
-            </div>
-          )}
+          <div className="print-footer-layout">
+            <div className="print-footer-left">
+              <div className="print-bottom-payment-details">
+                <div className="print-payment-line">
+                  <strong>Status:</strong>{" "}
+                  <span
+                    className={`print-status-text ${voucher.status?.toLowerCase() || "unpaid"}`}
+                  >
+                    {voucher.status || "Unpaid"}
+                  </span>
+                  {voucher.status !== "Unpaid" && (
+                    <span style={{ marginLeft: "4px", color: "#64748b" }}>
+                      / {voucher.paymentMethod || "Cash"}
+                    </span>
+                  )}
+                </div>
 
-          <div className="print-signatory-wrapper">
-            {clientCompany?.signature && (
-              <div className="print-signatory-img-wrapper" style={{ marginBottom: '10px' }}>
-                <img 
-                  src={clientCompany.signature} 
-                  alt="Authorized Signature" 
-                  className="print-signatory-img"
-                />
+                {voucher.status === "Partial" && (
+                  <div className="print-detailed-summary">
+                    <div className="print-detailed-row">
+                      <span>Total Amount:</span>
+                      <strong>
+                        ₹{calculateTotal(voucher.items).toFixed(2)}
+                      </strong>
+                    </div>
+                    <div className="print-detailed-row">
+                      <span>Amount Paid:</span>
+                      <strong>
+                        ₹{Number(voucher.paidAmount || 0).toFixed(2)}
+                      </strong>
+                    </div>
+                    <div className="print-detailed-row">
+                      <span>Balance Due:</span>
+                      <strong style={{ color: "#b91c1c" }}>
+                        ₹{Number(voucher.remainingAmount || 0).toFixed(2)}
+                      </strong>
+                    </div>
+                  </div>
+                )}
               </div>
-            )}
-            <p className="print-signatory-line">Authorized Signatory</p>
+
+              {/* Footer Notes */}
+              {voucher.note && (
+                <div className="print-notes-container">
+                  <h4 className="print-notes-heading">Notes:</h4>
+                  <p className="print-notes-body">{voucher.note}</p>
+                </div>
+              )}
+            </div>
+
+            <div className="print-signatory-wrapper">
+              {clientCompany?.signature && (
+                <div
+                  className="print-signatory-img-wrapper"
+                  style={{ marginBottom: "5px" }}
+                >
+                  <img
+                    src={clientCompany.signature}
+                    alt="Authorized Signature"
+                    className="print-signatory-img"
+                  />
+                </div>
+              )}
+              <p className="print-signatory-line">Authorized Signatory</p>
+            </div>
           </div>
         </div>
       </div>

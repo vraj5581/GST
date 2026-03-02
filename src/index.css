@@ -597,19 +597,29 @@ a {
   background: var(--bg-secondary);
 }
 .react-select__menu {
-  z-index: 100;
+  z-index: 9999;
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
   overflow: hidden;
-  background: var(--bg-primary);
+  background: white; /* Opaque background for readability */
+  border: 1px solid var(--border-color);
 }
 .react-select__option--is-focused {
-  background-color: var(--bg-secondary);
+  background-color: #f1f5f9;
   color: var(--text-primary);
 }
 .react-select__option--is-selected {
   background-color: var(--color-primary);
   color: white;
+}
+.react-select__menu-portal {
+  z-index: 99999 !important;
+}
+
+@media (max-width: 768px) {
+  .react-select__control {
+    min-height: 45px; /* Slightly taller for mobile touch */
+  }
 }
 
 /* Print Styles */

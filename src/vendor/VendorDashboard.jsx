@@ -808,11 +808,7 @@ const VendorDashboard = () => {
                       <div className="party-detail-icon">
                         <MapPin size={14} />
                       </div>
-                      <p className="tooltip-text" title={company.address}>
-                        {company.address?.length > 25
-                          ? company.address.substring(0, 25) + "..."
-                          : company.address}
-                      </p>
+                      <p className="vd-address-text">{company.address}</p>
                     </div>
                     {company.logo && (
                       <div className="party-detail-row">

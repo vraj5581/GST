@@ -324,7 +324,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.75rem; /* Increased for better separation */
   position: relative;
   z-index: 1;
 }
@@ -356,7 +356,7 @@
 .vd-dashboard-container .vd-card-body {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.6rem; /* Increased from 0.4rem */
   position: relative;
   z-index: 1;
   flex-grow: 1;
@@ -364,10 +364,11 @@
 
 .vd-dashboard-container .party-detail-row {
   display: flex;
-  align-items: center;
+  align-items: flex-start; /* Changed to flex-start for multi-line items */
   gap: 0.75rem;
   font-size: 0.85rem;
   color: #475569;
+  line-height: 1.4;
 }
 
 .vd-dashboard-container .party-detail-icon {
@@ -386,8 +387,15 @@
 
 .vd-dashboard-container .party-detail-row p {
   margin: 0;
-  word-break: break-all;
-  overflow-wrap: anywhere;
+  word-break: normal;
+  overflow-wrap: break-word; /* Better for reading addresses */
+}
+
+/* Specific address styling */
+.vd-dashboard-container .vd-address-text {
+  flex: 1;
+  color: #1e293b;
+  font-weight: 400;
 }
 
 .vd-dashboard-container .vd-mono {
@@ -400,13 +408,14 @@
 }
 
 .vd-dashboard-container .vd-card-footer {
-  padding: 0.6rem 0 0 0;
+  padding: 0.75rem 0 0 0;
   background: transparent;
-  border-top: 1px dashed rgba(203, 213, 225, 0.5);
+  border-top: 1px dashed rgba(148, 163, 184, 0.3);
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-top: 0.5rem;
+  gap: 1rem;
 }
 
 .vd-dashboard-container .vd-status-badge {
@@ -426,6 +435,10 @@
 .vd-dashboard-container .vd-status-badge.inactive {
   background: #f1f5f9;
   color: #475569;
+}
+
+.vd-dashboard-container .vd-status-btn-small {
+  margin: 0;
 }
 
 .vd-dashboard-container .vd-toggle-btn {
@@ -470,32 +483,7 @@
   margin-bottom: 1rem;
 }
 
-.vd-dashboard-container .tooltip-text {
-  position: relative;
-  cursor: help;
-  display: inline-block;
-  max-width: 100%;
-}
-
-.vd-dashboard-container .tooltip-text:hover::after {
-  content: attr(title);
-  position: absolute;
-  bottom: 100%;
-  right: 0;
-  margin-bottom: 5px;
-  background: var(--bg-sidebar);
-  color: var(--text-inverse);
-  padding: 0.5rem;
-  border-radius: var(--radius-md);
-  font-size: 0.75rem;
-  white-space: normal;
-  width: max-content;
-  max-width: 250px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  z-index: 10;
-  text-align: right;
-  word-wrap: break-word;
-}
+/* Tooltip logic removed as it was cluttering the UI */
 
 
 @media (max-width: 768px) {

@@ -40,15 +40,23 @@ function AddVoucher() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const loggedCompanyId = JSON.parse(localStorage.getItem('loggedCompany'))?.id;
+        const loggedCompanyId = JSON.parse(
+          localStorage.getItem("loggedCompany"),
+        )?.id;
 
-        const partiesQ = query(collection(db, "parties"), where("companyId", "==", loggedCompanyId));
+        const partiesQ = query(
+          collection(db, "parties"),
+          where("companyId", "==", loggedCompanyId),
+        );
         const partiesSnap = await getDocs(partiesQ);
         setParties(
           partiesSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() })),
         );
 
-        const productsQ = query(collection(db, "products"), where("companyId", "==", loggedCompanyId));
+        const productsQ = query(
+          collection(db, "products"),
+          where("companyId", "==", loggedCompanyId),
+        );
         const productsSnap = await getDocs(productsQ);
         setProducts(
           productsSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() })),
@@ -62,7 +70,7 @@ function AddVoucher() {
               paymentMethod: "Cash",
               status: "Paid",
               paidAmount: 0,
-              ...data
+              ...data,
             });
           }
         }
@@ -137,9 +145,9 @@ function AddVoucher() {
   // Auto-sync paidAmount when status is 'Paid'
   useEffect(() => {
     if (voucher.status === "Paid" && voucher.paidAmount !== totals.total) {
-      setVoucher(prev => ({
+      setVoucher((prev) => ({
         ...prev,
-        paidAmount: totals.total
+        paidAmount: totals.total,
       }));
     }
   }, [totals.total, voucher.status]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -161,7 +169,7 @@ function AddVoucher() {
       items: cleanedItems,
       totalAmount: totals.total,
       remainingAmount: remainingAmount,
-      companyId: JSON.parse(localStorage.getItem('loggedCompany'))?.id
+      companyId: JSON.parse(localStorage.getItem("loggedCompany"))?.id,
     };
 
     try {
@@ -172,10 +180,15 @@ function AddVoucher() {
         finalVoucher.createdAt = Date.now();
 
         // Generate Invoice Number
-        const loggedCompanyId = JSON.parse(localStorage.getItem('loggedCompany'))?.id;
-        const vouchersQ = query(collection(db, "vouchers"), where("companyId", "==", loggedCompanyId));
+        const loggedCompanyId = JSON.parse(
+          localStorage.getItem("loggedCompany"),
+        )?.id;
+        const vouchersQ = query(
+          collection(db, "vouchers"),
+          where("companyId", "==", loggedCompanyId),
+        );
         const vouchersSnap = await getDocs(vouchersQ);
-        const nextInvoiceNum = `INV/25-26/${String(vouchersSnap.size + 1).padStart(3, '0')}`;
+        const nextInvoiceNum = `INV/25-26/${String(vouchersSnap.size + 1).padStart(3, "0")}`;
         finalVoucher.invoiceNumber = nextInvoiceNum;
 
         await addDoc(collection(db, "vouchers"), finalVoucher);
@@ -202,7 +215,7 @@ function AddVoucher() {
     setVoucher({
       ...voucher,
       status: newStatus,
-      paidAmount: newPaidAmount
+      paidAmount: newPaidAmount,
     });
   };
 
@@ -221,7 +234,7 @@ function AddVoucher() {
     setVoucher({
       ...voucher,
       paidAmount: val,
-      status: newStatus
+      status: newStatus,
     });
   };
 
@@ -261,6 +274,7 @@ function AddVoucher() {
             <div className="form-group">
               <label className="form-label">Party</label>
               <Select
+                menuPortalTarget={document.body}
                 options={parties.map((p) => ({ value: p.name, label: p.name }))}
                 value={
                   voucher.partyId
@@ -282,12 +296,10 @@ function AddVoucher() {
           </div>
 
           {/* Multi-Select Products Section */}
-          <div
-            className="form-group av-products-group"
-            ref={productSelectRef}
-          >
+          <div className="form-group av-products-group" ref={productSelectRef}>
             <label className="form-label">Products</label>
             <Select
+              menuPortalTarget={document.body}
               isMulti
               isDisabled={!voucher.partyId}
               options={products.map((p) => ({ value: p.name, label: p.name }))}
@@ -353,9 +365,7 @@ function AddVoucher() {
                       className="voucher-cell voucher-col-unit"
                       data-label="UNIT"
                     >
-                      <span className="av-qty-unit">
-                        {item.unit || "Pcs"}
-                      </span>
+                      <span className="av-qty-unit">{item.unit || "Pcs"}</span>
                     </div>
                     <div
                       className="voucher-cell voucher-col-price"
@@ -379,36 +389,46 @@ function AddVoucher() {
                   </div>
                 ))
               ) : (
-                <div className="av-empty-state">
-                  No products selected.
-                </div>
+                <div className="av-empty-state">No products selected.</div>
               )}
             </div>
           </div>
 
           <div className="grid grid-2 voucher-header-info">
             <div className="form-group">
-              <label className="form-label">Payment Method</label>
-              <select
-                className="form-input"
-                value={voucher.paymentMethod}
-                onChange={(e) => setVoucher({ ...voucher, paymentMethod: e.target.value })}
-              >
-                <option value="Cash">Cash</option>
-                <option value="Online">Online</option>
-              </select>
+              <label className="form-label">Voucher Status</label>
+              <Select
+                menuPortalTarget={document.body}
+                options={[
+                  { value: "Unpaid", label: "Unpaid" },
+                  { value: "Partial", label: "Partial" },
+                  { value: "Paid", label: "Paid" },
+                ]}
+                value={{ value: voucher.status, label: voucher.status }}
+                onChange={(selected) => handleStatusChange(selected.value)}
+                className="react-select-container"
+                classNamePrefix="react-select"
+              />
             </div>
             <div className="form-group">
-              <label className="form-label">Voucher Status</label>
-              <select
-                className="form-input"
-                value={voucher.status}
-                onChange={(e) => handleStatusChange(e.target.value)}
-              >
-                <option value="Unpaid">Unpaid</option>
-                <option value="Partial">Partial</option>
-                <option value="Paid">Paid</option>
-              </select>
+              <label className="form-label">Payment Method</label>
+              <Select
+                menuPortalTarget={document.body}
+                isDisabled={voucher.status === "Unpaid"}
+                options={[
+                  { value: "Cash", label: "Cash" },
+                  { value: "Online", label: "Online" },
+                ]}
+                value={{
+                  value: voucher.paymentMethod,
+                  label: voucher.paymentMethod,
+                }}
+                onChange={(selected) =>
+                  setVoucher({ ...voucher, paymentMethod: selected.value })
+                }
+                className="react-select-container"
+                classNamePrefix="react-select"
+              />
             </div>
           </div>
 
@@ -431,7 +451,11 @@ function AddVoucher() {
                     className="form-input"
                     value={remainingAmount.toFixed(2)}
                     readOnly
-                    style={{ backgroundColor: '#f9f9f9', fontWeight: 'bold', color: remainingAmount > 0 ? '#e74c3c' : '#27ae60' }}
+                    style={{
+                      backgroundColor: "#f9f9f9",
+                      fontWeight: "bold",
+                      color: remainingAmount > 0 ? "#e74c3c" : "#27ae60",
+                    }}
                   />
                 </div>
               </div>

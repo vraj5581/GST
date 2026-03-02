@@ -16,6 +16,7 @@ import {
   CreditCard,
 } from "lucide-react";
 import QRCode from "react-qr-code";
+import Select from "react-select";
 import {
   collection,
   getDocs,
@@ -584,18 +585,25 @@ function Vouchers() {
                     </span>
                   )}
                 </div>
-                <select
-                  className="form-input"
-                  value={filters.status}
-                  onChange={(e) =>
-                    setFilters({ ...filters, status: e.target.value })
+                <Select
+                  menuPortalTarget={document.body}
+                  options={[
+                    { value: "", label: "All Statuses" },
+                    { value: "Paid", label: "Paid" },
+                    { value: "Unpaid", label: "Unpaid" },
+                    { value: "Partial", label: "Partial" },
+                  ]}
+                  value={
+                    filters.status
+                      ? { value: filters.status, label: filters.status }
+                      : { value: "", label: "All Statuses" }
                   }
-                >
-                  <option value="">All Statuses</option>
-                  <option value="Paid">Paid</option>
-                  <option value="Unpaid">Unpaid</option>
-                  <option value="Partial">Partial</option>
-                </select>
+                  onChange={(selected) =>
+                    setFilters({ ...filters, status: selected.value })
+                  }
+                  className="react-select-container"
+                  classNamePrefix="react-select"
+                />
               </div>
 
               <div className="form-group filter-form-group">
@@ -614,17 +622,27 @@ function Vouchers() {
                     </span>
                   )}
                 </div>
-                <select
-                  className="form-input"
-                  value={filters.paymentMethod}
-                  onChange={(e) =>
-                    setFilters({ ...filters, paymentMethod: e.target.value })
+                <Select
+                  menuPortalTarget={document.body}
+                  options={[
+                    { value: "", label: "All Methods" },
+                    { value: "Cash", label: "Cash" },
+                    { value: "Online", label: "Online" },
+                  ]}
+                  value={
+                    filters.paymentMethod
+                      ? {
+                          value: filters.paymentMethod,
+                          label: filters.paymentMethod,
+                        }
+                      : { value: "", label: "All Methods" }
                   }
-                >
-                  <option value="">All Methods</option>
-                  <option value="Cash">Cash</option>
-                  <option value="Online">Online</option>
-                </select>
+                  onChange={(selected) =>
+                    setFilters({ ...filters, paymentMethod: selected.value })
+                  }
+                  className="react-select-container"
+                  classNamePrefix="react-select"
+                />
               </div>
 
               <div className="form-group filter-form-group">
@@ -643,16 +661,23 @@ function Vouchers() {
                     </span>
                   )}
                 </div>
-                <select
-                  className="form-input"
-                  value={filters.sortInvoice}
-                  onChange={(e) =>
-                    setFilters({ ...filters, sortInvoice: e.target.value })
+                <Select
+                  menuPortalTarget={document.body}
+                  options={[
+                    { value: "desc", label: "Newest First" },
+                    { value: "asc", label: "Oldest First" },
+                  ]}
+                  value={
+                    filters.sortInvoice === "desc"
+                      ? { value: "desc", label: "Newest First" }
+                      : { value: "asc", label: "Oldest First" }
                   }
-                >
-                  <option value="desc">Newest First</option>
-                  <option value="asc">Oldest First</option>
-                </select>
+                  onChange={(selected) =>
+                    setFilters({ ...filters, sortInvoice: selected.value })
+                  }
+                  className="react-select-container"
+                  classNamePrefix="react-select"
+                />
               </div>
 
               <div className="form-group filter-form-group-last">
@@ -669,17 +694,26 @@ function Vouchers() {
                     </span>
                   )}
                 </div>
-                <select
-                  className="form-input"
-                  value={filters.sortParty}
-                  onChange={(e) =>
-                    setFilters({ ...filters, sortParty: e.target.value })
+                <Select
+                  menuPortalTarget={document.body}
+                  options={[
+                    { value: "", label: "None" },
+                    { value: "asc", label: "A to Z" },
+                    { value: "desc", label: "Z to A" },
+                  ]}
+                  value={
+                    filters.sortParty === "asc"
+                      ? { value: "asc", label: "A to Z" }
+                      : filters.sortParty === "desc"
+                        ? { value: "desc", label: "Z to A" }
+                        : { value: "", label: "None" }
                   }
-                >
-                  <option value="">None</option>
-                  <option value="asc">A to Z</option>
-                  <option value="desc">Z to A</option>
-                </select>
+                  onChange={(selected) =>
+                    setFilters({ ...filters, sortParty: selected.value })
+                  }
+                  className="react-select-container"
+                  classNamePrefix="react-select"
+                />
               </div>
 
               <div className="filter-actions">
@@ -734,26 +768,32 @@ function Vouchers() {
             <div className="qr-modal-body filter-modal-body">
               <div className="form-group filter-form-group">
                 <label className="form-label filter-label-bold">Status</label>
-                <select
-                  className="form-input"
-                  value={tempStatusData.status}
-                  onChange={(e) =>
+                <Select
+                  menuPortalTarget={document.body}
+                  options={[
+                    { value: "Paid", label: "Paid" },
+                    { value: "Partial", label: "Partial" },
+                    { value: "Unpaid", label: "Unpaid" },
+                  ]}
+                  value={{
+                    value: tempStatusData.status,
+                    label: tempStatusData.status,
+                  }}
+                  onChange={(selected) =>
                     setTempStatusData({
                       ...tempStatusData,
-                      status: e.target.value,
+                      status: selected.value,
                       paidAmount:
-                        e.target.value === "Paid"
+                        selected.value === "Paid"
                           ? calculateTotal(statusModalVoucher.items)
-                          : e.target.value === "Unpaid"
+                          : selected.value === "Unpaid"
                             ? 0
                             : tempStatusData.paidAmount,
                     })
                   }
-                >
-                  <option value="Paid">Paid</option>
-                  <option value="Partial">Partial</option>
-                  <option value="Unpaid">Unpaid</option>
-                </select>
+                  className="react-select-container"
+                  classNamePrefix="react-select"
+                />
               </div>
 
               {tempStatusData.status === "Partial" && (
