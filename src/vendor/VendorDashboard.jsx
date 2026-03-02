@@ -25,6 +25,8 @@ import {
   FileText,
   MapPin,
   Image as ImageIcon,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import "./VendorDashboard.css";
@@ -51,6 +53,8 @@ const VendorDashboard = () => {
   const [error, setError] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showFormPin, setShowFormPin] = useState(false);
+  const [visiblePins, setVisiblePins] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -172,9 +176,15 @@ const VendorDashboard = () => {
       !email.trim() ||
       !phone.trim() ||
       !gst.trim() ||
-      !address.trim()
+      !address.trim() ||
+      !fbApiKey.trim() ||
+      !fbAuthDomain.trim() ||
+      !fbProjectId.trim() ||
+      !fbStorageBucket.trim() ||
+      !fbMessagingSenderId.trim() ||
+      !fbAppId.trim()
     ) {
-      setError("All fields are strictly required.");
+      setError("All fields including Firebase config are strictly required.");
       return;
     }
 
@@ -215,10 +225,8 @@ const VendorDashboard = () => {
       appId: fbAppId.trim(),
     };
 
-    // Only save if at least projectId is provided
-    if (fbObj.projectId) {
-      firebaseConfig = JSON.stringify(fbObj);
-    }
+    // Now we know all fields are present due to validation above
+    firebaseConfig = JSON.stringify(fbObj);
 
     setIsSubmitting(true);
     try {
@@ -314,6 +322,7 @@ const VendorDashboard = () => {
     setIsAdding(false);
     setEditingId(null);
     setIsSubmitting(false);
+    setShowFormPin(false);
   };
 
   const handleEditCompany = (company) => {
@@ -470,6 +479,13 @@ const VendorDashboard = () => {
     navigate("/vendor");
   };
 
+  const togglePinVisibility = (id) => {
+    setVisiblePins((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
+
   const filteredCompanies = companies.filter(
     (company) =>
       company.companyName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -552,15 +568,26 @@ const VendorDashboard = () => {
                   <label>
                     4-Digit PIN <span className="vd-required-asterisk">*</span>
                   </label>
-                  <input
-                    type="password"
-                    value={pin}
-                    onChange={(e) => setPin(e.target.value)}
-                    placeholder="4-digit PIN"
-                    maxLength={4}
-                    pattern="\d{4}"
-                    required
-                  />
+                  <div className="vd-password-wrapper">
+                    <input
+                      type={showFormPin ? "text" : "password"}
+                      value={pin}
+                      onChange={(e) => setPin(e.target.value)}
+                      placeholder="4-digit PIN"
+                      maxLength={4}
+                      pattern="\d{4}"
+                      required
+                      className="vd-password-input"
+                    />
+                    <button
+                      type="button"
+                      className="vd-password-toggle-btn"
+                      onClick={() => setShowFormPin(!showFormPin)}
+                      tabIndex="-1"
+                    >
+                      {showFormPin ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
+                  </div>
                 </div>
                 <div className="vd-input-group">
                   <label>
@@ -601,7 +628,9 @@ const VendorDashboard = () => {
                 </div>
                 <div className="vd-input-group vd-full-width-col">
                   <label>
-                    Firebase Web Config (Required - Separate Fields)
+                    Firebase Web Config{" "}
+                    <span className="vd-required-asterisk">*</span> (Separate
+                    Fields)
                   </label>
                   <div
                     className="vd-grid"
@@ -617,36 +646,42 @@ const VendorDashboard = () => {
                       value={fbApiKey}
                       onChange={(e) => setFbApiKey(e.target.value)}
                       placeholder="apiKey"
+                      required
                     />
                     <input
                       type="text"
                       value={fbAuthDomain}
                       onChange={(e) => setFbAuthDomain(e.target.value)}
                       placeholder="authDomain"
+                      required
                     />
                     <input
                       type="text"
                       value={fbProjectId}
                       onChange={(e) => setFbProjectId(e.target.value)}
                       placeholder="projectId"
+                      required
                     />
                     <input
                       type="text"
                       value={fbStorageBucket}
                       onChange={(e) => setFbStorageBucket(e.target.value)}
                       placeholder="storageBucket"
+                      required
                     />
                     <input
                       type="text"
                       value={fbMessagingSenderId}
                       onChange={(e) => setFbMessagingSenderId(e.target.value)}
                       placeholder="messagingSenderId"
+                      required
                     />
                     <input
                       type="text"
                       value={fbAppId}
                       onChange={(e) => setFbAppId(e.target.value)}
                       placeholder="appId"
+                      required
                     />
                   </div>
                   <small
@@ -788,9 +823,26 @@ const VendorDashboard = () => {
                       <div className="party-detail-icon">
                         <Key size={14} />
                       </div>
-                      <p className="vd-mono">
-                        {company.pin || company.password}
-                      </p>
+                      <div className="vd-password-display-wrapper">
+                        <p className="vd-mono">
+                          {visiblePins[company.id]
+                            ? company.pin || company.password
+                            : "****"}
+                        </p>
+                        <button
+                          className="vd-password-toggle-icon"
+                          onClick={() => togglePinVisibility(company.id)}
+                          title={
+                            visiblePins[company.id] ? "Hide PIN" : "Show PIN"
+                          }
+                        >
+                          {visiblePins[company.id] ? (
+                            <EyeOff size={14} />
+                          ) : (
+                            <Eye size={14} />
+                          )}
+                        </button>
+                      </div>
                     </div>
                     <div className="party-detail-row">
                       <div className="party-detail-icon">

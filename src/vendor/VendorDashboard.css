@@ -235,6 +235,36 @@
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
 
+.vd-dashboard-container .vd-password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.vd-dashboard-container .vd-password-input {
+  width: 100%;
+  padding-right: 2.5rem !important; /* Space for the eye icon */
+}
+
+.vd-dashboard-container .vd-password-toggle-btn {
+  position: absolute;
+  right: 0.5rem;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem;
+  transition: color 0.2s;
+}
+
+.vd-dashboard-container .vd-password-toggle-btn:hover {
+  color: var(--text-primary);
+}
+
 .vd-dashboard-container .vd-form-actions {
   display: flex;
   justify-content: flex-end;
@@ -405,6 +435,30 @@
   border-radius: 6px;
   color: #0f172a;
   letter-spacing: 1px;
+}
+
+.vd-dashboard-container .vd-password-display-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.vd-dashboard-container .vd-password-toggle-icon {
+  background: transparent;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.2rem;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.vd-dashboard-container .vd-password-toggle-icon:hover {
+  color: #0f172a;
+  background: rgba(15, 23, 42, 0.05);
 }
 
 .vd-dashboard-container .vd-card-footer {
