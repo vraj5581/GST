@@ -221,15 +221,14 @@ function AddVoucher() {
 
   const handlePaidAmountChange = (val) => {
     const newPaidAmount = parseFloat(val) || 0;
-    let newStatus = voucher.status;
+    let newStatus = "Partial";
 
+    // Only flip to 'Paid' if the amount meets or exceeds the total
     if (newPaidAmount >= totals.total && totals.total > 0) {
       newStatus = "Paid";
-    } else if (newPaidAmount > 0) {
-      newStatus = "Partial";
-    } else {
-      newStatus = "Unpaid";
     }
+    // We avoid flipping to 'Unpaid' here so the input field doesn't disappear 
+    // while the user is typing/clearing the value.
 
     setVoucher({
       ...voucher,
@@ -452,9 +451,9 @@ function AddVoucher() {
                     value={remainingAmount.toFixed(2)}
                     readOnly
                     style={{
-                      backgroundColor: "#f9f9f9",
+                      backgroundColor: "#f0f2f2",
                       fontWeight: "bold",
-                      color: remainingAmount > 0 ? "#e74c3c" : "#27ae60",
+                      color: remainingAmount > 0 ? "#b12704" : "#007600",
                     }}
                   />
                 </div>
