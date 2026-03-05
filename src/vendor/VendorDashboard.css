@@ -574,4 +574,57 @@
     min-width: 0;
     margin-bottom: 0;
   }
+
+  .vd-dashboard-container .vd-card {
+    padding: 0.6rem;
+    border-radius: 10px;
+  }
+
+  .vd-dashboard-container .vd-card-header {
+    margin-bottom: 0.4rem;
+  }
+
+  .vd-dashboard-container .vd-card-title h4 {
+    font-size: 0.95rem;
+  }
+
+  .vd-dashboard-container .vd-card-body {
+    gap: 0.3rem;
+  }
+
+  .vd-dashboard-container .party-detail-row {
+    font-size: 0.75rem;
+    gap: 0.4rem;
+  }
+
+  .vd-dashboard-container .party-detail-icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .vd-dashboard-container .party-detail-icon svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  .vd-dashboard-container .vd-mono {
+    font-size: 0.7rem;
+    padding: 0.1rem 0.3rem;
+  }
+
+  .vd-dashboard-container .vd-card-footer {
+    padding-top: 0.4rem;
+    margin-top: 0.15rem;
+  }
+
+
+  .vd-dashboard-container .vd-status-btn-small {
+    font-size: 0.7rem;
+    padding: 0.3rem 0.6rem;
+  }
+
+  .vd-dashboard-container .vd-status-badge {
+    font-size: 0.65rem;
+    padding: 0.2rem 0.5rem;
+  }
 }

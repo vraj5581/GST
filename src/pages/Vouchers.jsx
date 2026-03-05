@@ -99,7 +99,17 @@ function Vouchers() {
         updates.paidAmount = 0;
         updates.remainingAmount = total;
       } else if (updates.status === "Partial") {
-        updates.remainingAmount = total - updates.paidAmount;
+        if (updates.paidAmount >= total && total > 0) {
+          updates.status = "Paid";
+          updates.paidAmount = total;
+          updates.remainingAmount = 0;
+        } else if (updates.paidAmount <= 0) {
+          updates.status = "Unpaid";
+          updates.paidAmount = 0;
+          updates.remainingAmount = total;
+        } else {
+          updates.remainingAmount = total - updates.paidAmount;
+        }
       }
 
       await updateDoc(doc(db, "vouchers", statusModalVoucher.id), updates);
@@ -585,7 +595,7 @@ function Vouchers() {
                     </span>
                   )}
                 </div>
-                <Select 
+                <Select
                   menuPortalTarget={document.body}
                   options={[
                     { value: "", label: "All Statuses" },
@@ -804,13 +814,34 @@ function Vouchers() {
                   <input
                     type="number"
                     className="form-input"
+                    min="0"
                     value={tempStatusData.paidAmount}
-                    onChange={(e) =>
+                    onChange={(e) => {
+                      let val = e.target.value;
+                      if (val === "") {
+                        setTempStatusData({
+                          ...tempStatusData,
+                          paidAmount: "",
+                        });
+                        return;
+                      }
+                      let num = parseFloat(val) || 0;
+                      const total = calculateTotal(statusModalVoucher.items);
+                      if (num < 0) num = 0;
+                      else if (total > 0 && num > total) num = total;
+
+                      let finalVal = val;
+                      if (
+                        parseFloat(val) < 0 ||
+                        (total > 0 && parseFloat(val) > total)
+                      ) {
+                        finalVal = num;
+                      }
                       setTempStatusData({
                         ...tempStatusData,
-                        paidAmount: e.target.value,
-                      })
-                    }
+                        paidAmount: finalVal,
+                      });
+                    }}
                   />
                   <div
                     style={{

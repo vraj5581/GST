@@ -1,7 +1,22 @@
 import { useState, useEffect } from "react";
-import { Search, Edit, Trash2, Plus, DollarSign, FileCode2, FileText } from "lucide-react";
+import {
+  Search,
+  Edit,
+  Trash2,
+  Plus,
+  DollarSign,
+  FileCode2,
+  FileText,
+} from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { collection, getDocs, deleteDoc, doc, query, where } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  deleteDoc,
+  doc,
+  query,
+  where,
+} from "firebase/firestore";
 import { getDB } from "../firebase";
 import "./Products.css";
 
@@ -14,7 +29,15 @@ function Products() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const q = query(collection(db, "products"), where("companyId", "==", JSON.parse(localStorage.getItem('loggedCompany'))?.id)); const querySnapshot = await getDocs(q);
+        const q = query(
+          collection(db, "products"),
+          where(
+            "companyId",
+            "==",
+            JSON.parse(localStorage.getItem("loggedCompany"))?.id,
+          ),
+        );
+        const querySnapshot = await getDocs(q);
         const data = querySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
@@ -109,13 +132,19 @@ function Products() {
 
                 <div className="product-details">
                   <div className="party-detail-row">
-                    <div className="party-detail-icon"><DollarSign size={14} /></div>
-                    <p>₹{p.price}/{p.unit}</p>
+                    <div className="party-detail-icon">
+                      <DollarSign size={14} />
+                    </div>
+                    <p>
+                      ₹{p.price}/{p.unit}
+                    </p>
                   </div>
 
                   {p.description && (
                     <div className="party-detail-row">
-                      <div className="party-detail-icon"><FileText size={14} /></div>
+                      <div className="party-detail-icon">
+                        <FileText size={14} />
+                      </div>
                       <p className="product-description">{p.description}</p>
                     </div>
                   )}

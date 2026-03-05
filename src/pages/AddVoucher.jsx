@@ -220,7 +220,23 @@ function AddVoucher() {
   };
 
   const handlePaidAmountChange = (val) => {
-    const newPaidAmount = parseFloat(val) || 0;
+    if (val === "") {
+      setVoucher({
+        ...voucher,
+        paidAmount: "",
+        status: "Unpaid",
+      });
+      return;
+    }
+
+    let newPaidAmount = parseFloat(val) || 0;
+
+    if (newPaidAmount < 0) {
+      newPaidAmount = 0;
+    } else if (newPaidAmount > totals.total && totals.total > 0) {
+      newPaidAmount = totals.total;
+    }
+
     let newStatus = voucher.status;
 
     if (newPaidAmount >= totals.total && totals.total > 0) {
@@ -231,9 +247,17 @@ function AddVoucher() {
       newStatus = "Unpaid";
     }
 
+    let finalVal = val;
+    if (
+      parseFloat(val) < 0 ||
+      (totals.total > 0 && parseFloat(val) > totals.total)
+    ) {
+      finalVal = newPaidAmount;
+    }
+
     setVoucher({
       ...voucher,
-      paidAmount: val,
+      paidAmount: finalVal,
       status: newStatus,
     });
   };
@@ -440,6 +464,7 @@ function AddVoucher() {
                   <input
                     type="number"
                     className="form-input"
+                    min="0"
                     value={voucher.paidAmount}
                     onChange={(e) => handlePaidAmountChange(e.target.value)}
                   />

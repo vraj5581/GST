@@ -852,30 +852,10 @@ const VendorDashboard = () => {
                     </div>
                     <div className="party-detail-row">
                       <div className="party-detail-icon">
-                        <FileText size={14} />
-                      </div>
-                      <p>{company.gst}</p>
-                    </div>
-                    <div className="party-detail-row">
-                      <div className="party-detail-icon">
                         <MapPin size={14} />
                       </div>
                       <p className="vd-address-text">{company.address}</p>
                     </div>
-                    {company.logo && (
-                      <div className="party-detail-row">
-                        <div className="party-detail-icon">
-                          <ImageIcon size={14} />
-                        </div>
-                        <p>
-                          <img
-                            src={company.logo}
-                            alt="Logo"
-                            className="vd-card-logo-img"
-                          />
-                        </p>
-                      </div>
-                    )}
                   </div>
                   <div className="vd-card-footer vd-card-footer-spaced">
                     <span
@@ -894,7 +874,7 @@ const VendorDashboard = () => {
                       }
                     >
                       {company.isActive === false
-                        ? "Make Active  "
+                        ? "Make Active"
                         : "Make Deactive"}
                     </button>
                   </div>
