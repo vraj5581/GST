@@ -220,39 +220,12 @@ function AddVoucher() {
   };
 
   const handlePaidAmountChange = (val) => {
-    if (val === "") {
-      setVoucher({
-        ...voucher,
-        paidAmount: "",
-        status: "Unpaid",
-      });
-      return;
-    }
-
-    let newPaidAmount = parseFloat(val) || 0;
-
-    if (newPaidAmount < 0) {
-      newPaidAmount = 0;
-    } else if (newPaidAmount > totals.total && totals.total > 0) {
-      newPaidAmount = totals.total;
-    }
-
+    const newPaidAmount = parseFloat(val) || 0;
     let newStatus = voucher.status;
 
+    // Only flip to 'Paid' if the amount meets or exceeds the total
     if (newPaidAmount >= totals.total && totals.total > 0) {
       newStatus = "Paid";
-    } else if (newPaidAmount > 0) {
-      newStatus = "Partial";
-    } else {
-      newStatus = "Unpaid";
-    }
-
-    let finalVal = val;
-    if (
-      parseFloat(val) < 0 ||
-      (totals.total > 0 && parseFloat(val) > totals.total)
-    ) {
-      finalVal = newPaidAmount;
     }
 
     setVoucher({
@@ -477,9 +450,9 @@ function AddVoucher() {
                     value={remainingAmount.toFixed(2)}
                     readOnly
                     style={{
-                      backgroundColor: "#f9f9f9",
+                      backgroundColor: "#f0f2f2",
                       fontWeight: "bold",
-                      color: remainingAmount > 0 ? "#e74c3c" : "#27ae60",
+                      color: remainingAmount > 0 ? "#b12704" : "#007600",
                     }}
                   />
                 </div>
