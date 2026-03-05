@@ -780,6 +780,7 @@ function Vouchers() {
                 <label className="form-label filter-label-bold">Status</label>
                 <Select
                   menuPortalTarget={document.body}
+                  isSearchable={false}
                   options={[
                     { value: "Paid", label: "Paid" },
                     { value: "Partial", label: "Partial" },
