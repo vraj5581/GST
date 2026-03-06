@@ -628,3 +628,26 @@
     padding: 0.2rem 0.5rem;
   }
 }
+
+.vd-fb-config-grid {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.vd-fb-config-helper {
+  color: var(--text-secondary);
+  margin-top: 0.5rem;
+  display: block;
+}
+
+.vd-preview-flex {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.vd-signatory-img {
+  max-height: 60px;
+}

@@ -282,7 +282,6 @@ function Vouchers() {
                         });
                       }}
                       title="Click to update status"
-                      style={{ cursor: "pointer" }}
                     >
                       {v.status || "Unpaid"}
                     </span>
@@ -762,9 +761,8 @@ function Vouchers() {
           onClick={() => setStatusModalVoucher(null)}
         >
           <div
-            className="qr-modal-content filter-modal-content"
+            className="qr-modal-content filter-modal-content status-modal-content"
             onClick={(e) => e.stopPropagation()}
-            style={{ maxWidth: "400px" }}
           >
             <div className="qr-modal-header">
               <h3>Update Status</h3>
@@ -844,13 +842,7 @@ function Vouchers() {
                       });
                     }}
                   />
-                  <div
-                    style={{
-                      marginTop: "0.5rem",
-                      fontSize: "0.85rem",
-                      color: "var(--text-secondary)",
-                    }}
-                  >
+                  <div className="status-modal-balance">
                     Balance: ₹
                     {(
                       calculateTotal(statusModalVoucher.items) -
@@ -860,7 +852,7 @@ function Vouchers() {
                 </div>
               )}
 
-              <div className="filter-actions" style={{ marginTop: "1rem" }}>
+              <div className="filter-actions status-modal-actions">
                 <button
                   className="btn btn-outline-danger filter-btn-clear"
                   onClick={() => setStatusModalVoucher(null)}

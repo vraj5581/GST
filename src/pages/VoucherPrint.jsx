@@ -262,7 +262,7 @@ function VoucherPrint() {
                     {voucher.status || "Unpaid"}
                   </span>
                   {voucher.status !== "Unpaid" && (
-                    <span style={{ marginLeft: "4px", color: "#64748b" }}>
+                    <span className="print-payment-method-text">
                       / {voucher.paymentMethod || "Cash"}
                     </span>
                   )}
@@ -284,7 +284,7 @@ function VoucherPrint() {
                     </div>
                     <div className="print-detailed-row">
                       <span>Balance Due:</span>
-                      <strong style={{ color: "#b91c1c" }}>
+                      <strong className="print-balance-due-text">
                         ₹{Number(voucher.remainingAmount || 0).toFixed(2)}
                       </strong>
                     </div>
@@ -303,10 +303,7 @@ function VoucherPrint() {
 
             <div className="print-signatory-wrapper">
               {clientCompany?.signature && (
-                <div
-                  className="print-signatory-img-wrapper"
-                  style={{ marginBottom: "5px" }}
-                >
+                <div className="print-signatory-img-wrapper print-img-spacing">
                   <img
                     src={clientCompany.signature}
                     alt="Authorized Signature"

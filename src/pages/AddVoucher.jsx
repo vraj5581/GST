@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+  import { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Save, Plus, Trash2, Printer, Calendar } from "lucide-react";
 import Select from "react-select";
@@ -230,7 +230,7 @@ function AddVoucher() {
 
     setVoucher({
       ...voucher,
-      paidAmount: finalVal,
+      paidAmount: val,
       status: newStatus,
     });
   };
@@ -446,14 +446,9 @@ function AddVoucher() {
                   <label className="form-label">Balance Remaining (₹)</label>
                   <input
                     type="text"
-                    className="form-input"
+                    className={`form-input av-balance-input ${remainingAmount > 0 ? "av-balance-due" : "av-balance-clear"}`}
                     value={remainingAmount.toFixed(2)}
                     readOnly
-                    style={{
-                      backgroundColor: "#f0f2f2",
-                      fontWeight: "bold",
-                      color: remainingAmount > 0 ? "#b12704" : "#007600",
-                    }}
                   />
                 </div>
               </div>

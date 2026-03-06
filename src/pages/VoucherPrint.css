@@ -672,3 +672,16 @@
     padding: 0.2rem 0.5rem 0 0.5rem;
   }
 }
+
+.print-payment-method-text {
+  margin-left: 4px;
+  color: #64748b;
+}
+
+.print-balance-due-text {
+  color: #b91c1c;
+}
+
+.print-img-spacing {
+  margin-bottom: 5px;
+}

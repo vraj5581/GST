@@ -632,15 +632,7 @@ const VendorDashboard = () => {
                     <span className="vd-required-asterisk">*</span> (Separate
                     Fields)
                   </label>
-                  <div
-                    className="vd-grid"
-                    style={{
-                      gridTemplateColumns:
-                        "repeat(auto-fit, minmax(200px, 1fr))",
-                      gap: "1rem",
-                      marginTop: "0.5rem",
-                    }}
-                  >
+                  <div className="vd-grid vd-fb-config-grid">
                     <input
                       type="text"
                       value={fbApiKey}
@@ -684,13 +676,7 @@ const VendorDashboard = () => {
                       required
                     />
                   </div>
-                  <small
-                    style={{
-                      color: "var(--text-secondary)",
-                      marginTop: "0.5rem",
-                      display: "block",
-                    }}
-                  >
+                  <small className="vd-fb-config-helper">
                     Provide the Firebase Config keys for this company's DB. This
                     is Required to activate their custom DB as data is no longer
                     mixed in the main vendor DB.
@@ -749,8 +735,7 @@ const VendorDashboard = () => {
                       <img
                         src={signature}
                         alt="Signatory"
-                        className="vd-logo-preview-img"
-                        style={{ maxHeight: "60px" }}
+                        className="vd-logo-preview-img vd-signatory-img"
                       />
                       <button
                         type="button"

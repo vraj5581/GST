@@ -529,3 +529,15 @@
   flex: 1;
   justify-content: center;
 }
+.status-modal-content {
+  max-width: 400px;
+}
+.status-modal-balance {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+.status-modal-actions {
+  margin-top: 1rem;
+}
+
