@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { Printer, ArrowLeft } from "lucide-react";
 import {
   collection,
@@ -9,13 +9,13 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { getDB } from "../firebase";
+import { getDB, mainDb, getTenantDb } from "../firebase";
 import "./VoucherPrint.css";
 
 function VoucherPrint() {
-  const db = getDB();
   const { id } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const [voucher, setVoucher] = useState(null);
   const [party, setParty] = useState(null);
@@ -24,31 +24,46 @@ function VoucherPrint() {
   useEffect(() => {
     const fetchVoucherData = async () => {
       try {
-        const voucherRef = doc(db, "vouchers", id);
+        let currentDb = getDB();
+        const companyIdFromUrl = searchParams.get("companyId");
+        let fetchedCompany =
+          JSON.parse(localStorage.getItem("loggedCompany")) || {};
+
+        if (companyIdFromUrl && !fetchedCompany.id) {
+          const compSnap = await getDoc(
+            doc(mainDb, "companies", companyIdFromUrl),
+          );
+          if (compSnap.exists()) {
+            const cData = compSnap.data();
+            fetchedCompany = { id: compSnap.id, ...cData };
+            currentDb = getTenantDb(companyIdFromUrl, cData.firebaseConfig);
+          } else {
+            console.error("Company not found for QR print!");
+            navigate("/");
+            return;
+          }
+        } else if (fetchedCompany.id) {
+          const compSnap = await getDoc(
+            doc(mainDb, "companies", fetchedCompany.id),
+          );
+          if (compSnap.exists()) {
+            fetchedCompany = { id: compSnap.id, ...compSnap.data() };
+          }
+        }
+
+        setClientCompany(fetchedCompany);
+
+        const voucherRef = doc(currentDb, "vouchers", id);
         const voucherSnap = await getDoc(voucherRef);
 
         if (voucherSnap.exists()) {
           const vData = voucherSnap.data();
-          const targetCompanyId =
-            vData.companyId ||
-            JSON.parse(localStorage.getItem("loggedCompany"))?.id;
-
-          let fetchedCompany =
-            JSON.parse(localStorage.getItem("loggedCompany")) || {};
-          if (targetCompanyId) {
-            const compSnap = await getDoc(
-              doc(db, "companies", targetCompanyId),
-            );
-            if (compSnap.exists()) {
-              fetchedCompany = { id: compSnap.id, ...compSnap.data() };
-            }
-          }
-          setClientCompany(fetchedCompany);
+          const targetCompanyId = fetchedCompany.id;
 
           let fallbackInvoiceNumber = "";
           if (!vData.invoiceNumber && targetCompanyId) {
             const vouchersQ = query(
-              collection(db, "vouchers"),
+              collection(currentDb, "vouchers"),
               where("companyId", "==", targetCompanyId),
             );
             const allVouchersSnap = await getDocs(vouchersQ);
@@ -65,7 +80,7 @@ function VoucherPrint() {
 
           // Fetch the associated party using query
           const q = query(
-            collection(db, "parties"),
+            collection(currentDb, "parties"),
             where("name", "==", vData.partyId),
           );
           const partySnap = await getDocs(q);
@@ -91,7 +106,7 @@ function VoucherPrint() {
     if (id) {
       fetchVoucherData();
     }
-  }, [id, navigate]);
+  }, [id, navigate, searchParams]);
 
   const handlePrint = () => {
     window.print();

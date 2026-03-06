@@ -397,7 +397,7 @@ function Vouchers() {
             </div>
             <div className="qr-modal-body">
               <QRCode
-                value={`${window.location.origin}/voucher-print/${qrVoucher.id}`}
+                value={`${window.location.origin}/voucher-print/${qrVoucher.id}?companyId=${qrVoucher.companyId || JSON.parse(localStorage.getItem("loggedCompany"))?.id}`}
                 size={220}
                 className="qr-code-img"
               />
