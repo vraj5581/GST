@@ -1,33 +1,40 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { collection, query, where, getDocs, updateDoc, doc, serverTimestamp, addDoc } from 'firebase/firestore';
-import { mainDb as db } from './firebase';
-import './CompanyLogin.css';
-import hitnishLogo from './contexts/hitnish.png';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  updateDoc,
+  doc,
+  serverTimestamp,
+  addDoc,
+} from "firebase/firestore";
+import { mainDb as db } from "./firebase";
+import "./CompanyLogin.css";
+import hitnishLogo from "./contexts/hitnish.png";
 
 const CompanyLogin = ({ onLogin }) => {
-  const [phone, setPhone] = useState('');
-  const [pin, setPin] = useState('');
-  const [error, setError] = useState('');
+  const [phone, setPhone] = useState("");
+  const [pin, setPin] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-
-
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
     // Vendor shortcut login
-    if (phone === 'hitnish' && pin === '1234') {
-      navigate('/vendor/dashboard');
+    if (phone === "hitnish" && pin === "1234") {
+      navigate("/vendor/dashboard");
       return;
     }
 
     setLoading(true);
 
     try {
-      const q = query(collection(db, 'companies'), where("phone", "==", phone));
+      const q = query(collection(db, "companies"), where("phone", "==", phone));
       const querySnapshot = await getDocs(q);
 
       if (querySnapshot.empty) {
@@ -54,25 +61,37 @@ const CompanyLogin = ({ onLogin }) => {
       }
 
       if (companyData.isActive === false) {
-        setError("Your account has been deactivated. Please contact the vendor.");
+        setError(
+          "Your account has been deactivated. Please contact the vendor.",
+        );
         setLoading(false);
         return;
       }
 
       // Successful login - update lastLogin only
       try {
-        await updateDoc(doc(db, 'companies', companyId), {
-          lastLogin: serverTimestamp()
+        await updateDoc(doc(db, "companies", companyId), {
+          lastLogin: serverTimestamp(),
         });
       } catch (logErr) {
         console.error("Failed to update lastLogin:", logErr);
       }
 
-      onLogin({
+      const fullData = {
         id: companyId,
-        ...companyData
-      });
-      navigate('/');
+        ...companyData,
+      };
+
+      const safeData = {
+        id: companyId,
+        companyName: companyData.companyName,
+        phone: companyData.phone,
+        firebaseConfig: companyData.firebaseConfig,
+        isActive: companyData.isActive,
+      };
+
+      onLogin(safeData, fullData);
+      navigate("/");
     } catch (err) {
       console.error("Login error:", err);
       setError("An error occurred during login. Please try again.");
@@ -114,7 +133,7 @@ const CompanyLogin = ({ onLogin }) => {
               inputMode="numeric"
               value={pin}
               onChange={(e) => {
-                const value = e.target.value.replace(/\D/g, '');
+                const value = e.target.value.replace(/\D/g, "");
                 if (value.length <= 4) {
                   setPin(value);
                 }
@@ -124,7 +143,11 @@ const CompanyLogin = ({ onLogin }) => {
             />
           </div>
 
-          <button type="submit" className="company-login-btn" disabled={loading}>
+          <button
+            type="submit"
+            className="company-login-btn"
+            disabled={loading}
+          >
             {loading ? "Signing In..." : "Sign In"}
           </button>
         </form>
