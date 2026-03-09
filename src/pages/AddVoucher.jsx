@@ -219,11 +219,15 @@ function AddVoucher() {
   };
 
   const handleItemChange = (index, field, value) => {
+    let safeValue = value;
+    if (typeof safeValue === "string" && safeValue.includes("-")) {
+      safeValue = safeValue.replace(/-/g, "");
+    }
+
     const newItems = [...voucher.items];
     const item = { ...newItems[index] };
 
-    const parsedValue = value === "" ? "" : Math.max(0, parseFloat(value) || 0);
-    item[field] = parsedValue;
+    item[field] = safeValue;
 
     const qty = parseFloat(item.qty) || 0;
     const price = parseFloat(item.price) || 0;
@@ -325,7 +329,11 @@ function AddVoucher() {
   };
 
   const handlePaidAmountChange = (val) => {
-    const safeVal = val === "" ? "" : Math.max(0, parseFloat(val) || 0);
+    let safeVal = val;
+    if (typeof safeVal === "string" && safeVal.includes("-")) {
+      safeVal = safeVal.replace(/-/g, "");
+    }
+
     const newPaidAmount = parseFloat(safeVal) || 0;
     let newStatus = voucher.status;
 
@@ -506,6 +514,11 @@ function AddVoucher() {
                       <input
                         type="number"
                         min="0"
+                        onKeyDown={(e) => {
+                          if (["-", "+", "e", "E"].includes(e.key)) {
+                            e.preventDefault();
+                          }
+                        }}
                         className="form-input av-qty-input"
                         value={item.qty}
                         onChange={(e) =>
@@ -526,6 +539,11 @@ function AddVoucher() {
                       <input
                         type="number"
                         min="0"
+                        onKeyDown={(e) => {
+                          if (["-", "+", "e", "E"].includes(e.key)) {
+                            e.preventDefault();
+                          }
+                        }}
                         className="form-input"
                         value={item.price}
                         onChange={(e) =>
@@ -594,6 +612,11 @@ function AddVoucher() {
                     type="number"
                     className="form-input"
                     min="0"
+                    onKeyDown={(e) => {
+                      if (["-", "+", "e", "E"].includes(e.key)) {
+                        e.preventDefault();
+                      }
+                    }}
                     value={voucher.paidAmount}
                     onChange={(e) => handlePaidAmountChange(e.target.value)}
                   />

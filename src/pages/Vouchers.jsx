@@ -814,9 +814,18 @@ function Vouchers() {
                     type="number"
                     className="form-input"
                     min="0"
+                    onKeyDown={(e) => {
+                      if (["-", "+", "e", "E"].includes(e.key)) {
+                        e.preventDefault();
+                      }
+                    }}
                     value={tempStatusData.paidAmount}
                     onChange={(e) => {
                       let val = e.target.value;
+                      if (typeof val === "string" && val.includes("-")) {
+                        val = val.replace(/-/g, "");
+                      }
+
                       if (val === "") {
                         setTempStatusData({
                           ...tempStatusData,
@@ -824,18 +833,15 @@ function Vouchers() {
                         });
                         return;
                       }
+
                       let num = parseFloat(val) || 0;
                       const total = calculateTotal(statusModalVoucher.items);
-                      if (num < 0) num = 0;
-                      else if (total > 0 && num > total) num = total;
 
                       let finalVal = val;
-                      if (
-                        parseFloat(val) < 0 ||
-                        (total > 0 && parseFloat(val) > total)
-                      ) {
-                        finalVal = num;
+                      if (total > 0 && num > total) {
+                        finalVal = total.toString();
                       }
+
                       setTempStatusData({
                         ...tempStatusData,
                         paidAmount: finalVal,

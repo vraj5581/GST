@@ -57,15 +57,13 @@ function AddProduct() {
   };
 
   const handleChange = (e) => {
-    const { name, value, type } = e.target;
-    let safeValue = value;
+    let { name, value, type } = e.target;
 
-    // Prevent negative numbers on number inputs
-    if (type === "number" && value !== "") {
-      safeValue = Math.max(0, parseFloat(value) || 0);
+    if (type === "number" && typeof value === "string" && value.includes("-")) {
+      value = value.replace(/-/g, "");
     }
 
-    setProduct({ ...product, [name]: safeValue });
+    setProduct({ ...product, [name]: value });
 
     if (errors[name]) {
       setErrors({ ...errors, [name]: "" });
@@ -142,6 +140,11 @@ function AddProduct() {
                 name="price"
                 type="number"
                 min="0"
+                onKeyDown={(e) => {
+                  if (["-", "+", "e", "E"].includes(e.key)) {
+                    e.preventDefault();
+                  }
+                }}
                 value={product.price}
                 placeholder="Ex: 500"
                 onChange={handleChange}
