@@ -57,8 +57,15 @@ function AddProduct() {
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setProduct({ ...product, [name]: value });
+    const { name, value, type } = e.target;
+    let safeValue = value;
+
+    // Prevent negative numbers on number inputs
+    if (type === "number" && value !== "") {
+      safeValue = Math.max(0, parseFloat(value) || 0);
+    }
+
+    setProduct({ ...product, [name]: safeValue });
 
     if (errors[name]) {
       setErrors({ ...errors, [name]: "" });
@@ -80,7 +87,10 @@ function AddProduct() {
         await updateDoc(docRef, product);
       } else {
         // Create new
-        await addDoc(collection(db, "products"), { ...product, companyId: JSON.parse(localStorage.getItem('loggedCompany'))?.id });
+        await addDoc(collection(db, "products"), {
+          ...product,
+          companyId: JSON.parse(localStorage.getItem("loggedCompany"))?.id,
+        });
       }
       navigate("/products");
     } catch (error) {
@@ -131,6 +141,7 @@ function AddProduct() {
                 className={`form-input ${errors.price ? "input-error" : ""}`}
                 name="price"
                 type="number"
+                min="0"
                 value={product.price}
                 placeholder="Ex: 500"
                 onChange={handleChange}
@@ -197,7 +208,7 @@ function AddProduct() {
               className="btn btn-outline-primary btn-mobile-flex"
               disabled={loading}
             >
-              {loading ? "Processing..." : (id ? "Update" : "Save")}
+              {loading ? "Processing..." : id ? "Update" : "Save"}
             </button>
             <button
               type="button"

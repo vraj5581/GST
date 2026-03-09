@@ -97,8 +97,15 @@ function AddService() {
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setService({ ...service, [name]: value });
+    const { name, value, type } = e.target;
+    let safeValue = value;
+
+    // Prevent negative numbers on number inputs
+    if (type === "number" && value !== "") {
+      safeValue = Math.max(0, parseFloat(value) || 0);
+    }
+
+    setService({ ...service, [name]: safeValue });
 
     if (errors[name]) {
       setErrors({ ...errors, [name]: "" });
@@ -206,6 +213,7 @@ function AddService() {
                 className={`form-input ${errors.servicePrice ? "input-error" : ""}`}
                 name="servicePrice"
                 type="number"
+                min="0"
                 value={service.servicePrice}
                 placeholder="Ex: 500"
                 onChange={handleChange}

@@ -222,7 +222,8 @@ function AddVoucher() {
     const newItems = [...voucher.items];
     const item = { ...newItems[index] };
 
-    item[field] = value;
+    const parsedValue = value === "" ? "" : Math.max(0, parseFloat(value) || 0);
+    item[field] = parsedValue;
 
     const qty = parseFloat(item.qty) || 0;
     const price = parseFloat(item.price) || 0;
@@ -324,7 +325,8 @@ function AddVoucher() {
   };
 
   const handlePaidAmountChange = (val) => {
-    const newPaidAmount = parseFloat(val) || 0;
+    const safeVal = val === "" ? "" : Math.max(0, parseFloat(val) || 0);
+    const newPaidAmount = parseFloat(safeVal) || 0;
     let newStatus = voucher.status;
 
     // Only flip to 'Paid' if the amount meets or exceeds the total
@@ -334,7 +336,7 @@ function AddVoucher() {
 
     setVoucher({
       ...voucher,
-      paidAmount: val,
+      paidAmount: safeVal,
       status: newStatus,
     });
   };
@@ -503,6 +505,7 @@ function AddVoucher() {
                     >
                       <input
                         type="number"
+                        min="0"
                         className="form-input av-qty-input"
                         value={item.qty}
                         onChange={(e) =>
@@ -522,6 +525,7 @@ function AddVoucher() {
                     >
                       <input
                         type="number"
+                        min="0"
                         className="form-input"
                         value={item.price}
                         onChange={(e) =>
