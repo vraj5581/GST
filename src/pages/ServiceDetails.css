@@ -1,0 +1,81 @@
+/* CSS for Service Details Page */
+
+.services-page .service-details-header {
+  justify-content: flex-start;
+}
+
+.services-page .service-details-back-btn {
+  flex-shrink: 0;
+}
+
+.services-page .service-details-title {
+  margin: 0;
+  border: none;
+}
+
+.services-page .service-details-wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.services-page .service-details-name {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--color-primary);
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
+  position: relative;
+  z-index: 1;
+}
+
+.services-page .service-details-grid {
+  gap: 1rem;
+  position: relative;
+  z-index: 1;
+}
+
+.services-page .service-details-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+  color: #64748b;
+  margin-bottom: 0.5rem;
+}
+
+.services-page .service-details-value {
+  font-size: 1.1rem;
+  color: #1e293b;
+  font-weight: 500;
+  margin: 0;
+}
+
+.services-page .service-details-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+  border-top: 1px solid var(--border-color);
+  padding-top: 1.5rem;
+}
+
+/* Page Layout spacing */
+.services-page .content-below-fixed {
+  padding-top: 6rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  padding-bottom: 2rem;
+}
+
+@media (max-width: 768px) {
+  .services-page .content-below-fixed {
+    padding-top: 4.5rem;
+    padding-left: 0.1rem;
+    padding-right: 0.1rem;
+    padding-bottom: 0.1rem;
+  }
+
+  .services-page .service-details-grid {
+    grid-template-columns: 1fr !important;
+  }
+}

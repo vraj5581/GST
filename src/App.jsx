@@ -13,6 +13,7 @@ import {
   X,
   LogOut,
   CheckCircle,
+  Briefcase,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import {
@@ -36,6 +37,9 @@ import AddVoucher from "./pages/AddVoucher";
 import VoucherPrint from "./pages/VoucherPrint";
 import VendorDashboard from "./vendor/VendorDashboard";
 import CompanyLogin from "./CompanyLogin";
+import Services from "./pages/Services";
+import AddService from "./pages/AddService";
+import ServiceDetails from "./pages/ServiceDetails";
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -136,6 +140,15 @@ function App() {
       pageName = "Manage Product";
     } else if (path.startsWith("/product/")) {
       pageName = "Product Details";
+    } else if (path === "/services") {
+      pageName = "Services";
+    } else if (
+      path.startsWith("/add-service") ||
+      path.startsWith("/edit-service")
+    ) {
+      pageName = "Manage Service";
+    } else if (path.startsWith("/service/")) {
+      pageName = "Service Details";
     } else if (path === "/vouchers") {
       pageName = "Vouchers";
     } else if (path.startsWith("/add-voucher")) {
@@ -152,7 +165,7 @@ function App() {
     document.title = `${pageName} - ${companySuffix}`;
   }, [location.pathname, loggedCompany]);
 
-  const isMainPage = ["/", "/products", "/vouchers"].includes(
+  const isMainPage = ["/", "/products", "/vouchers", "/services"].includes(
     location.pathname,
   );
 
@@ -235,6 +248,14 @@ function App() {
             <span>Products</span>
           </NavLink>
           <NavLink
+            to="/services"
+            className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
+            onClick={() => setSidebarOpen(false)}
+          >
+            <Briefcase size={20} />
+            <span>Services</span>
+          </NavLink>
+          <NavLink
             to="/vouchers"
             className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
             onClick={() => setSidebarOpen(false)}
@@ -280,6 +301,11 @@ function App() {
             <Route path="/add-voucher" element={<AddVoucher />} />
             <Route path="/add-voucher/:id" element={<AddVoucher />} />
             <Route path="/voucher-print/:id" element={<VoucherPrint />} />
+
+            <Route path="/services" element={<Services />} />
+            <Route path="/add-service" element={<AddService />} />
+            <Route path="/edit-service/:id" element={<AddService />} />
+            <Route path="/service/:id" element={<ServiceDetails />} />
 
             {/* Fallback route */}
             <Route path="*" element={<Navigate to="/" replace />} />

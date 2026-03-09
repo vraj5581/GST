@@ -1,4 +1,4 @@
-  import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Save, Plus, Trash2, Printer, Calendar } from "lucide-react";
 import Select from "react-select";
@@ -22,6 +22,9 @@ function AddVoucher() {
 
   const [parties, setParties] = useState([]);
   const [products, setProducts] = useState([]);
+  const [services, setServices] = useState([]);
+
+  const [popupData, setPopupData] = useState(null);
 
   const [loading, setLoading] = useState(false);
   const productSelectRef = useRef(null);
@@ -62,6 +65,15 @@ function AddVoucher() {
           productsSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() })),
         );
 
+        const servicesQ = query(
+          collection(db, "services"),
+          where("companyId", "==", loggedCompanyId),
+        );
+        const servicesSnap = await getDocs(servicesQ);
+        setServices(
+          servicesSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() })),
+        );
+
         if (id) {
           const voucherSnap = await getDoc(doc(db, "vouchers", id));
           if (voucherSnap.exists()) {
@@ -81,32 +93,124 @@ function AddVoucher() {
     fetchData();
   }, [id, db]);
 
-  const handleProductSelect = (selectedOptions) => {
-    // Handle the multi-select options
+  const updateVoucherItems = (selectedOptions) => {
     const newSelectedProducts = selectedOptions || [];
 
-    // Map selected products to items, preserving existing row data (qty, price)
     const updatedItems = newSelectedProducts.map((option) => {
-      const existingItem = voucher.items.find(
-        (item) => item.productId === option.value,
-      );
-      if (existingItem) {
-        return existingItem;
-      }
+      if (option.isService) {
+        const existingItem = voucher.items.find(
+          (item) => item.serviceId === option.serviceId,
+        );
+        if (existingItem) return existingItem;
 
-      const productDef = products.find((p) => p.name === option.value);
-      const price = productDef ? parseFloat(productDef.price) || 0 : 0;
-      return {
-        productId: option.value,
-        name: productDef ? productDef.name : option.value,
-        price: price,
-        qty: 1,
-        amount: price * 1,
-        unit: productDef ? productDef.unit : "Pcs",
-      };
+        const serviceDef = services.find((s) => s.id === option.serviceId);
+        const relatedProduct = serviceDef
+          ? products.find((p) => p.id === serviceDef.productId)
+          : null;
+        const price = serviceDef ? parseFloat(serviceDef.servicePrice) || 0 : 0;
+        return {
+          isService: true,
+          serviceId: option.serviceId,
+          productId: serviceDef ? serviceDef.productId : null,
+          name: serviceDef
+            ? `${relatedProduct ? relatedProduct.name : ""} (${serviceDef.serviceType})`.trim()
+            : option.label,
+          price: price,
+          qty: 1,
+          amount: price * 1,
+          unit: "Service",
+        };
+      } else {
+        const existingItem = voucher.items.find(
+          (item) => item.productId === option.value && !item.isService,
+        );
+        if (existingItem) return existingItem;
+
+        const productDef = products.find((p) => p.name === option.value);
+        const price = productDef ? parseFloat(productDef.price) || 0 : 0;
+        return {
+          isService: false,
+          productId: option.value,
+          name: productDef ? productDef.name : option.value,
+          price: price,
+          qty: 1,
+          amount: price * 1,
+          unit: productDef ? productDef.unit : "Pcs",
+        };
+      }
     });
 
     setVoucher({ ...voucher, items: updatedItems });
+  };
+
+  const handleProductSelect = (newValue, actionMeta) => {
+    if (
+      actionMeta &&
+      (actionMeta.action === "select-option" ||
+        actionMeta.action === "deselect-option")
+    ) {
+      const option = actionMeta.option;
+      if (!option.isService) {
+        const productDef = products.find((p) => p.name === option.value);
+        if (productDef) {
+          const prodServices = services.filter(
+            (s) => s.productId === productDef.id,
+          );
+          if (prodServices.length > 0) {
+            setPopupData({
+              product: productDef,
+              services: prodServices,
+            });
+            return;
+          }
+        }
+      }
+
+      if (actionMeta.action === "deselect-option") {
+        return; // Prevent accidental deselection from dropdown menu click; users must use "x" on tag
+      }
+    }
+
+    updateVoucherItems(newValue);
+  };
+
+  const handlePopupSelection = (type, itemData) => {
+    const currentOptions = voucher.items.map((item) => ({
+      value: item.isService ? `service_${item.serviceId}` : item.productId,
+      label: item.name,
+      isService: item.isService,
+      serviceId: item.serviceId,
+    }));
+
+    if (type === "product") {
+      const exists = currentOptions.some(
+        (o) => o.value === popupData.product.name && !o.isService,
+      );
+      if (!exists) {
+        currentOptions.push({
+          value: popupData.product.name,
+          label: popupData.product.name,
+        });
+      }
+    }
+    if (type === "service") {
+      const val = `service_${itemData.id}`;
+      const exists = currentOptions.some((o) => o.value === val);
+      if (!exists) {
+        currentOptions.push({
+          value: val,
+          label: `${itemData.serviceType}`,
+          isService: true,
+          serviceId: itemData.id,
+        });
+      }
+    }
+
+    updateVoucherItems(currentOptions);
+  };
+
+  const handlePopupClose = () => {
+    setPopupData(null);
   };
 
   const removeItem = (index) => {
@@ -298,11 +402,36 @@ function AddVoucher() {
             <Select
               menuPortalTarget={document.body}
               isMulti
+              hideSelectedOptions={false}
               isDisabled={!voucher.partyId}
-              options={products.map((p) => ({ value: p.name, label: p.name }))}
+              options={products
+                .filter((p) => {
+                  const isProductAdded = voucher.items.some(
+                    (item) => !item.isService && item.productId === p.name,
+                  );
+                  const prodServices = services.filter(
+                    (s) => s.productId === p.id,
+                  );
+
+                  if (!isProductAdded) return true;
+                  if (prodServices.length === 0) return false;
+
+                  const allServicesAdded = prodServices.every((s) =>
+                    voucher.items.some(
+                      (item) => item.isService && item.serviceId === s.id,
+                    ),
+                  );
+
+                  return !allServicesAdded;
+                })
+                .map((p) => ({ value: p.name, label: p.name }))}
               value={voucher.items.map((item) => ({
-                value: item.productId,
+                value: item.isService
+                  ? `service_${item.serviceId}`
+                  : item.productId,
                 label: item.name,
+                isService: item.isService,
+                serviceId: item.serviceId,
               }))}
               onChange={handleProductSelect}
               placeholder={
@@ -343,7 +472,30 @@ function AddVoucher() {
                       className="voucher-cell voucher-col-product"
                       data-label="Product"
                     >
-                      <strong>{item.name}</strong>
+                      {(() => {
+                        const lastOpen = item.name.lastIndexOf("(");
+                        const lastClose = item.name.lastIndexOf(")");
+                        if (
+                          item.isService &&
+                          lastOpen !== -1 &&
+                          lastClose > lastOpen
+                        ) {
+                          const pName = item.name.substring(0, lastOpen).trim();
+                          const sName = item.name.substring(
+                            lastOpen,
+                            lastClose + 1,
+                          );
+                          return (
+                            <>
+                              <strong>{pName}</strong>
+                              <span className="av-service-subtext">
+                                {sName}
+                              </span>
+                            </>
+                          );
+                        }
+                        return <strong>{item.name}</strong>;
+                      })()}
                     </div>
                     <div
                       className="voucher-cell voucher-col-qty av-qty-cell-content"
@@ -484,6 +636,68 @@ function AddVoucher() {
           </div>
         </form>
       </div>
+
+      {popupData && (
+        <div className="av-popup-overlay">
+          <div className="av-popup-content">
+            <h4>{popupData.product.name} Options</h4>
+            <p className="av-popup-sub">This product has services available.</p>
+
+            <div className="av-popup-options">
+              {(() => {
+                const isProductAdded = voucher.items.some(
+                  (item) =>
+                    !item.isService &&
+                    item.productId === popupData.product.name,
+                );
+                return (
+                  <button
+                    type="button"
+                    className="btn btn-outline-primary av-popup-btn"
+                    onClick={() => handlePopupSelection("product")}
+                    disabled={isProductAdded}
+                  >
+                    {isProductAdded ? "Added" : "Add Product Only"}
+                  </button>
+                );
+              })()}
+
+              <div className="av-popup-divider">SERVICES</div>
+
+              {popupData.services.map((s) => {
+                const isServiceAdded = voucher.items.some(
+                  (item) => item.isService && item.serviceId === s.id,
+                );
+                return (
+                  <div key={s.id} className="av-popup-service-row">
+                    <span className="av-popup-service-name">
+                      {s.serviceType} (₹{s.servicePrice})
+                    </span>
+                    <div className="av-popup-service-actions">
+                      <button
+                        type="button"
+                        className="btn btn-outline-secondary btn-sm"
+                        onClick={() => handlePopupSelection("service", s)}
+                        disabled={isServiceAdded}
+                      >
+                        {isServiceAdded ? "Added" : "Service Only"}
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <button
+              type="button"
+              className="btn btn-primary av-popup-cancel"
+              onClick={handlePopupClose}
+            >
+              Done
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,0 +1,93 @@
+/* CSS for AddService Page */
+
+/* Forms */
+.add-service-page .form-group {
+  margin-bottom: 0rem;
+}
+
+.add-service-page .form-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 0.1rem;
+}
+
+.add-service-page .form-input,
+.add-service-page .form-textarea,
+.add-service-page select.form-input {
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  font-size: 0.95rem;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+.add-service-page .form-input:focus,
+.add-service-page .form-textarea:focus,
+.add-service-page select.form-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Utilities override if needed */
+.add-service-page .grid {
+  display: grid;
+  gap: 0.7rem;
+}
+.add-service-page .grid-2 {
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+.add-service-page .content-below-fixed {
+  padding-top: 6rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  padding-bottom: 2rem;
+}
+
+@media (max-width: 768px) {
+  .add-service-page .content-below-fixed {
+    padding-top: 4.5rem;
+    padding-left: 0.2rem;
+    padding-right: 0.2rem;
+    padding-bottom: 0.2rem;
+  }
+}
+
+/* Extracted from inline styles */
+.add-service-page .add-service-header {
+  justify-content: flex-start;
+}
+.add-service-page .add-service-back-btn {
+  flex-shrink: 0;
+}
+.add-service-page .add-service-title {
+  margin: 0;
+  border: none;
+}
+.add-service-page .required-asterisk {
+  color: var(--color-danger);
+}
+.add-service-page .error-text {
+  color: var(--color-danger);
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+.add-service-page .input-error {
+  border-color: var(--color-danger) !important;
+}
+.add-service-page .select-error .react-select__control {
+  border-color: var(--color-danger) !important;
+}
+.add-service-page .add-service-form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+}
