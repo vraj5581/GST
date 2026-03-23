@@ -27,6 +27,7 @@ import {
   Image as ImageIcon,
   Eye,
   EyeOff,
+  Loader2,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import "./VendorDashboard.css";
@@ -55,6 +56,7 @@ const VendorDashboard = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showFormPin, setShowFormPin] = useState(false);
   const [visiblePins, setVisiblePins] = useState({});
+  const [deletingId, setDeletingId] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -358,10 +360,11 @@ const VendorDashboard = () => {
   const handleDeleteCompany = async (company) => {
     if (
       window.confirm(
-        `Are you sure you want to delete ${company.companyName}? This will permanently delete all data (Vouchers, Products, Parties) associated with this company.`,
+        `Are you sure you want to delete ${company.companyName}? This will permanently delete all data (Vouchers, Products, Parties, Services) associated with this company.`,
       )
     ) {
       try {
+        setDeletingId(company.id);
         let hasValidConfig = false;
         if (company.firebaseConfig) {
           try {
@@ -372,7 +375,7 @@ const VendorDashboard = () => {
 
         // Helper function to safely delete documents in batches under a 400 limit
         const deleteDataWithBatches = async (targetDb) => {
-          const collectionsToDelete = ["vouchers", "products", "parties"];
+          const collectionsToDelete = ["vouchers", "products", "parties", "services"];
           let currentBatch = writeBatch(targetDb);
           let count = 0;
 
@@ -420,10 +423,17 @@ const VendorDashboard = () => {
           }
         };
 
+        const withTimeout = (promise, ms) => {
+          return Promise.race([
+            promise,
+            new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout trying to delete from tenant DB")), ms))
+          ]);
+        };
+
         if (hasValidConfig) {
           try {
             const tenantDb = getTenantDb(company.id, company.firebaseConfig);
-            await deleteDataWithBatches(tenantDb);
+            await withTimeout(deleteDataWithBatches(tenantDb), 5000);
           } catch (tenantErr) {
             console.error(
               "Warning: Failed to delete remote tenant DB data.",
@@ -435,7 +445,7 @@ const VendorDashboard = () => {
 
         // ALWAYS delete the data from the MAIN database as well to ensure master is clean
         try {
-          await deleteDataWithBatches(db);
+          await withTimeout(deleteDataWithBatches(db), 5000);
         } catch (mainErr) {
           console.error("Warning: Failed to delete main DB data.", mainErr);
         }
@@ -448,6 +458,8 @@ const VendorDashboard = () => {
       } catch (error) {
         console.error("Error deleting company:", error);
         alert("Failed to delete company.");
+      } finally {
+        setDeletingId(null);
       }
     }
   };
@@ -792,8 +804,9 @@ const VendorDashboard = () => {
                         className="btn btn-action-delete"
                         onClick={() => handleDeleteCompany(company)}
                         title="Delete Company"
+                        disabled={deletingId === company.id}
                       >
-                        <Trash2 size={16} />
+                        {deletingId === company.id ? <Loader2 size={16} className="vd-spin" /> : <Trash2 size={16} />}
                       </button>
                     </div>
                   </div>
